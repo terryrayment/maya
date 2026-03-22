@@ -39,13 +39,13 @@ export function SplashIntro() {
         transition: "opacity 0.6s ease-out",
         backgroundColor: "#0a0a0a",
         backgroundImage:
-          "url(https://cdn.shopify.com/s/files/1/0915/2576/4750/files/MAYA_DOG_HERO_BW.jpg?v=1719522000)",
+          "url(https://officeofmaya.com/cdn/shop/files/Monty-Pond-2520x1449_80a23225-9013-439a-9733-f731efb9e987.webp?v=1717127305&width=2200)",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/60" />
+      {/* Subtle overlay for text readability */}
+      <div className="absolute inset-0 bg-black/20" />
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-between h-full w-full py-16 lg:py-24">
