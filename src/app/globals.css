@@ -1,24 +1,47 @@
 @import "tailwindcss";
 
-/* ---- MAYA Brand Fonts ---- */
+/* ---- MAYA Brand Font (from source: assets/Unica-77-Mono-Low-LL-TT-175026d0.woff2) ---- */
 @font-face {
-  font-family: 'Unica77MonoLow';
+  font-family: 'Unica 77 Mono Low LL TT wf';
   src: url('/fonts/Unica77MonoLow.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
+/* ---- Source: :root from theme-7bd878af.css ---- */
 @theme inline {
+  --color-black: #000;
+  --color-white: #fff;
+  --color-ivory: #fdfbf7;
   --color-cream: #F5F2ED;
-  --color-cream-dark: #EBE6DE;
-  --color-ink: #1A1A1A;
-  --color-ink-light: #4A4A4A;
+  --color-ink: #000;
   --color-ink-muted: #8A8A8A;
-  --color-border: #1A1A1A;
-  --color-accent: #2C2C2C;
-  --font-mono: 'Unica77MonoLow', 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', 'Source Code Pro', ui-monospace, monospace;
-  --font-display: 'GTStandard-M', -apple-system, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --color-border: #000;
+  --font-mono: 'Unica 77 Mono Low LL TT wf', sans-serif;
+}
+
+/* ---- Source values ---- */
+:root {
+  --black: #000;
+  --white: #fff;
+  --ivory: #fdfbf7;
+  --background-color: var(--white);
+  --text-color: var(--black);
+  --base-font-weight: 400;
+  --base-font-size: 1rem;
+  --base-line-height: 1.4;
+  --base-letter-spacing: 0;
+  --primary-font: "Unica 77 Mono Low LL TT wf", sans-serif;
+  --side-padding: 1.4285714285714286rem;
+  --anc-banner-height: 2.142857142857143rem;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --base-font-size: 1rem;
+    --side-padding: 2.857142857142857rem;
+  }
 }
 
 * {
@@ -28,37 +51,40 @@
 }
 
 html {
+  min-height: 100%;
   scroll-behavior: smooth;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 body {
-  background-color: #F5F2ED;
-  color: #1A1A1A;
-  font-family: var(--font-mono);
+  background-color: var(--ivory, #fdfbf7);
+  color: var(--black, #000);
+  font-family: var(--primary-font);
+  font-weight: var(--base-font-weight);
+  font-size: var(--base-font-size);
+  line-height: var(--base-line-height);
+  letter-spacing: var(--base-letter-spacing);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background-color: #1A1A1A;
-  color: #F5F2ED;
+  background-color: #000;
+  color: #fdfbf7;
 }
 
 input, textarea, select {
   font-family: inherit;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: inherit;
 }
 
 button {
   cursor: pointer;
   font-family: inherit;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: inherit;
 }
 
 a {
@@ -66,45 +92,26 @@ a {
   text-decoration: none;
 }
 
-/* ---- MAYA Design System: Dotted Borders ---- */
-.border-maya {
-  border: 1px dotted #1A1A1A;
-}
-
-.border-b-maya {
-  border-bottom: 1px dotted #1A1A1A;
-}
-
-.border-t-maya {
-  border-top: 1px dotted #1A1A1A;
-}
-
-/* Override all solid borders to dotted */
+/* ---- Dotted borders (matches source: all separators are dotted) ---- */
 [class*="border-"] {
   border-style: dotted;
 }
 
-/* But not border-0 or border-none */
 .border-0, .border-none, [class*="border-transparent"] {
   border-style: none;
 }
 
-/* ---- Display font for large headings ---- */
+/* ---- Display font for MAYA wordmark ---- */
 .font-display {
-  font-family: var(--font-display);
+  font-family: -apple-system, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.1em;
 }
 
-/* ---- Tight spacing overrides ---- */
+/* ---- Source spacing: --side-padding ---- */
 .section-padding {
-  padding: 2rem 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .section-padding {
-    padding: 3rem 2rem;
-  }
+  padding: var(--side-padding);
 }
 
 /* ---- Product card hover ---- */
@@ -113,10 +120,10 @@ a {
   transition: transform 0.3s ease;
 }
 
-/* Scrollbar styling */
+/* Scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
 }
 
 ::-webkit-scrollbar-track {
@@ -124,6 +131,6 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1A1A1A;
+  background: #000;
   border-radius: 0;
 }
