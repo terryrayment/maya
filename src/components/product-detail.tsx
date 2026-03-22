@@ -21,10 +21,10 @@ const FAQS = [
 ];
 
 const TRUST_BADGES = [
-  "Vet Formulated",
+  "USDA Certified",
+  "Vegan",
+  "Responsibly Produced",
   "Made in USA",
-  "Natural Ingredients",
-  "30-Day Guarantee",
 ];
 
 export function ProductDetail({ product }: { product: ShopifyProduct }) {
@@ -45,7 +45,6 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
   const subscriptionPrice = basePrice * 0.8;
   const displayPrice = isSubscription ? subscriptionPrice : basePrice;
 
-  // Check if product is a supplement (show subscription toggle)
   const isSupplement =
     product.productType?.toLowerCase().includes("supplement") ||
     product.title.toLowerCase().includes("supplement") ||
@@ -70,18 +69,16 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
   }
 
   return (
-    <div className="px-6 lg:px-12 py-8 lg:py-16">
+    <div className="px-4 lg:px-10 py-6 lg:py-12">
       <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
-          {/* Images */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
+          {/* Left: Images */}
           <div>
-            <div className="aspect-square bg-cream-dark relative overflow-hidden mb-3">
+            <div className="aspect-square bg-[#e8e4de] relative overflow-hidden mb-3 border border-ink" style={{ borderStyle: "dotted" }}>
               {images[activeImageIndex] ? (
                 <Image
                   src={images[activeImageIndex].url}
-                  alt={
-                    images[activeImageIndex].altText || product.title
-                  }
+                  alt={images[activeImageIndex].altText || product.title}
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -89,7 +86,7 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="font-mono text-xl tracking-widest uppercase text-ink-muted">
+                  <span className="text-xl tracking-widest opacity-30">
                     {product.title}
                   </span>
                 </div>
@@ -101,11 +98,12 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
                   <button
                     key={i}
                     onClick={() => setActiveImageIndex(i)}
-                    className={`w-16 h-16 lg:w-20 lg:h-20 relative flex-shrink-0 overflow-hidden border-2 transition-colors ${
+                    className={`w-16 h-16 lg:w-20 lg:h-20 relative flex-shrink-0 overflow-hidden border transition-colors ${
                       i === activeImageIndex
                         ? "border-ink"
                         : "border-transparent"
                     }`}
+                    style={{ borderStyle: i === activeImageIndex ? "dotted" : "none" }}
                   >
                     <Image
                       src={img.url}
@@ -120,28 +118,20 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
             )}
           </div>
 
-          {/* Product info */}
-          <div className="lg:py-4">
-            <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-muted mb-2">
+          {/* Right: Product info */}
+          <div className="lg:py-2">
+            <p className="text-[10px] tracking-[0.15em] opacity-50 mb-2">
               {product.productType || "MAYA"}
             </p>
-            <h1 className="text-3xl lg:text-4xl font-light tracking-tight mb-3">
+            <h1 className="text-lg lg:text-xl tracking-[0.1em] mb-4">
               {product.title}
             </h1>
-            <p className="font-mono text-lg mb-6">
-              {formatPrice(displayPrice.toFixed(2))}
-              {isSubscription && (
-                <span className="text-ink-muted text-sm ml-2 line-through">
-                  {formatPrice(basePrice.toFixed(2))}
-                </span>
-              )}
-            </p>
 
             {/* Variant selector */}
             {variants.length > 1 &&
               variants[0].title !== "Default Title" && (
                 <div className="mb-6">
-                  <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-ink-muted mb-3">
+                  <p className="text-[10px] tracking-[0.15em] opacity-50 mb-3">
                     {variants[0].selectedOptions?.[0]?.name || "Option"}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -150,13 +140,14 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
                         key={v.id}
                         onClick={() => setSelectedVariantIndex(i)}
                         disabled={!v.availableForSale}
-                        className={`px-4 py-2 border font-mono text-xs tracking-wide transition-colors ${
+                        className={`px-4 py-2 border text-[10px] tracking-[0.15em] transition-colors ${
                           i === selectedVariantIndex
-                            ? "bg-ink text-cream border-ink"
+                            ? "bg-ink text-[#fdfbf7] border-ink"
                             : v.availableForSale
-                            ? "border-border hover:border-ink"
-                            : "border-border text-ink-muted opacity-50 cursor-not-allowed"
+                            ? "border-ink hover:bg-ink hover:text-[#fdfbf7]"
+                            : "border-ink opacity-30 cursor-not-allowed"
                         }`}
+                        style={{ borderStyle: "dotted" }}
                       >
                         {v.title}
                       </button>
@@ -167,54 +158,58 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
 
             {/* Subscribe & Save toggle */}
             {isSupplement && (
-              <div className="mb-8 space-y-2">
+              <div className="mb-6 space-y-2">
                 <button
                   onClick={() => setIsSubscription(false)}
-                  className={`w-full flex items-center justify-between p-4 border transition-colors ${
-                    !isSubscription ? "border-ink" : "border-border"
+                  className={`w-full flex items-center justify-between p-3 border transition-colors ${
+                    !isSubscription ? "border-ink" : "border-ink/30"
                   }`}
+                  style={{ borderStyle: "dotted" }}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        !isSubscription ? "border-ink" : "border-ink-muted"
+                      className={`w-3 h-3 rounded-full border flex items-center justify-center ${
+                        !isSubscription ? "border-ink" : "border-ink/40"
                       }`}
+                      style={{ borderStyle: "dotted" }}
                     >
                       {!isSubscription && (
-                        <div className="w-2 h-2 rounded-full bg-ink" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-ink" />
                       )}
                     </div>
-                    <span className="text-sm">One-time purchase</span>
+                    <span className="text-[10px] tracking-[0.15em]">One-Time Purchase</span>
                   </div>
-                  <span className="font-mono text-sm">
+                  <span className="text-[10px] tracking-[0.15em]">
                     {formatPrice(basePrice.toFixed(2))}
                   </span>
                 </button>
 
                 <button
                   onClick={() => setIsSubscription(true)}
-                  className={`w-full flex items-center justify-between p-4 border transition-colors ${
-                    isSubscription ? "border-ink" : "border-border"
+                  className={`w-full flex items-center justify-between p-3 border transition-colors ${
+                    isSubscription ? "border-ink" : "border-ink/30"
                   }`}
+                  style={{ borderStyle: "dotted" }}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                        isSubscription ? "border-ink" : "border-ink-muted"
+                      className={`w-3 h-3 rounded-full border flex items-center justify-center ${
+                        isSubscription ? "border-ink" : "border-ink/40"
                       }`}
+                      style={{ borderStyle: "dotted" }}
                     >
                       {isSubscription && (
-                        <div className="w-2 h-2 rounded-full bg-ink" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-ink" />
                       )}
                     </div>
                     <div className="text-left">
-                      <span className="text-sm">Subscribe &amp; Save 20%</span>
-                      <p className="text-[11px] text-ink-muted mt-0.5">
-                        Never Run Out &middot; Cancel anytime
+                      <span className="text-[10px] tracking-[0.15em]">Subscribe &amp; Save 20%</span>
+                      <p className="text-[9px] tracking-[0.1em] opacity-50 mt-0.5">
+                        Never Run Out &middot; Cancel Anytime
                       </p>
                     </div>
                   </div>
-                  <span className="font-mono text-sm">
+                  <span className="text-[10px] tracking-[0.15em]">
                     {formatPrice(subscriptionPrice.toFixed(2))}
                   </span>
                 </button>
@@ -225,59 +220,66 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
             <button
               onClick={handleAddToCart}
               disabled={!selectedVariant?.availableForSale}
-              className="w-full bg-ink text-cream py-4 font-mono text-[11px] tracking-[0.2em] uppercase hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed mb-8"
+              className="w-full flex items-center justify-between border border-ink py-3 px-4 hover:bg-ink hover:text-[#fdfbf7] transition-colors disabled:opacity-30 disabled:cursor-not-allowed mb-6"
+              style={{ borderStyle: "dotted" }}
             >
-              {selectedVariant?.availableForSale
-                ? "Add to Cart"
-                : "Sold Out"}
+              <span className="text-[10px] tracking-[0.15em]">
+                {selectedVariant?.availableForSale ? "Add to Cart" : "Sold Out"}
+              </span>
+              <span className="text-[10px] tracking-[0.15em]">
+                {formatPrice(displayPrice.toFixed(2))}
+              </span>
             </button>
 
             {/* Trust badges */}
-            <div className="flex flex-wrap gap-x-6 gap-y-2 mb-8 pb-8 border-b border-border">
-              {TRUST_BADGES.map((badge) => (
-                <span
-                  key={badge}
-                  className="font-mono text-[9px] tracking-[0.15em] uppercase text-ink-muted"
-                >
+            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-6 pb-6 border-b border-ink" style={{ borderStyle: "dotted" }}>
+              {TRUST_BADGES.map((badge, i) => (
+                <span key={badge} className="text-[9px] tracking-[0.1em] opacity-50 flex items-center gap-1">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
                   {badge}
+                  {i < TRUST_BADGES.length - 1 && <span className="ml-3">|</span>}
                 </span>
               ))}
             </div>
 
             {/* Description tabs */}
-            <div className="mb-8">
-              <div className="flex gap-6 border-b border-border mb-4">
+            <div className="mb-6">
+              <div className="flex gap-0 border-b border-ink mb-4" style={{ borderStyle: "dotted" }}>
                 <button
                   onClick={() => setActiveTab("details")}
-                  className={`pb-3 font-mono text-[10px] tracking-[0.2em] uppercase transition-colors ${
+                  className={`pb-2 mr-6 text-[10px] tracking-[0.15em] transition-colors ${
                     activeTab === "details"
-                      ? "border-b-2 border-ink text-ink"
-                      : "text-ink-muted hover:text-ink"
+                      ? "border-b border-ink"
+                      : "opacity-40 hover:opacity-70"
                   }`}
+                  style={{ borderStyle: activeTab === "details" ? "dotted" : "none" }}
                 >
                   Details
                 </button>
                 <button
                   onClick={() => setActiveTab("ingredients")}
-                  className={`pb-3 font-mono text-[10px] tracking-[0.2em] uppercase transition-colors ${
+                  className={`pb-2 text-[10px] tracking-[0.15em] transition-colors ${
                     activeTab === "ingredients"
-                      ? "border-b-2 border-ink text-ink"
-                      : "text-ink-muted hover:text-ink"
+                      ? "border-b border-ink"
+                      : "opacity-40 hover:opacity-70"
                   }`}
+                  style={{ borderStyle: activeTab === "ingredients" ? "dotted" : "none" }}
                 >
                   Ingredients
                 </button>
               </div>
-              <div className="text-sm text-ink-light leading-relaxed">
+              <div className="text-[11px] tracking-[0.05em] leading-relaxed opacity-70">
                 {activeTab === "details" ? (
                   <div
                     dangerouslySetInnerHTML={{
                       __html: product.descriptionHtml || product.description,
                     }}
-                    className="prose prose-sm max-w-none [&>p]:mb-3 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:mb-3"
+                    className="[&>p]:mb-3 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:mb-3"
                   />
                 ) : (
-                  <p className="text-ink-muted">
+                  <p>
                     See product packaging for full ingredient list. All
                     ingredients are natural, non-GMO, and sourced responsibly.
                   </p>
@@ -287,24 +289,24 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
 
             {/* FAQ */}
             <div>
-              <h3 className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-muted mb-4">
+              <h3 className="text-[10px] tracking-[0.15em] opacity-50 mb-3">
                 FAQ
               </h3>
               <div className="space-y-0">
                 {FAQS.map((faq, i) => (
-                  <div key={i} className="border-t border-border">
+                  <div key={i} className="border-t border-ink" style={{ borderStyle: "dotted" }}>
                     <button
                       onClick={() =>
                         setOpenFaq(openFaq === i ? null : i)
                       }
-                      className="w-full flex items-center justify-between py-4 text-left"
+                      className="w-full flex items-center justify-between py-3 text-left"
                     >
-                      <span className="text-sm font-medium pr-4">
+                      <span className="text-[10px] tracking-[0.1em] pr-4">
                         {faq.q}
                       </span>
                       <svg
-                        width="14"
-                        height="14"
+                        width="12"
+                        height="12"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
@@ -317,7 +319,7 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
                       </svg>
                     </button>
                     {openFaq === i && (
-                      <p className="text-sm text-ink-light leading-relaxed pb-4">
+                      <p className="text-[10px] tracking-[0.05em] leading-relaxed opacity-60 pb-3">
                         {faq.a}
                       </p>
                     )}

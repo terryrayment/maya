@@ -2,6 +2,7 @@
 
 import { useCart } from "@/context/cart-context";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect } from "react";
 
 export function CartDrawer() {
@@ -38,51 +39,49 @@ export function CartDrawer() {
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-cream z-50 transform transition-transform duration-300 ease-out ${
+        className={`fixed top-0 right-0 h-full w-full max-w-md bg-[#fdfbf7] z-50 transform transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-border">
-            <h2 className="font-mono text-sm tracking-widest uppercase">
-              Cart ({itemCount})
-            </h2>
+          <div
+            className="flex items-center justify-between px-4 lg:px-6 py-4 border-b border-ink"
+            style={{ borderStyle: "dotted" }}
+          >
+            <span className="text-[10px] tracking-[0.15em]">
+              Cart {itemCount}
+            </span>
+            <span className="text-[10px] tracking-[0.3em]">
+              Maya
+            </span>
             <button
               onClick={closeCart}
-              className="text-ink-muted hover:text-ink transition-colors"
+              className="text-[10px] tracking-[0.15em] hover:opacity-50 transition-opacity"
               aria-label="Close cart"
             >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <path d="M18 6L6 18M6 6l12 12" />
-              </svg>
+              Close
             </button>
           </div>
 
           {/* Items */}
-          <div className="flex-1 overflow-y-auto px-6 py-4">
+          <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4">
             {items.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <p className="text-ink-muted text-sm mb-4">
-                  Your cart is empty
+                <p className="text-[10px] tracking-[0.15em] mb-4">
+                  Your Cart is Empty.
                 </p>
-                <a
+                <Link
                   href="/shop"
                   onClick={closeCart}
-                  className="font-mono text-xs tracking-widest uppercase border-b border-ink pb-0.5 hover:text-ink-muted transition-colors"
+                  className="text-[10px] tracking-[0.15em] border border-ink px-5 py-2 hover:bg-ink hover:text-[#fdfbf7] transition-colors"
+                  style={{ borderStyle: "dotted" }}
                 >
-                  Continue Shopping
-                </a>
+                  Go to Shop
+                </Link>
               </div>
             ) : (
-              <ul className="space-y-6">
+              <ul className="space-y-0">
                 {items.map((item) => (
                   <li
                     key={
@@ -90,55 +89,62 @@ export function CartDrawer() {
                         ? `${item.variantId}-sub`
                         : item.variantId
                     }
-                    className="flex gap-4"
+                    className="flex gap-4 py-4 border-b border-ink"
+                    style={{ borderStyle: "dotted" }}
                   >
-                    <div className="w-20 h-20 bg-cream-dark flex-shrink-0 relative overflow-hidden">
+                    <div
+                      className="w-[70px] h-[70px] bg-[#e8e4de] flex-shrink-0 relative overflow-hidden border border-ink"
+                      style={{ borderStyle: "dotted" }}
+                    >
                       {item.image && (
                         <Image
                           src={item.image}
                           alt={item.title}
                           fill
                           className="object-cover"
-                          sizes="80px"
+                          sizes="70px"
                         />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium leading-tight truncate">
+                      <h3 className="text-[10px] tracking-[0.1em] leading-tight truncate">
                         {item.title}
                       </h3>
                       {item.variantTitle !== "Default Title" && (
-                        <p className="text-xs text-ink-muted mt-0.5">
+                        <p className="text-[9px] tracking-[0.1em] opacity-50 mt-0.5">
                           {item.variantTitle}
                         </p>
                       )}
                       {item.isSubscription && (
-                        <p className="text-xs text-ink-muted mt-0.5">
-                          Subscribe & Save
+                        <p className="text-[9px] tracking-[0.1em] opacity-50 mt-0.5">
+                          Subscribe &amp; Save
                         </p>
                       )}
-                      <p className="font-mono text-sm mt-1">
+                      <p className="text-[10px] tracking-[0.1em] mt-1">
                         ${item.price.toFixed(2)}
                       </p>
                       <div className="flex items-center justify-between mt-2">
-                        <div className="flex items-center border border-border">
+                        <div
+                          className="flex items-center border border-ink"
+                          style={{ borderStyle: "dotted" }}
+                        >
                           <button
                             onClick={() =>
                               updateQuantity(item.variantId, item.quantity - 1)
                             }
-                            className="w-7 h-7 flex items-center justify-center text-xs hover:bg-cream-dark transition-colors"
+                            className="w-6 h-6 flex items-center justify-center text-[10px] hover:bg-[#e8e4de] transition-colors"
                             aria-label="Decrease quantity"
                           >
                             -
                           </button>
-                          <span className="w-7 h-7 flex items-center justify-center text-xs font-mono">
+                          <span className="w-6 h-6 flex items-center justify-center text-[10px]">
                             {item.quantity}
                           </span>
                           <button
                             onClick={() =>
                               updateQuantity(item.variantId, item.quantity + 1)
                             }
-                            className="w-7 h-7 flex items-center justify-center text-xs hover:bg-cream-dark transition-colors"
+                            className="w-6 h-6 flex items-center justify-center text-[10px] hover:bg-[#e8e4de] transition-colors"
                             aria-label="Increase quantity"
                           >
                             +
@@ -146,7 +152,7 @@ export function CartDrawer() {
                         </div>
                         <button
                           onClick={() => removeItem(item.variantId)}
-                          className="text-xs text-ink-muted hover:text-ink transition-colors font-mono tracking-wide uppercase"
+                          className="text-[9px] tracking-[0.15em] opacity-50 hover:opacity-100 transition-opacity"
                         >
                           Remove
                         </button>
@@ -160,26 +166,25 @@ export function CartDrawer() {
 
           {/* Footer */}
           {items.length > 0 && (
-            <div className="border-t border-border px-6 py-5 space-y-4">
+            <div
+              className="border-t border-ink px-4 lg:px-6 py-4 space-y-3"
+              style={{ borderStyle: "dotted" }}
+            >
               <div className="flex items-center justify-between">
-                <span className="font-mono text-sm tracking-widest uppercase">
+                <span className="text-[10px] tracking-[0.15em]">
                   Subtotal
                 </span>
-                <span className="font-mono text-sm">
+                <span className="text-[10px] tracking-[0.15em]">
                   ${subtotal.toFixed(2)}
                 </span>
               </div>
-              {subtotal >= 75 && (
-                <p className="text-xs text-ink-muted text-center">
-                  You qualify for free shipping
-                </p>
-              )}
-              {subtotal > 0 && subtotal < 75 && (
-                <p className="text-xs text-ink-muted text-center">
-                  ${(75 - subtotal).toFixed(2)} away from free shipping
-                </p>
-              )}
-              <button className="w-full bg-ink text-cream py-3.5 font-mono text-xs tracking-widest uppercase hover:bg-accent transition-colors">
+              <p className="text-[9px] tracking-[0.1em] opacity-50 text-center">
+                Shipping Calculated at Checkout.
+              </p>
+              <button
+                className="w-full border border-ink py-3 text-[10px] tracking-[0.15em] hover:bg-ink hover:text-[#fdfbf7] transition-colors"
+                style={{ borderStyle: "dotted" }}
+              >
                 Checkout
               </button>
             </div>

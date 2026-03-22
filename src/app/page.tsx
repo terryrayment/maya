@@ -3,6 +3,8 @@ import Image from "next/image";
 import { getAllProducts, formatPrice, type ShopifyProduct } from "@/lib/shopify";
 import { ProductGrid } from "@/components/product-grid";
 import { EmailCapture } from "@/components/email-capture";
+import { ProductSlider } from "@/components/product-slider";
+import { VideoBar } from "@/components/video-bar";
 
 export const revalidate = 3600;
 
@@ -32,8 +34,42 @@ export default async function HomePage() {
 
   const featuredImage = featuredProduct?.images.edges[0]?.node;
 
+  // Build product image map for slider
+  const productImages: Record<string, string> = {};
+  for (const p of products) {
+    const img = p.images.edges[0]?.node?.url;
+    if (!img) continue;
+    const h = p.handle.toLowerCase();
+    const t = p.title.toLowerCase();
+    if (h.includes("brush") || t.includes("brush")) productImages["dog brush"] = img;
+    if (h.includes("gift") || t.includes("gift")) productImages["gift card"] = img;
+  }
+  // For collections, use first matching product image
+  for (const p of products) {
+    const img = p.images.edges[0]?.node?.url;
+    if (!img) continue;
+    if (
+      p.productType?.toLowerCase().includes("supplement") ||
+      p.tags?.some((t) => t.toLowerCase().includes("wellness"))
+    ) {
+      if (!productImages["supplements"]) productImages["supplements"] = img;
+    }
+    if (
+      p.productType?.toLowerCase().includes("apparel") ||
+      p.tags?.some((t) => t.toLowerCase().includes("apparel"))
+    ) {
+      if (!productImages["apparel"]) productImages["apparel"] = img;
+    }
+  }
+
   return (
     <>
+      {/* Product Slider */}
+      <ProductSlider productImages={productImages} />
+
+      {/* Video Bar */}
+      <VideoBar />
+
       {/* Hero */}
       <section className="px-6 lg:px-12 py-20 lg:py-32">
         <div className="max-w-6xl mx-auto">
