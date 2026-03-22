@@ -1,26 +1,129 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---- MAYA Brand Fonts ---- */
+@font-face {
+  font-family: 'Unica77MonoLow';
+  src: url('/fonts/Unica77MonoLow.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: #F5F2ED;
+  --color-cream-dark: #EBE6DE;
+  --color-ink: #1A1A1A;
+  --color-ink-light: #4A4A4A;
+  --color-ink-muted: #8A8A8A;
+  --color-border: #1A1A1A;
+  --color-accent: #2C2C2C;
+  --font-mono: 'Unica77MonoLow', 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Mono', 'Droid Sans Mono', 'Source Code Pro', ui-monospace, monospace;
+  --font-display: 'GTStandard-M', -apple-system, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 13px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #F5F2ED;
+  color: #1A1A1A;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: #1A1A1A;
+  color: #F5F2ED;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---- MAYA Design System: Dotted Borders ---- */
+.border-maya {
+  border: 1px dotted #1A1A1A;
+}
+
+.border-b-maya {
+  border-bottom: 1px dotted #1A1A1A;
+}
+
+.border-t-maya {
+  border-top: 1px dotted #1A1A1A;
+}
+
+/* Override all solid borders to dotted */
+[class*="border-"] {
+  border-style: dotted;
+}
+
+/* But not border-0 or border-none */
+.border-0, .border-none, [class*="border-transparent"] {
+  border-style: none;
+}
+
+/* ---- Display font for large headings ---- */
+.font-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ---- Tight spacing overrides ---- */
+.section-padding {
+  padding: 2rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 3rem 2rem;
+  }
+}
+
+/* ---- Product card hover ---- */
+.product-card:hover img {
+  transform: scale(1.02);
+  transition: transform 0.3s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1A1A1A;
+  border-radius: 0;
 }

@@ -1,65 +1,245 @@
+import Link from "next/link";
 import Image from "next/image";
+import { getAllProducts, formatPrice, type ShopifyProduct } from "@/lib/shopify";
+import { ProductGrid } from "@/components/product-grid";
+import { EmailCapture } from "@/components/email-capture";
 
-export default function Home() {
+export const revalidate = 3600;
+
+export default async function HomePage() {
+  const products = await getAllProducts();
+
+  // Separate supplements from other products
+  const supplements = products.filter(
+    (p) =>
+      p.productType?.toLowerCase().includes("supplement") ||
+      p.title.toLowerCase().includes("supplement") ||
+      p.tags?.some((t) => t.toLowerCase().includes("supplement")) ||
+      p.tags?.some((t) => t.toLowerCase().includes("wellness"))
+  );
+
+  // Find the allergy supplement as the featured product
+  const featuredProduct =
+    supplements.find(
+      (p) =>
+        p.handle.includes("allergy") ||
+        p.title.toLowerCase().includes("allergy")
+    ) || supplements[0] || products[0];
+
+  // Use supplements if we found them, otherwise show first 4 products
+  const wellnessProducts =
+    supplements.length > 0 ? supplements.slice(0, 4) : products.slice(0, 4);
+
+  const featuredImage = featuredProduct?.images.edges[0]?.node;
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      {/* Hero */}
+      <section className="px-6 lg:px-12 py-20 lg:py-32">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="order-2 lg:order-1">
+              <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-muted mb-6">
+                Los Angeles &middot; Ciudad de M&eacute;xico
+              </p>
+              <h1 className="text-4xl lg:text-6xl font-light leading-[1.1] tracking-tight mb-6">
+                Care and wellness
+                <br />
+                for dogs.
+              </h1>
+              <p className="text-ink-light text-lg leading-relaxed mb-8 max-w-md">
+                Vet-formulated supplements and essentials designed for the dogs
+                who deserve more. Natural ingredients, real results.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/shop"
+                  className="inline-flex items-center justify-center bg-ink text-cream px-8 py-3.5 font-mono text-[10px] tracking-[0.2em] uppercase hover:bg-accent transition-colors"
+                >
+                  Shop All
+                </Link>
+                <Link
+                  href={
+                    featuredProduct
+                      ? `/products/${featuredProduct.handle}`
+                      : "/shop"
+                  }
+                  className="inline-flex items-center justify-center border border-ink px-8 py-3.5 font-mono text-[10px] tracking-[0.2em] uppercase hover:bg-ink hover:text-cream transition-colors"
+                >
+                  Best Seller
+                </Link>
+              </div>
+            </div>
+            <div className="order-1 lg:order-2">
+              <div className="aspect-[4/5] bg-cream-dark relative overflow-hidden">
+                {featuredImage ? (
+                  <Image
+                    src={featuredImage.url}
+                    alt={featuredImage.altText || featuredProduct.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    priority
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="font-mono text-2xl tracking-[0.3em] uppercase text-ink-muted">
+                      MAYA
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Start Here — Featured */}
+      <section className="px-6 lg:px-12 py-16 lg:py-24 border-t border-border">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-muted mb-3">
+              Start Here
+            </h2>
+            <p className="text-2xl lg:text-3xl font-light tracking-tight">
+              The essentials for every dog
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Featured product */}
+            {featuredProduct && (
+              <Link
+                href={`/products/${featuredProduct.handle}`}
+                className="group block"
+              >
+                <div className="aspect-square bg-cream-dark relative overflow-hidden">
+                  {featuredImage ? (
+                    <Image
+                      src={featuredImage.url}
+                      alt={featuredImage.altText || featuredProduct.title}
+                      fill
+                      className="object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <span className="font-mono text-lg tracking-widest uppercase text-ink-muted">
+                        {featuredProduct.title}
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-ink text-cream font-mono text-[9px] tracking-[0.15em] uppercase px-3 py-1.5">
+                      Best Seller
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">{featuredProduct.title}</h3>
+                  <p className="font-mono text-sm text-ink-light mt-1">
+                    {formatPrice(
+                      featuredProduct.priceRange.minVariantPrice.amount,
+                      featuredProduct.priceRange.minVariantPrice.currencyCode
+                    )}
+                  </p>
+                </div>
+              </Link>
+            )}
+
+            {/* Wellness Stack CTA */}
+            <div className="flex flex-col justify-center bg-cream-dark p-8 lg:p-12">
+              <h3 className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-muted mb-4">
+                Complete Wellness
+              </h3>
+              <p className="text-2xl lg:text-3xl font-light tracking-tight mb-4">
+                The Complete
+                <br />
+                Wellness Stack
+              </p>
+              <p className="text-ink-light leading-relaxed mb-8 max-w-sm">
+                Build your dog&apos;s daily routine with our full range of
+                vet-formulated supplements. Cover every base &mdash; from skin
+                and coat to joints and digestion.
+              </p>
+              <Link
+                href="/shop?collection=wellness"
+                className="inline-flex items-center justify-center self-start bg-ink text-cream px-8 py-3.5 font-mono text-[10px] tracking-[0.2em] uppercase hover:bg-accent transition-colors"
+              >
+                Shop Wellness
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Supplement Grid */}
+      <section className="px-6 lg:px-12 py-16 lg:py-24 border-t border-border">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <h2 className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-muted mb-3">
+                Wellness
+              </h2>
+              <p className="text-2xl lg:text-3xl font-light tracking-tight">
+                Daily supplements
+              </p>
+            </div>
+            <Link
+              href="/shop?collection=wellness"
+              className="hidden sm:inline-flex font-mono text-[10px] tracking-[0.2em] uppercase border-b border-ink pb-0.5 hover:text-ink-muted transition-colors"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              View All
+            </Link>
+          </div>
+
+          <ProductGrid products={wellnessProducts} />
+
+          <div className="mt-8 text-center sm:hidden">
+            <Link
+              href="/shop?collection=wellness"
+              className="font-mono text-[10px] tracking-[0.2em] uppercase border-b border-ink pb-0.5"
             >
-              Learning
-            </a>{" "}
-            center.
+              View All
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Brand Story */}
+      <section className="px-6 lg:px-12 py-16 lg:py-24 border-t border-border">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-muted mb-6">
+            Our Story
+          </p>
+          <p className="text-2xl lg:text-3xl font-light leading-relaxed tracking-tight mb-6">
+            MAYA was born from a simple belief: every dog deserves the same
+            quality of care we expect for ourselves.
+          </p>
+          <p className="text-ink-light leading-relaxed mb-8">
+            We work with veterinarians and nutritional scientists to formulate
+            supplements that actually work. No fillers, no gimmicks — just
+            clean, effective ingredients sourced with intention.
+          </p>
+          <p className="font-mono text-[10px] tracking-[0.3em] uppercase text-ink-muted">
+            All Furs &middot; Todos Pieles
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Email Capture */}
+      <section className="px-6 lg:px-12 py-16 lg:py-24 border-t border-border">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-2xl lg:text-3xl font-light tracking-tight mb-3">
+            Get 10% off your first order
+          </h2>
+          <p className="text-ink-light text-sm mb-8">
+            Join the MAYA community for early access, wellness tips, and
+            exclusive offers.
+          </p>
+          <EmailCapture />
         </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }
