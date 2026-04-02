@@ -24,20 +24,44 @@ export function CollectionFilter() {
   }
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="collection-filter">
       {COLLECTIONS.map((col) => (
         <button
           key={col.value}
           onClick={() => handleFilter(col.value)}
-          className={`font-mono text-[10px] tracking-[0.2em] uppercase px-4 py-2 border transition-colors ${
-            active === col.value
-              ? "bg-ink text-cream border-ink"
-              : "border-border text-ink-light hover:border-ink hover:text-ink"
-          }`}
+          className="button collection-filter-btn"
+          style={{
+            minWidth: "auto",
+            height: "auto",
+            padding: "0.5rem 1rem",
+            fontSize: "1rem",
+            background: active === col.value ? "var(--black)" : "transparent",
+            color: active === col.value ? "var(--ivory)" : "var(--black)",
+          }}
         >
           {col.label}
+          <svg className="button-border" viewBox="0 0 200 50" preserveAspectRatio="none">
+            <rect
+              width="198" height="48" x="1" y="1" rx="0" ry="0"
+              fill="none"
+              stroke={active === col.value ? "var(--ivory)" : "var(--black)"}
+              strokeWidth="1"
+              strokeDasharray="2"
+            />
+          </svg>
         </button>
       ))}
+
+      <style jsx>{`
+        .collection-filter {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        .collection-filter-btn {
+          position: relative;
+        }
+      `}</style>
     </div>
   );
 }

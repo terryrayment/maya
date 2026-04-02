@@ -9,36 +9,66 @@ export function EmailCapture() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
-    // In production, integrate with Klaviyo/Mailchimp here
     setSubmitted(true);
   }
 
   if (submitted) {
     return (
-      <div className="text-center">
-        <p className="font-mono text-sm tracking-wide">
-          Welcome to MAYA. Check your inbox for 10% off.
-        </p>
+      <div style={{ textAlign: "center" }}>
+        <p>Welcome to MAYA. Check your inbox for 10% off.</p>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto">
+    <form
+      onSubmit={handleSubmit}
+      className="email-capture"
+    >
       <input
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email address"
+        placeholder="Email Address"
         required
-        className="flex-1 bg-transparent border-b border-ink py-2.5 font-mono text-sm tracking-wide placeholder:text-ink-muted focus:outline-none"
+        className="email-capture-input"
       />
-      <button
-        type="submit"
-        className="bg-ink text-cream px-8 py-2.5 font-mono text-[10px] tracking-[0.2em] uppercase hover:bg-accent transition-colors shrink-0"
-      >
+      <button type="submit" className="button email-capture-button">
         Subscribe
+        <svg className="button-border" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <rect width="198" height="48" x="1" y="1" rx="0" ry="0" fill="none" stroke="#000" strokeWidth="1" strokeDasharray="2" />
+        </svg>
       </button>
+
+      <style jsx>{`
+        .email-capture {
+          display: flex;
+          gap: 1rem;
+          width: 100%;
+          max-width: 30rem;
+          margin: 0 auto;
+        }
+        .email-capture-input {
+          flex: 1;
+          background: transparent;
+          border: none;
+          border-bottom: 1px solid var(--black);
+          padding: 0.714rem 0;
+          outline: none;
+          font: inherit;
+          text-transform: uppercase;
+          letter-spacing: inherit;
+          color: inherit;
+        }
+        .email-capture-input::placeholder {
+          color: currentColor;
+          opacity: 0.5;
+        }
+        .email-capture-button {
+          flex-shrink: 0;
+          font-size: 1rem;
+        }
+      `}</style>
     </form>
   );
 }

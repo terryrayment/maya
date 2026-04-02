@@ -4,17 +4,16 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { CartDrawer } from "@/components/cart-drawer";
 import { SplashIntro } from "@/components/splash-intro";
-import { CameraRoll } from "@/components/camera-roll";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "MAYA — Care and Wellness for Dogs",
   description:
-    "Premium dog wellness from Los Angeles and Ciudad de México. Supplements, care, and apparel. All Furs · Todos Pieles.",
+    "Premium dog wellness from Los Angeles and Ciudad de M\u00e9xico. Supplements, care, and apparel. All Furs \u00b7 Todos Pieles.",
   openGraph: {
     title: "MAYA — Care and Wellness for Dogs",
     description:
-      "Premium dog wellness from Los Angeles and Ciudad de México. Supplements, care, and apparel.",
+      "Premium dog wellness from Los Angeles and Ciudad de M\u00e9xico. Supplements, care, and apparel.",
     siteName: "MAYA",
     locale: "en_US",
     type: "website",
@@ -28,12 +27,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen flex flex-col">
+      <body>
         <CartProvider>
           <SplashIntro />
           <Header />
-          <main className="flex-1">{children}</main>
-          <CameraRoll />
+          <main>{children}</main>
           <Footer />
           <CartDrawer />
         </CartProvider>

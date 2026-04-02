@@ -11,6 +11,7 @@ const announcements = [
 
 export function AnnouncementBar() {
   const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,11 +20,62 @@ export function AnnouncementBar() {
     return () => clearInterval(interval);
   }, []);
 
+  if (!visible) return null;
+
   return (
-    <div className="py-2 text-center border-b border-ink">
-      <p className="text-[10px] tracking-[0.15em]">
-        {announcements[index]}
-      </p>
+    <div className="anc-banner">
+      <div className="anc-banner-inner">
+        {announcements.map((text, i) => (
+          <div
+            key={i}
+            className="anc-banner-item"
+            style={{
+              visibility: i === index ? "visible" : "hidden",
+              opacity: i === index ? 1 : 0,
+            }}
+          >
+            <p>{text}</p>
+          </div>
+        ))}
+      </div>
+
+      <style jsx>{`
+        .anc-banner {
+          width: 100%;
+          height: var(--anc-banner-height);
+          position: fixed;
+          top: 0;
+          left: 0;
+          z-index: 9;
+          background-color: var(--ivory);
+          font-size: 1rem;
+        }
+        .anc-banner-inner {
+          background: linear-gradient(to right, #000 50%, transparent 50%) bottom;
+          background-size: 4px 1px;
+          background-repeat: repeat-x;
+          height: 100%;
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+        .anc-banner-item {
+          width: 100%;
+          padding: 0 var(--side-padding);
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: 0.5s;
+          transition-property: visibility, opacity;
+        }
+        .anc-banner-item p {
+          margin-bottom: 0;
+        }
+      `}</style>
     </div>
   );
 }
@@ -33,88 +85,260 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 bg-[#F5F2ED]">
+    <>
       <AnnouncementBar />
-      <nav className="flex items-center justify-between px-4 lg:px-6 py-3 border-b border-ink">
-        {/* Logo - left */}
-        <Link href="/" className="tracking-[0.3em] text-sm font-normal">
-          Maya
-        </Link>
+      <header className="header">
+        {/* Desktop: full nav bar */}
+        <div className="header-menu">
+          {/* Logo - on desktop, this is the first menu item */}
+          <div className="header-menu-item header-menu-item--logo">
+            <Link href="/" className="header-menu-link">
+              Maya
+            </Link>
+          </div>
 
-        {/* Mobile menu button */}
-        <button
-          className="lg:hidden text-[10px] tracking-[0.15em]"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileMenuOpen ? "Close" : "Menu"}
-        </button>
+          {/* Mobile: hamburger toggle */}
+          <div className="header-menu-toggle-wrapper">
+            <button
+              className="header-menu-toggle"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? "Close" : "Menu"}
+            </button>
+          </div>
 
-        {/* Desktop nav right */}
-        <div className="hidden lg:flex items-center gap-6">
-          <Link
-            href="/shop"
-            className="text-[10px] tracking-[0.15em] hover:opacity-50 transition-opacity"
-          >
-            Shop
-          </Link>
-          <Link
-            href="/about"
-            className="text-[10px] tracking-[0.15em] hover:opacity-50 transition-opacity"
-          >
-            About
-          </Link>
-          <Link
-            href="/contact"
-            className="text-[10px] tracking-[0.15em] hover:opacity-50 transition-opacity"
-          >
-            Contact
-          </Link>
-          <button
-            onClick={toggleCart}
-            className="text-[10px] tracking-[0.15em] hover:opacity-50 transition-opacity"
-            aria-label="Open cart"
-          >
-            Cart{" "}
-            <span className="inline-flex items-center justify-center w-4 h-4 border border-ink rounded-full text-[8px] ml-0.5" style={{ borderStyle: 'dotted' }}>
-              {itemCount}
-            </span>
-          </button>
+          {/* Mobile: centered logo */}
+          <div className="header-logo-wrapper">
+            <Link href="/">
+              <span className="header-logo-text">Maya</span>
+            </Link>
+          </div>
+
+          {/* Nav links */}
+          <div className="header-menu-item header-menu-item--nav">
+            <Link href="/shop" className="header-menu-link">
+              Shop
+            </Link>
+          </div>
+          <div className="header-menu-item header-menu-item--nav">
+            <Link href="/about" className="header-menu-link">
+              About
+            </Link>
+          </div>
+          <div className="header-menu-item header-menu-item--nav">
+            <Link href="/contact" className="header-menu-link">
+              Contact
+            </Link>
+          </div>
+          <div className="header-menu-item header-menu-item--cart">
+            <button onClick={toggleCart} className="header-menu-link">
+              Cart
+              <span className="header-cart-count">
+                <svg className="button-border" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <rect width="98" height="98" rx="50" ry="50" />
+                </svg>
+                {itemCount}
+              </span>
+            </button>
+          </div>
         </div>
-      </nav>
 
-      {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="lg:hidden border-b border-ink px-4 py-4 space-y-3">
-          <Link
-            href="/shop"
-            className="block text-[10px] tracking-[0.15em]"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Shop
-          </Link>
-          <Link
-            href="/about"
-            className="block text-[10px] tracking-[0.15em]"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            About
-          </Link>
-          <Link
-            href="/contact"
-            className="block text-[10px] tracking-[0.15em]"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            Contact
-          </Link>
-          <button
-            onClick={() => { toggleCart(); setMobileMenuOpen(false); }}
-            className="block text-[10px] tracking-[0.15em]"
-          >
-            Cart {itemCount}
-          </button>
-        </div>
-      )}
-    </header>
+        {/* Mobile menu overlay */}
+        {mobileMenuOpen && (
+          <div className="header-mobile-menu">
+            <Link href="/shop" className="header-mobile-link" onClick={() => setMobileMenuOpen(false)}>
+              Shop
+            </Link>
+            <Link href="/about" className="header-mobile-link" onClick={() => setMobileMenuOpen(false)}>
+              About
+            </Link>
+            <Link href="/contact" className="header-mobile-link" onClick={() => setMobileMenuOpen(false)}>
+              Contact
+            </Link>
+            <button onClick={() => { toggleCart(); setMobileMenuOpen(false); }} className="header-mobile-link">
+              Cart ({itemCount})
+            </button>
+          </div>
+        )}
+
+        <style jsx>{`
+          .header {
+            width: 100%;
+            position: fixed;
+            top: var(--anc-banner-height);
+            left: 0;
+            z-index: 10;
+            transition: top 0.5s;
+          }
+          .header::before {
+            content: "";
+            width: 100%;
+            height: 4rem;
+            background: var(--ivory);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            box-shadow: 0 0.714rem 0.714rem var(--ivory);
+          }
+          .header-menu {
+            display: flex;
+            justify-content: space-between;
+            line-height: 1;
+            pointer-events: all;
+          }
+          .header-menu-link {
+            position: relative;
+            letter-spacing: 0.01em;
+            color: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+          }
+
+          /* Mobile layout (<1024px) */
+          @media (max-width: 1023px) {
+            .header {
+              display: flex;
+              align-items: center;
+              padding: 1.5rem var(--side-padding) 0;
+            }
+            .header-menu {
+              width: 100%;
+              align-items: center;
+            }
+            .header-menu-toggle-wrapper {
+              width: 35%;
+            }
+            .header-logo-wrapper {
+              flex: 1;
+              text-align: center;
+            }
+            .header-logo-text {
+              font-size: inherit;
+              letter-spacing: 0.01em;
+            }
+            .header-menu-item--logo {
+              display: none;
+            }
+            .header-menu-item--nav {
+              display: none;
+            }
+            .header-menu-item--cart {
+              width: 35%;
+              display: flex;
+              justify-content: flex-end;
+            }
+          }
+
+          /* Desktop layout (>=1024px) */
+          @media (min-width: 1024px) {
+            .header {
+              padding-top: 1.4285714285714286rem;
+              pointer-events: none;
+            }
+            .header::before {
+              height: 4.357142857142857rem;
+              box-shadow: 0 1.0714285714285714rem 1.0714285714285714rem var(--ivory);
+            }
+            .header-menu-toggle-wrapper {
+              display: none;
+            }
+            .header-logo-wrapper {
+              display: none;
+            }
+            .header-menu {
+              padding: 0 var(--side-padding);
+              font-size: 1.5rem;
+            }
+            .header-menu-item--logo {
+              margin-right: auto;
+            }
+            .header-menu-item--nav,
+            .header-menu-item--cart {
+              margin-left: 2.5rem;
+            }
+          }
+
+          .header-menu-toggle {
+            position: relative;
+            letter-spacing: 0.01em;
+          }
+
+          .header-cart-count {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 1.5rem;
+            margin-left: 0.357rem;
+            height: 1.5rem;
+            position: relative;
+            font-size: 0.857em;
+            line-height: 1.5rem;
+          }
+          @media (min-width: 1024px) {
+            .header-cart-count {
+              min-width: 2.2857142857142856rem;
+              height: 2.2857142857142856rem;
+              margin-left: 0.714rem;
+              font-size: 0.857em;
+              line-height: 2.2857142857142856rem;
+            }
+          }
+
+          .header-cart-count :global(.button-border) {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+          }
+          .header-cart-count :global(.button-border rect) {
+            fill: none;
+            stroke: var(--black);
+            stroke-width: 1px;
+            stroke-dasharray: 2px;
+            animation: dash 0.35s infinite linear;
+            animation-play-state: paused;
+          }
+          .header-menu-link:hover .header-cart-count :global(.button-border rect) {
+            animation-play-state: running;
+          }
+
+          .header-mobile-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--black);
+            color: var(--ivory);
+            z-index: 11;
+            display: flex;
+            flex-direction: column;
+            padding: 6rem var(--side-padding);
+            gap: 1.5rem;
+            font-size: 2rem;
+          }
+          @media (min-width: 1024px) {
+            .header-mobile-menu {
+              display: none;
+            }
+          }
+          .header-mobile-link {
+            color: inherit;
+            text-decoration: none;
+            letter-spacing: 0.01em;
+          }
+
+          @keyframes dash {
+            to {
+              stroke-dashoffset: -4px;
+            }
+          }
+        `}</style>
+      </header>
+    </>
   );
 }

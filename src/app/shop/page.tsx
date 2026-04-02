@@ -33,8 +33,8 @@ async function ShopContent({
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-20">
-        <p className="text-ink-muted font-mono text-sm">
+      <div style={{ textAlign: "center", padding: "5rem 0" }}>
+        <p style={{ opacity: 0.5 }}>
           No products found in this collection.
         </p>
       </div>
@@ -50,42 +50,31 @@ export default async function ShopPage({
   searchParams: Promise<{ collection?: string }>;
 }) {
   return (
-    <div className="px-6 lg:px-12 py-12 lg:py-20">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-10 lg:mb-14">
-          <h1 className="text-3xl lg:text-4xl font-light tracking-tight mb-2">
-            Shop
-          </h1>
-          <p className="text-ink-muted text-sm">
-            Everything your dog needs, nothing they don&apos;t.
-          </p>
-        </div>
-
-        {/* Filters */}
-        <div className="mb-10">
-          <Suspense fallback={null}>
-            <CollectionFilter />
-          </Suspense>
-        </div>
-
-        {/* Products */}
-        <Suspense
-          fallback={
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 lg:gap-x-6 lg:gap-y-10">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="aspect-square bg-cream-dark mb-4" />
-                  <div className="h-4 bg-cream-dark w-3/4 mb-2" />
-                  <div className="h-3 bg-cream-dark w-1/4" />
-                </div>
-              ))}
-            </div>
-          }
-        >
-          <ShopContent searchParams={searchParams} />
+    <div
+      style={{
+        paddingTop: "7.071428571428571rem",
+        backgroundColor: "var(--ivory)",
+        minHeight: "100vh",
+        paddingLeft: "var(--side-padding)",
+        paddingRight: "var(--side-padding)",
+        paddingBottom: "6rem",
+      }}
+    >
+      <div style={{ marginBottom: "2rem" }}>
+        <Suspense fallback={null}>
+          <CollectionFilter />
         </Suspense>
       </div>
+
+      <Suspense
+        fallback={
+          <div style={{ padding: "5rem 0", textAlign: "center", opacity: 0.3 }}>
+            Loading...
+          </div>
+        }
+      >
+        <ShopContent searchParams={searchParams} />
+      </Suspense>
     </div>
   );
 }

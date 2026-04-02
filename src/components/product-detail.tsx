@@ -20,13 +20,6 @@ const FAQS = [
   },
 ];
 
-const TRUST_BADGES = [
-  "USDA Certified",
-  "Vegan",
-  "Responsibly Produced",
-  "Made in USA",
-];
-
 export function ProductDetail({ product }: { product: ShopifyProduct }) {
   const { addItem } = useCart();
   const images = product.images.edges.map((e) => e.node);
@@ -34,10 +27,7 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
 
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0);
   const [isSubscription, setIsSubscription] = useState(false);
-  const [activeTab, setActiveTab] = useState<"details" | "ingredients">(
-    "details"
-  );
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openAccordion, setOpenAccordion] = useState<string | null>("details");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const selectedVariant = variants[selectedVariantIndex];
@@ -68,268 +58,346 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
     });
   }
 
+  function toggleAccordion(key: string) {
+    setOpenAccordion(openAccordion === key ? null : key);
+  }
+
   return (
-    <div className="px-4 lg:px-10 py-6 lg:py-12">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
-          {/* Left: Images */}
-          <div>
-            <div className="aspect-square bg-[#e8e4de] relative overflow-hidden mb-3 border border-ink" style={{ borderStyle: "dotted" }}>
-              {images[activeImageIndex] ? (
-                <Image
-                  src={images[activeImageIndex].url}
-                  alt={images[activeImageIndex].altText || product.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-xl tracking-widest opacity-30">
-                    {product.title}
+    <div className="product">
+      <div className="product-columns">
+        {/* Left: Images */}
+        <div className="product-column product-column--images">
+          {images.map((img, i) => (
+            <div
+              key={i}
+              className={`product-images-item ${i === 0 ? "product-images-item--first" : ""}`}
+            >
+              <Image
+                src={img.url}
+                alt={img.altText || product.title}
+                width={800}
+                height={800}
+                className="product-images-media"
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                priority={i === 0}
+                style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}
+              />
+            </div>
+          ))}
+          {images.length === 0 && (
+            <div className="product-images-item product-images-item--first">
+              <div style={{ aspectRatio: "1", background: "#e8e4de", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ opacity: 0.3 }}>{product.title}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right: Product info */}
+        <div className="product-column product-column--info">
+          <div className="product-column-inner">
+            <div>
+              {/* Title & price */}
+              <div className="product-form">
+                <div className="product-form-details">
+                  <span>{product.title}</span>
+                  <span className="product-price">
+                    {formatPrice(displayPrice.toFixed(2))}
                   </span>
                 </div>
-              )}
-            </div>
-            {images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto">
-                {images.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveImageIndex(i)}
-                    className={`w-16 h-16 lg:w-20 lg:h-20 relative flex-shrink-0 overflow-hidden border transition-colors ${
-                      i === activeImageIndex
-                        ? "border-ink"
-                        : "border-transparent"
-                    }`}
-                    style={{ borderStyle: i === activeImageIndex ? "dotted" : "none" }}
-                  >
-                    <Image
-                      src={img.url}
-                      alt={img.altText || `${product.title} ${i + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="80px"
-                    />
-                  </button>
-                ))}
               </div>
-            )}
-          </div>
 
-          {/* Right: Product info */}
-          <div className="lg:py-2">
-            <p className="text-[10px] tracking-[0.15em] opacity-50 mb-2">
-              {product.productType || "MAYA"}
-            </p>
-            <h1 className="text-lg lg:text-xl tracking-[0.1em] mb-4">
-              {product.title}
-            </h1>
-
-            {/* Variant selector */}
-            {variants.length > 1 &&
-              variants[0].title !== "Default Title" && (
-                <div className="mb-6">
-                  <p className="text-[10px] tracking-[0.15em] opacity-50 mb-3">
+              {/* Variant selector */}
+              {variants.length > 1 && variants[0].title !== "Default Title" && (
+                <div className="product-variants">
+                  <p style={{ opacity: 0.5, marginBottom: "0.5rem" }}>
                     {variants[0].selectedOptions?.[0]?.name || "Option"}
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                     {variants.map((v, i) => (
                       <button
                         key={v.id}
                         onClick={() => setSelectedVariantIndex(i)}
                         disabled={!v.availableForSale}
-                        className={`px-4 py-2 border text-[10px] tracking-[0.15em] transition-colors ${
-                          i === selectedVariantIndex
-                            ? "bg-ink text-[#fdfbf7] border-ink"
-                            : v.availableForSale
-                            ? "border-ink hover:bg-ink hover:text-[#fdfbf7]"
-                            : "border-ink opacity-30 cursor-not-allowed"
-                        }`}
-                        style={{ borderStyle: "dotted" }}
+                        className="button"
+                        style={{
+                          minWidth: "auto",
+                          height: "auto",
+                          padding: "0.5rem 1rem",
+                          fontSize: "1rem",
+                          opacity: !v.availableForSale ? 0.3 : 1,
+                          background: i === selectedVariantIndex ? "var(--black)" : "transparent",
+                          color: i === selectedVariantIndex ? "var(--ivory)" : "var(--black)",
+                        }}
                       >
                         {v.title}
+                        <svg className="button-border" viewBox="0 0 200 50" preserveAspectRatio="none">
+                          <rect width="198" height="48" x="1" y="1" rx="0" ry="0" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="2" />
+                        </svg>
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-            {/* Subscribe & Save toggle */}
-            {isSupplement && (
-              <div className="mb-6 space-y-2">
-                <button
-                  onClick={() => setIsSubscription(false)}
-                  className={`w-full flex items-center justify-between p-3 border transition-colors ${
-                    !isSubscription ? "border-ink" : "border-ink/30"
-                  }`}
-                  style={{ borderStyle: "dotted" }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-3 h-3 rounded-full border flex items-center justify-center ${
-                        !isSubscription ? "border-ink" : "border-ink/40"
-                      }`}
-                      style={{ borderStyle: "dotted" }}
-                    >
-                      {!isSubscription && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-ink" />
-                      )}
-                    </div>
-                    <span className="text-[10px] tracking-[0.15em]">One-Time Purchase</span>
-                  </div>
-                  <span className="text-[10px] tracking-[0.15em]">
-                    {formatPrice(basePrice.toFixed(2))}
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => setIsSubscription(true)}
-                  className={`w-full flex items-center justify-between p-3 border transition-colors ${
-                    isSubscription ? "border-ink" : "border-ink/30"
-                  }`}
-                  style={{ borderStyle: "dotted" }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-3 h-3 rounded-full border flex items-center justify-center ${
-                        isSubscription ? "border-ink" : "border-ink/40"
-                      }`}
-                      style={{ borderStyle: "dotted" }}
-                    >
-                      {isSubscription && (
-                        <div className="w-1.5 h-1.5 rounded-full bg-ink" />
-                      )}
-                    </div>
-                    <div className="text-left">
-                      <span className="text-[10px] tracking-[0.15em]">Subscribe &amp; Save 20%</span>
-                      <p className="text-[9px] tracking-[0.1em] opacity-50 mt-0.5">
+              {/* Subscribe & Save */}
+              {isSupplement && (
+                <div className="product-subscribe">
+                  <button
+                    onClick={() => setIsSubscription(false)}
+                    className="product-subscribe-option"
+                    style={{ opacity: !isSubscription ? 1 : 0.4 }}
+                  >
+                    <span>One-Time Purchase</span>
+                    <span>{formatPrice(basePrice.toFixed(2))}</span>
+                  </button>
+                  <button
+                    onClick={() => setIsSubscription(true)}
+                    className="product-subscribe-option"
+                    style={{ opacity: isSubscription ? 1 : 0.4 }}
+                  >
+                    <div>
+                      <span>Subscribe &amp; Save 20%</span>
+                      <br />
+                      <span style={{ opacity: 0.5, fontSize: "0.857rem" }}>
                         Never Run Out &middot; Cancel Anytime
+                      </span>
+                    </div>
+                    <span>{formatPrice(subscriptionPrice.toFixed(2))}</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Add to Cart */}
+              <button
+                onClick={handleAddToCart}
+                disabled={!selectedVariant?.availableForSale}
+                className="button product-add-button"
+                style={{
+                  width: "100%",
+                  opacity: !selectedVariant?.availableForSale ? 0.3 : 1,
+                  cursor: !selectedVariant?.availableForSale ? "not-allowed" : "pointer",
+                }}
+              >
+                {selectedVariant?.availableForSale ? "Add to Cart" : "Sold Out"}
+                <svg className="button-border" viewBox="0 0 200 50" preserveAspectRatio="none">
+                  <rect width="198" height="48" x="1" y="1" rx="0" ry="0" fill="none" stroke="#000" strokeWidth="1" strokeDasharray="2" />
+                </svg>
+              </button>
+
+              {/* Accordion: Details, Ingredients, FAQ */}
+              <div className="product-info-accordion">
+                {/* Details */}
+                <div className={`product-info-row ${openAccordion === "details" ? "product-info-row--active" : ""}`}>
+                  <button className="product-info-title" onClick={() => toggleAccordion("details")}>
+                    Details
+                    <span className="product-info-plus" />
+                  </button>
+                  {openAccordion === "details" && (
+                    <div className="product-info-value">
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: product.descriptionHtml || product.description,
+                        }}
+                        style={{ textTransform: "none", lineHeight: 1.6 }}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Ingredients */}
+                <div className={`product-info-row ${openAccordion === "ingredients" ? "product-info-row--active" : ""}`}>
+                  <button className="product-info-title" onClick={() => toggleAccordion("ingredients")}>
+                    Ingredients
+                    <span className="product-info-plus" />
+                  </button>
+                  {openAccordion === "ingredients" && (
+                    <div className="product-info-value">
+                      <p style={{ textTransform: "none", lineHeight: 1.6 }}>
+                        See product packaging for full ingredient list. All
+                        ingredients are natural, non-GMO, and sourced responsibly.
                       </p>
                     </div>
-                  </div>
-                  <span className="text-[10px] tracking-[0.15em]">
-                    {formatPrice(subscriptionPrice.toFixed(2))}
-                  </span>
-                </button>
-              </div>
-            )}
+                  )}
+                </div>
 
-            {/* Add to Cart */}
-            <button
-              onClick={handleAddToCart}
-              disabled={!selectedVariant?.availableForSale}
-              className="w-full flex items-center justify-between border border-ink py-3 px-4 hover:bg-ink hover:text-[#fdfbf7] transition-colors disabled:opacity-30 disabled:cursor-not-allowed mb-6"
-              style={{ borderStyle: "dotted" }}
-            >
-              <span className="text-[10px] tracking-[0.15em]">
-                {selectedVariant?.availableForSale ? "Add to Cart" : "Sold Out"}
-              </span>
-              <span className="text-[10px] tracking-[0.15em]">
-                {formatPrice(displayPrice.toFixed(2))}
-              </span>
-            </button>
-
-            {/* Trust badges */}
-            <div className="flex flex-wrap gap-x-4 gap-y-1 mb-6 pb-6 border-b border-ink" style={{ borderStyle: "dotted" }}>
-              {TRUST_BADGES.map((badge, i) => (
-                <span key={badge} className="text-[9px] tracking-[0.1em] opacity-50 flex items-center gap-1">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 6L9 17l-5-5" />
-                  </svg>
-                  {badge}
-                  {i < TRUST_BADGES.length - 1 && <span className="ml-3">|</span>}
-                </span>
-              ))}
-            </div>
-
-            {/* Description tabs */}
-            <div className="mb-6">
-              <div className="flex gap-0 border-b border-ink mb-4" style={{ borderStyle: "dotted" }}>
-                <button
-                  onClick={() => setActiveTab("details")}
-                  className={`pb-2 mr-6 text-[10px] tracking-[0.15em] transition-colors ${
-                    activeTab === "details"
-                      ? "border-b border-ink"
-                      : "opacity-40 hover:opacity-70"
-                  }`}
-                  style={{ borderStyle: activeTab === "details" ? "dotted" : "none" }}
-                >
-                  Details
-                </button>
-                <button
-                  onClick={() => setActiveTab("ingredients")}
-                  className={`pb-2 text-[10px] tracking-[0.15em] transition-colors ${
-                    activeTab === "ingredients"
-                      ? "border-b border-ink"
-                      : "opacity-40 hover:opacity-70"
-                  }`}
-                  style={{ borderStyle: activeTab === "ingredients" ? "dotted" : "none" }}
-                >
-                  Ingredients
-                </button>
-              </div>
-              <div className="text-[11px] tracking-[0.05em] leading-relaxed opacity-70">
-                {activeTab === "details" ? (
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: product.descriptionHtml || product.description,
-                    }}
-                    className="[&>p]:mb-3 [&>ul]:list-disc [&>ul]:pl-4 [&>ul]:mb-3"
-                  />
-                ) : (
-                  <p>
-                    See product packaging for full ingredient list. All
-                    ingredients are natural, non-GMO, and sourced responsibly.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* FAQ */}
-            <div>
-              <h3 className="text-[10px] tracking-[0.15em] opacity-50 mb-3">
-                FAQ
-              </h3>
-              <div className="space-y-0">
-                {FAQS.map((faq, i) => (
-                  <div key={i} className="border-t border-ink" style={{ borderStyle: "dotted" }}>
-                    <button
-                      onClick={() =>
-                        setOpenFaq(openFaq === i ? null : i)
-                      }
-                      className="w-full flex items-center justify-between py-3 text-left"
-                    >
-                      <span className="text-[10px] tracking-[0.1em] pr-4">
-                        {faq.q}
-                      </span>
-                      <svg
-                        width="12"
-                        height="12"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        className={`flex-shrink-0 transition-transform ${
-                          openFaq === i ? "rotate-45" : ""
-                        }`}
-                      >
-                        <path d="M12 5v14M5 12h14" />
-                      </svg>
-                    </button>
-                    {openFaq === i && (
-                      <p className="text-[10px] tracking-[0.05em] leading-relaxed opacity-60 pb-3">
-                        {faq.a}
-                      </p>
-                    )}
-                  </div>
-                ))}
+                {/* FAQ */}
+                <div className={`product-info-row ${openAccordion === "faq" ? "product-info-row--active" : ""}`}>
+                  <button className="product-info-title" onClick={() => toggleAccordion("faq")}>
+                    FAQ
+                    <span className="product-info-plus" />
+                  </button>
+                  {openAccordion === "faq" && (
+                    <div className="product-info-value">
+                      {FAQS.map((faq, i) => (
+                        <div key={i} style={{ marginBottom: "1rem" }}>
+                          <p style={{ marginBottom: "0.3em" }}>{faq.q}</p>
+                          <p style={{ opacity: 0.6, textTransform: "none", lineHeight: 1.6 }}>{faq.a}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .product {
+          padding: 5.357rem var(--side-padding) 6.071rem;
+          background-color: var(--ivory);
+        }
+        @media (min-width: 1024px) {
+          .product {
+            padding: 0;
+          }
+        }
+        .product-columns {
+          display: block;
+        }
+        @media (min-width: 1024px) {
+          .product-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--side-padding);
+          }
+        }
+        .product-column--images {
+          overflow: hidden;
+          margin-bottom: 2rem;
+        }
+        @media (max-width: 1023px) {
+          .product-column--images {
+            margin: 0 calc(var(--side-padding) * -1) 4.071rem;
+            padding-bottom: 0.714rem;
+          }
+        }
+        .product-images-item--first {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+        }
+        .product-images-media {
+          display: block;
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+        }
+
+        @media (min-width: 1024px) {
+          .product-column-inner {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            overflow: auto;
+            padding-top: 7rem;
+            padding-right: var(--side-padding);
+            padding-bottom: 1.143rem;
+            position: sticky;
+            top: 0;
+          }
+        }
+
+        .product-form {
+          margin-bottom: 1.5rem;
+        }
+        .product-form-details {
+          flex: 1;
+          display: flex;
+          justify-content: space-between;
+          gap: 1em;
+          padding-bottom: 0.143rem;
+          font-size: 1.1428571428571428rem;
+          line-height: 1.1;
+        }
+        .product-price {
+          white-space: nowrap;
+        }
+
+        .product-variants {
+          margin-bottom: 1.5rem;
+        }
+
+        .product-subscribe {
+          margin-bottom: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        .product-subscribe-option {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.714rem;
+          text-align: left;
+          background: linear-gradient(to right, #000 50%, transparent 50%);
+          background-size: 4px 1px;
+          background-repeat: repeat-x;
+          background-position: 0 100%;
+          transition: opacity 0.2s;
+        }
+
+        .product-add-button {
+          margin-bottom: 2rem;
+        }
+
+        .product-info-accordion {
+          background: linear-gradient(to right, #000 50%, transparent 50%) top;
+          background-size: 4px 1px;
+          background-repeat: repeat-x;
+          display: flex;
+          flex-direction: column;
+          gap: 0.19em;
+          line-height: 1;
+        }
+        .product-info-row {
+          background: linear-gradient(to right, #000 50%, transparent 50%) bottom;
+          background-size: 4px 1px;
+          background-repeat: repeat-x;
+        }
+        .product-info-title {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          width: 100%;
+          padding: 0.679rem 0;
+          position: relative;
+          user-select: none;
+          cursor: pointer;
+          letter-spacing: 0.01em;
+          text-align: left;
+        }
+        .product-info-plus {
+          display: block;
+          width: 0.571rem;
+          height: 0.571rem;
+          position: relative;
+        }
+        .product-info-plus::before,
+        .product-info-plus::after {
+          content: "";
+          width: 0.571rem;
+          height: 1px;
+          position: absolute;
+          top: 50%;
+          left: 0;
+          background-color: currentColor;
+        }
+        .product-info-plus::after {
+          transform: rotate(90deg);
+        }
+        .product-info-row--active .product-info-plus::after {
+          opacity: 0;
+        }
+        .product-info-value {
+          padding-bottom: 1rem;
+          font-size: 0.857rem;
+          opacity: 0.7;
+        }
+      `}</style>
     </div>
   );
 }
