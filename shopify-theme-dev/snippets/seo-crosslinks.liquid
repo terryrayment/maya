@@ -1,0 +1,52 @@
+{%- comment -%}
+  SEO Cross-links — automatically added to SEO landing pages.
+  Shows related product CTAs and internal links to other SEO pages.
+{%- endcomment -%}
+
+{%- assign handle = page.handle -%}
+
+{%- if handle == 'dog-allergy-supplement' -%}
+  <div class="seo-crosslinks">
+    <div class="seo-crosslinks-cta">
+      <a href="/products/supplement-allergy">Shop Allergy Supplement — $76</a>
+    </div>
+    <p class="seo-crosslinks-bundle">Or get all four supplements for $199 → <a href="/products/complete-wellness-stack">Complete Wellness Stack</a></p>
+    <p class="seo-crosslinks-also">See also: <a href="/pages/dog-itching-relief">Dog Itching Relief</a> · <a href="/pages/dog-joint-supplement">Dog Joint Supplement</a> · <a href="/pages/dog-digestion-supplement">Dog Digestion Supplement</a> · <a href="/pages/best-dog-supplements">Best Dog Supplements</a></p>
+  </div>
+
+{%- elsif handle == 'dog-itching-relief' -%}
+  <div class="seo-crosslinks">
+    <div class="seo-crosslinks-cta">
+      <a href="/products/supplement-allergy">Shop Allergy Supplement — $76</a>
+    </div>
+    <p class="seo-crosslinks-bundle">For skin + coat support: <a href="/products/supplement-skinandcoat">Skin &amp; Coat Supplement — $74</a></p>
+    <p class="seo-crosslinks-also">See also: <a href="/pages/dog-allergy-supplement">Dog Allergy Supplement</a> · <a href="/pages/dog-joint-supplement">Dog Joint Supplement</a> · <a href="/pages/best-dog-supplements">Best Dog Supplements</a></p>
+  </div>
+
+{%- elsif handle == 'dog-joint-supplement' -%}
+  <div class="seo-crosslinks">
+    <div class="seo-crosslinks-cta">
+      <a href="/products/supplement-hipandjoint">Shop Joint Supplement — $68</a>
+    </div>
+    <p class="seo-crosslinks-bundle">Or get all four supplements for $199 → <a href="/products/complete-wellness-stack">Complete Wellness Stack</a></p>
+    <p class="seo-crosslinks-also">See also: <a href="/pages/dog-allergy-supplement">Dog Allergy Supplement</a> · <a href="/pages/dog-digestion-supplement">Dog Digestion Supplement</a> · <a href="/pages/best-dog-supplements">Best Dog Supplements</a></p>
+  </div>
+
+{%- elsif handle == 'dog-digestion-supplement' -%}
+  <div class="seo-crosslinks">
+    <div class="seo-crosslinks-cta">
+      <a href="/products/supplement-digestivecare">Shop Digestive Supplement — $68</a>
+    </div>
+    <p class="seo-crosslinks-bundle">Or get all four supplements for $199 → <a href="/products/complete-wellness-stack">Complete Wellness Stack</a></p>
+    <p class="seo-crosslinks-also">See also: <a href="/pages/dog-allergy-supplement">Dog Allergy Supplement</a> · <a href="/pages/dog-joint-supplement">Dog Joint Supplement</a> · <a href="/pages/best-dog-supplements">Best Dog Supplements</a></p>
+  </div>
+
+{%- elsif handle == 'best-dog-supplements' -%}
+  <div class="seo-crosslinks">
+    <div class="seo-crosslinks-cta">
+      <a href="/products/complete-wellness-stack">Shop the Complete Wellness Stack — $199</a>
+    </div>
+    <p class="seo-crosslinks-bundle">Shop individually: <a href="/products/supplement-allergy">Allergy — $76</a> · <a href="/products/supplement-digestivecare">Digestive — $68</a> · <a href="/products/supplement-hipandjoint">Joint — $68</a> · <a href="/products/supplement-skinandcoat">Skin &amp; Coat — $74</a></p>
+    <p class="seo-crosslinks-also">Learn more: <a href="/pages/dog-allergy-supplement">Dog Allergy Supplement</a> · <a href="/pages/dog-itching-relief">Dog Itching Relief</a> · <a href="/pages/dog-joint-supplement">Dog Joint Supplement</a> · <a href="/pages/dog-digestion-supplement">Dog Digestion Supplement</a></p>
+  </div>
+{%- endif -%}

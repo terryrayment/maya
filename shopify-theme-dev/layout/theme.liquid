@@ -1,0 +1,245 @@
+<!doctype html>
+<html
+  lang="{{ shop.locale }}"
+  class="{% if request.design_mode %}design-mode{% else %}live-mode{% endif %}"
+  data-template="{{ template }}"
+>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link
+      rel="shortcut icon"
+      href="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/favicon_26383ce8-47b6-45b4-8162-c554aa70150e.ico?v=1717705581"
+    >
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- else -%}
+      <meta name="description" content="Vet-formulated dog supplements for allergy, digestion, joint, and coat support. Made in small batches in Los Angeles. No fillers. Free shipping over $100.">
+    {%- endif -%}
+    <meta name="theme-color" content="#fdfbf7">
+
+    {%- comment -%} Open Graph / Pinterest Rich Pins / Social Sharing {%- endcomment -%}
+    <meta property="og:site_name" content="{{ shop.name }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    {%- if template contains 'product' -%}
+      <meta property="og:type" content="product">
+      <meta property="og:title" content="{{ product.title }}">
+      <meta property="og:description" content="{{ product.description | strip_html | truncate: 200 | escape }}">
+      {%- if product.featured_image -%}
+        <meta property="og:image" content="https:{{ product.featured_image | image_url: width: 1200 }}">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="1200">
+      {%- endif -%}
+      <meta property="og:price:amount" content="{{ product.price | divided_by: 100.00 }}">
+      <meta property="og:price:currency" content="{{ cart.currency.iso_code }}">
+      <meta property="product:availability" content="{% if product.available %}in stock{% else %}out of stock{% endif %}">
+      <meta property="product:price:amount" content="{{ product.price | divided_by: 100.00 }}">
+      <meta property="product:price:currency" content="{{ cart.currency.iso_code }}">
+      <meta property="product:brand" content="MAYA">
+      <meta property="product:condition" content="new">
+    {%- elsif template contains 'collection' -%}
+      <meta property="og:type" content="website">
+      <meta property="og:title" content="{{ collection.title }}">
+      <meta property="og:description" content="{{ collection.description | strip_html | truncate: 200 | default: page_description | escape }}">
+      {%- if collection.image -%}
+        <meta property="og:image" content="https:{{ collection.image | image_url: width: 1200 }}">
+      {%- endif -%}
+    {%- else -%}
+      <meta property="og:type" content="website">
+      <meta property="og:title" content="{{ page_title }}">
+      <meta property="og:description" content="{{ page_description | escape }}">
+    {%- endif -%}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ page_title }}">
+    <meta name="twitter:description" content="{{ page_description | escape }}">
+
+    {%- liquid
+      render 'vite' with 'theme.scss', preload_stylesheet: false
+    -%}
+
+    {% comment %} {% render 'vite' with '@/components/product' %} {% endcomment %}
+
+    {% comment %} {% render 'vite' with '/resources/js/jquery.min.js' %} {% endcomment %}
+    {% render 'vite' with 'theme.js' %}
+
+    {% comment %}
+      {%- liquid
+        render 'vite' with 'theme.scss', preload_stylesheet: true
+        render 'vite' with 'theme.ts'
+        render 'vite' with '@/foo.ts'
+        render 'vite' with '~/bar.ts'
+        render 'vite' with '/resources/js/baz.js'
+        render 'vite' with '@modules/qux.ts'
+      -%}
+    {% endcomment %}
+
+    <style>
+      /* Spacing system overrides */
+      :root {
+        --space-xs: 0.5rem;    /* 8px */
+        --space-sm: 1rem;      /* 16px */
+        --space-md: 1.5rem;    /* 24px */
+        --space-lg: 2.5rem;    /* 40px */
+        --space-xl: 4rem;      /* 64px */
+        --space-2xl: 6rem;     /* 96px */
+        --section-gap: 5rem;
+      }
+      @media (max-width: 767px) {
+        :root { --section-gap: 3.5rem; }
+      }
+      /* Increase text contrast sitewide */
+      .product-trust-stack { opacity: 0.6; }
+      .product-why-different li { opacity: 0.6; }
+      .product-why-different-text { opacity: 0.6; }
+      .product-usage-signal { opacity: 0.45; }
+      /* Compress footer stack */
+      .camera-roll { padding-top: 3rem; padding-bottom: 1rem; }
+      footer.footer { padding-top: 2.5rem; }
+      /* Collection grid spacing */
+      .collection-products-inner { gap: 1.5rem 1rem; }
+      @media (min-width: 768px) {
+        .collection-products-inner { gap: 2.5rem 1.5rem; }
+      }
+      /* Fix content pages */
+      .page-seo-inner, .page-content { max-width: 44rem; }
+      /* Products without images: collapse image column */
+      .product-images:empty { display: none !important; }
+      .product-images:empty ~ .product-details { width: 100% !important; max-width: 44rem !important; }
+    </style>
+
+    <!-- MailerLite Universal -->
+    <script>
+      (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+      .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+      n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
+      (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+      ml('account', '2029859');
+    </script>
+    <!-- End MailerLite Universal -->
+
+    {{ content_for_header }}
+  </head>
+
+  <body>
+    <div
+      class="page-overlay"
+      style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: 20; background-color: #fdfbf7; pointer-events: none; transition: 0.3s ease-out; transition-property: visibility, opacity;"
+    ></div>
+
+    {% section 'announcement-banner' %}
+    {% section 'header' %}
+    {% comment %} {%- section 'cart-drawer' -%} {% endcomment %}
+
+    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% comment %} {% section 'hero-product' %} {% endcomment %}
+    {% section 'camera-roll' %}
+    {% section 'footer' %}
+
+    {% render 'vite' with '/resources/js/cart.js' %}
+    {% liquid
+      unless template == 'cart'
+        render 'mini-cart'
+      endunless
+    %}
+
+    {% unless request.path == '/cart' %}
+      {% render 'vite' with '/resources/js/cart-notification.js' %}
+      {%- render 'cart-notification' -%}
+    {% endunless %}
+
+    <script>
+      window.shopUrl = '{{ request.origin }}'
+      window.routes = {
+        cart_add_url: '{{ routes.cart_add_url }}',
+        cart_change_url: '{{ routes.cart_change_url }}',
+        cart_update_url: '{{ routes.cart_update_url }}',
+        cart_url: '{{ routes.cart_url }}',
+        predictive_search_url: '{{ routes.predictive_search_url }}',
+      }
+
+      window.cartStrings = {
+        error: `Error`,
+        quantityError: `Quantity error`,
+      }
+
+      window.variantStrings = {
+        addToCart: `Add to cart`,
+        soldOut: `Sold out`,
+        unavailable: `Unavailable`,
+      }
+
+      window.accessibilityStrings = {
+        imageAvailable: `Image available`,
+        shareSuccess: `Share success`,
+        pauseSlideshow: `Pause slideshow`,
+        playSlideshow: `Play slideshow`,
+      }
+    </script>
+
+    <script>
+      class QuantityInput extends HTMLElement {
+        constructor() {
+          super()
+          this.input = this.querySelector('input')
+          this.changeEvent = new Event('change', { bubbles: true })
+
+          this.querySelectorAll('button').forEach((button) =>
+            button.addEventListener('click', this.onButtonClick.bind(this))
+          )
+        }
+
+        onButtonClick(event) {
+          event.preventDefault()
+          const previousValue = this.input.value
+
+          event.target.name === 'plus' ? this.input.stepUp() : this.input.stepDown()
+          if (previousValue !== this.input.value) this.input.dispatchEvent(this.changeEvent)
+        }
+      }
+
+      customElements.define('quantity-input', QuantityInput)
+    </script>
+
+    {% render 'vite' with '/resources/js/shopify-common.js' %}
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    {% render 'junip-store-key' %}
+    {% section 'email-popup' %}
+
+    <!-- Fix cookie consent persistence -->
+    <script>
+      (function() {
+        var dismissed = localStorage.getItem('maya_cookie_dismissed');
+        if (dismissed) {
+          var style = document.createElement('style');
+          style.textContent = '.shopify-cookies-banner, [id*="cookie-banner"], [class*="cookie-banner"], [class*="cookie-consent"], .cc-window, .shopify-privacy-banner { display: none !important; }';
+          document.head.appendChild(style);
+        }
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+          if (target.closest('[class*="cookie"] button, [class*="cookie"] a, [id*="cookie"] button, .shopify-cookies-banner button, .cc-dismiss, [class*="privacy-banner"] button')) {
+            localStorage.setItem('maya_cookie_dismissed', '1');
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,158 @@
+{%- comment -%}
+  Apparel showcase — horizontal scroll of apparel products.
+  Replaces the old product slider carousel.
+{%- endcomment -%}
+
+{%- assign apparel = collections['apparel'] | default: collections['apparel'] -%}
+
+<div class="apparel-showcase">
+  <div class="apparel-showcase-header">
+    <p class="apparel-showcase-label">The MAYA Uniform</p>
+    <h2 class="apparel-showcase-title">For the morning walk. The park. The vet. The couch.</h2>
+    <p class="apparel-showcase-sub">Heavyweight cotton. Designed to look better the more you wear it.</p>
+    <a href="/collections/apparel" class="apparel-showcase-link">
+      <svg class="button-border"><rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" /></svg>
+      Shop the uniform
+    </a>
+  </div>
+  <div class="apparel-showcase-scroll">
+    {%- comment -%} Maya Tote last among the first 8 apparel collection products. {%- endcomment -%}
+    {%- assign apparel_tote_product = nil -%}
+    {%- for product in apparel.products limit: 8 -%}
+      {%- if product.handle == 'maya-tote' -%}
+        {%- assign apparel_tote_product = product -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- for product in apparel.products limit: 8 -%}
+      {%- if product.handle == 'maya-tote' -%}
+        {%- continue -%}
+      {%- endif -%}
+      {%- if product.featured_image -%}
+        {% render 'apparel-showcase-item', product: product %}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if apparel_tote_product and apparel_tote_product.featured_image -%}
+      {% render 'apparel-showcase-item', product: apparel_tote_product %}
+    {%- endif -%}
+  </div>
+</div>
+
+<style>
+  .apparel-showcase {
+    position: relative;
+    z-index: 10;
+    background: #1a1a1a;
+    color: #f5f2ed;
+    padding: 2.5rem 0 1.5rem;
+    overflow: hidden;
+  }
+  .apparel-showcase-header {
+    padding: 0 var(--side-padding);
+    margin-bottom: 2.5rem;
+    max-width: 30rem;
+  }
+  .apparel-showcase-label {
+    font-size: 0.7em;
+    letter-spacing: 0.12em;
+    opacity: 0.4;
+    margin-bottom: 0.5rem;
+  }
+  .apparel-showcase-title {
+    font-size: 1.3em;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+  }
+  .apparel-showcase-sub {
+    font-size: 0.75em;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+    opacity: 0.5;
+    margin-bottom: 1.25rem;
+    max-width: 26rem;
+  }
+  .apparel-showcase-link {
+    font-size: 0.75em;
+    letter-spacing: 0.08em;
+    color: #f5f2ed;
+    opacity: 0.5;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .apparel-showcase-link:hover {
+    opacity: 1;
+  }
+  .apparel-showcase-scroll {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 var(--side-padding) 0.5rem;
+    scrollbar-width: none;
+  }
+  .apparel-showcase-scroll::after {
+    content: '';
+    flex: 0 0 var(--side-padding);
+  }
+  .apparel-showcase-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .apparel-showcase-item {
+    flex: 0 0 auto;
+    width: 280px;
+    scroll-snap-align: start;
+    text-decoration: none;
+    color: #f5f2ed;
+    transition: opacity 0.2s;
+  }
+  .apparel-showcase-item:hover {
+    opacity: 0.8;
+  }
+  .apparel-showcase-img {
+    background: #2a2825;
+    margin-bottom: 0;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+  }
+  .apparel-showcase-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .apparel-showcase-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem 0.75rem;
+  }
+  .apparel-showcase-name {
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    opacity: 0.85;
+  }
+  .apparel-showcase-price {
+    font-size: 0.7em;
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+  }
+  @media (min-width: 768px) {
+    .apparel-showcase-item {
+      width: 320px;
+    }
+  }
+  @media (min-width: 1200px) {
+    .apparel-showcase-item {
+      width: 22vw;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Apparel Showcase",
+  "tag": "section",
+  "class": "apparel-showcase-section"
+}
+{% endschema %}

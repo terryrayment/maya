@@ -1,0 +1,68 @@
+{% assign product = section.settings.product %}
+{% assign media = product.media | first %}
+
+<div class="hero-product-inner">
+  <div class="hero-product-media">
+    <div class="hero-product-media-inner">
+      {% if media.media_type == 'image' %}
+        {% assign image = media %}
+        <img
+          class="hero-product-media-image"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+          src="{{ image | image_url: width: 200 }}"
+          srcset="{{ image | image_url: width: 300 }} 300w, {{ image | image_url: width: 400 }} 400w, {{ image | image_url: width: 500 }} 500w, {{ image | image_url: width: 600 }} 600w, {{ image | image_url: width: 700 }} 700w, {{ image | image_url: width: 800 }} 800w, {{ image | image_url: width: 900 }} 900w, {{ image | image_url: width: 1000 }} 1000w, {{ image | image_url: width: 1100 }} 1100w, {{ image | image_url: width: 1200 }} 1200w, {{ image | image_url: width: 1500 }} 1500w, {{ image | image_url: width: 1800 }} 1800w, {{ image | image_url: width: 2100 }} 2100w, {{ image | image_url: width: 2400 }} 2400w, {{ image | image_url: width: 2800 }} 2800w"
+          sizes="100vw"
+          alt="{{ image.alt | escape }}"
+          loading="eager"
+          fetchpriority="high"
+        >
+      {% elsif media.media_type == 'video' %}
+        {{
+          media
+          | video_tag:
+            playsinline: true,
+            controls: false,
+            autoplay: true,
+            muted: true,
+            loop: true,
+            class: 'hero-product-media-video'
+        }}
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-product-details">
+    <h2 class="hero-product-title">{{ product.title }}</h2>
+    {% comment %} <h3 class="hero-product-subtitle">{{ product.metafields.custom.subtitle.value }}</h3> {% endcomment %}
+    <p class="hero-product-price">
+      {% if product.metafields.custom.preorder %}
+        Join the waitlist
+      {% else %}
+        {{ product.price | money_without_trailing_zeros }}
+      {% endif %}
+    </p>
+    <p>
+      <a class="button {% if product.metafields.custom.preorder %}-preorder{% endif %}" href="{{ product.url }}">
+        View
+        <svg class="button-border">
+          <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" />
+        </svg>
+      </a>
+    </p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero product",
+  "tag": "div",
+  "class": "hero-product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Featured product"
+    }
+  ]
+}
+{% endschema %}

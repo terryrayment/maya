@@ -1,0 +1,93 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "intro": {
+      "type": "intro",
+      "blocks": {
+        "image_QHGGB7": {
+          "type": "image",
+          "settings": {
+            "image": "shopify:\/\/shop_images\/Monty-Pond-2520x1449_80a23225-9013-439a-9733-f731efb9e987.webp",
+            "image_mobile": "shopify:\/\/shop_images\/Monty-Pond-786x1318.jpg"
+          }
+        }
+      },
+      "block_order": [
+        "image_QHGGB7"
+      ],
+      "settings": {
+      }
+    },
+    "product_slider": {
+      "type": "product-slider",
+      "blocks": {
+        "slide_7KgPay": {
+          "type": "slide",
+          "settings": {
+            "category": "Dog Brush",
+            "caption": "Join the Waitlist",
+            "button_link": "shopify:\/\/products\/dog-brush",
+            "video": "shopify:\/\/files\/videos\/6bab4cab30f147f7802c53ce5f7b05b4.HD-1080p-7.2Mbps-26707206.mp4"
+          }
+        },
+        "slide_ijyccy": {
+          "type": "slide",
+          "settings": {
+            "category": "Supplements",
+            "caption": "",
+            "button_link": "shopify:\/\/collections",
+            "image": "shopify:\/\/shop_images\/Supplements-Rotate.webp"
+          }
+        },
+        "slide_AEQmex": {
+          "type": "slide",
+          "settings": {
+            "category": "Apparel",
+            "caption": "",
+            "button_link": "shopify:\/\/collections",
+            "image": "shopify:\/\/shop_images\/Product-Cycle-B.webp"
+          }
+        },
+        "slide_UDrFx3": {
+          "type": "slide",
+          "settings": {
+            "category": "Gift Card",
+            "caption": "",
+            "button_link": "shopify:\/\/collections",
+            "image": "shopify:\/\/shop_images\/Gift-Card-Monty_9c571694-cd99-4b10-be36-bd23d45dd982.webp"
+          }
+        }
+      },
+      "block_order": [
+        "slide_7KgPay",
+        "slide_ijyccy",
+        "slide_AEQmex",
+        "slide_UDrFx3"
+      ],
+      "settings": {
+      }
+    },
+    "video_bar": {
+      "type": "video-bar",
+      "settings": {
+        "title": "Watch Now",
+        "desc": "“A Portrait of My Dog”\na film by Danny Geritz",
+        "image": "shopify:\/\/shop_images\/Maya_Video-Cover-2_7666faf4-2ca6-48d6-91a7-21b2ddab59e4.webp",
+        "video_url": "https:\/\/vimeo.com\/944612214"
+      }
+    }
+  },
+  "order": [
+    "intro",
+    "product_slider",
+    "video_bar"
+  ]
+}

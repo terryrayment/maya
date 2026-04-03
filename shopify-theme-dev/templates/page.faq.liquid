@@ -1,0 +1,22 @@
+{% liquid
+  assign content = page.content
+  assign content = content | replace: '<h2>', '</div><h2 class="page-faq-group-title">'
+  assign content = content | replace: '</h2>', '</h2><div>'
+  assign content = content | replace: '</h3>', '</h3><div class="page-faq-answer">'
+  assign content = content | replace: '<h3>', '</div><h3 class="page-faq-question">'
+  assign content = content | replace: '<h4>', '</div><h4>'
+  assign content = content | replace: '</h4>', '</h4><div>'
+%}
+
+<div class="page-faq">
+  <div class="page-faq-columns">
+    <div class="page-faq-column">
+      <h1 class="page-faq-title">{{ page.title }}</h1>
+    </div>
+    <div class="page-faq-column">
+      <div>
+        {{ content }}
+      </div>
+    </div>
+  </div>
+</div>

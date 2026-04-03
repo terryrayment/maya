@@ -1,0 +1,184 @@
+{%- comment -%}
+  Comparison table — MAYA vs mass-market supplements with scroll animation.
+{%- endcomment -%}
+
+<div class="comparison">
+  <div class="comparison-inner">
+    <div class="comparison-header">
+      <p class="comparison-label">Why MAYA costs more</p>
+      <h2 class="comparison-title">Not all supplements are equal.</h2>
+    </div>
+    <div class="comparison-table">
+      <div class="comparison-row comparison-row-header">
+        <span class="comparison-cell comparison-cell-label"></span>
+        <span class="comparison-cell comparison-cell-maya">MAYA</span>
+        <span class="comparison-cell comparison-cell-other">Mass-market</span>
+      </div>
+      <div class="comparison-row" data-anim>
+        <span class="comparison-cell comparison-cell-label">Ingredients</span>
+        <span class="comparison-cell comparison-cell-maya">Vet-grade, single-source</span>
+        <span class="comparison-cell comparison-cell-other">Bulk commodity fillers</span>
+      </div>
+      <div class="comparison-row" data-anim>
+        <span class="comparison-cell comparison-cell-label">Batch size</span>
+        <span class="comparison-cell comparison-cell-maya">Small batch</span>
+        <span class="comparison-cell comparison-cell-other">Mass produced overseas</span>
+      </div>
+      <div class="comparison-row" data-anim>
+        <span class="comparison-cell comparison-cell-label">Testing</span>
+        <span class="comparison-cell comparison-cell-maya">Every batch tested</span>
+        <span class="comparison-cell comparison-cell-other">Spot-checked or untested</span>
+      </div>
+      <div class="comparison-row" data-anim>
+        <span class="comparison-cell comparison-cell-label">Formulation</span>
+        <span class="comparison-cell comparison-cell-maya">Vet-formulated for results</span>
+        <span class="comparison-cell comparison-cell-other">Marketing-led formulas</span>
+      </div>
+      <div class="comparison-row" data-anim>
+        <span class="comparison-cell comparison-cell-label">Guarantee</span>
+        <span class="comparison-cell comparison-cell-maya">30-day money-back</span>
+        <span class="comparison-cell comparison-cell-other">None or limited</span>
+      </div>
+      <div class="comparison-row" data-anim>
+        <span class="comparison-cell comparison-cell-label">Daily cost</span>
+        <span class="comparison-cell comparison-cell-maya">From $2.27/day</span>
+        <span class="comparison-cell comparison-cell-other">$0.80–$1.50/day</span>
+      </div>
+    </div>
+    <p class="comparison-note">Better sourcing. Smaller batches. Actual testing. That's what your dog feels.</p>
+  </div>
+</div>
+
+<script>
+  // Scroll-reveal animation for comparison rows
+  (function() {
+    var rows = document.querySelectorAll('.comparison-row[data-anim]');
+    if (!rows.length || !('IntersectionObserver' in window)) return;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    rows.forEach(function(row, i) {
+      row.style.transitionDelay = (i * 0.08) + 's';
+      observer.observe(row);
+    });
+  })();
+</script>
+
+<style>
+  .comparison {
+    padding: 2.5rem var(--side-padding) 3rem;
+    position: relative;
+    z-index: 10;
+    background: var(--bg, #fdfbf7);
+    background-image: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+    background-position: top;
+  }
+  .comparison-inner {
+    max-width: 64rem;
+    margin: 0 auto;
+  }
+  .comparison-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+  .comparison-label {
+    font-size: 0.7em;
+    letter-spacing: 0.12em;
+    opacity: 0.4;
+    margin-bottom: 0.5rem;
+  }
+  .comparison-title {
+    font-size: 1.3em;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+  }
+  .comparison-table {
+    margin: 0 auto 1.5rem;
+  }
+  .comparison-row {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1.5fr;
+    gap: 1rem;
+    padding: 0.85rem 0;
+    background-image: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+    background-position: bottom;
+  }
+  .comparison-row[data-anim] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .comparison-row-header {
+    padding-bottom: 0.6rem;
+  }
+  .comparison-cell {
+    font-size: 0.75em;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+  }
+  .comparison-cell-label {
+    opacity: 0.35;
+  }
+  .comparison-cell-maya {
+    opacity: 1;
+  }
+  .comparison-cell-other {
+    opacity: 0.3;
+  }
+  .comparison-row-header .comparison-cell-maya,
+  .comparison-row-header .comparison-cell-other {
+    font-size: 0.65em;
+    letter-spacing: 0.1em;
+    opacity: 0.5;
+    text-decoration: none;
+  }
+  .comparison-note {
+    font-size: 0.7em;
+    line-height: 1.6;
+    opacity: 0.35;
+    letter-spacing: 0.03em;
+    text-align: center;
+    max-width: 36rem;
+    margin: 0 auto;
+  }
+  @media (max-width: 600px) {
+    .comparison-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+    }
+    .comparison-cell-label {
+      grid-column: 1 / -1;
+      margin-bottom: 0.1rem;
+      font-size: 0.65em;
+    }
+    .comparison-row-header {
+      display: none;
+    }
+    .comparison-cell-maya::before {
+      content: 'MAYA: ';
+      opacity: 0.4;
+      font-size: 0.85em;
+    }
+    .comparison-cell-other::before {
+      content: 'Others: ';
+      opacity: 0.4;
+      font-size: 0.85em;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Comparison Table",
+  "tag": "section",
+  "class": "comparison-table-section"
+}
+{% endschema %}

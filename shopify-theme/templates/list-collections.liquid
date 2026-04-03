@@ -1,0 +1,44 @@
+{% liquid
+  assign size = 0
+  for link in linklists.collections.links
+    if link.type == 'collection_link'
+      assign collection = link.object
+      for product in collection.products
+        assign size = size | plus: 1
+      endfor
+    endif
+  endfor
+%}
+
+<div class="collection">
+  <p class="breadcrumbs">
+    <a class="breadcrumbs-link -active" href="/collections">Shop All</a>
+    {% for link in linklists.collections.links %}
+      {% if link.type == 'collection_link' %}
+        {% assign collection = link.object %}
+        <span class="breadcrumbs-separator">/</span>
+        <a class="breadcrumbs-link" href="{{ collection.url }}">{{ collection.title }}</a>
+      {% endif %}
+    {% endfor %}
+  </p>
+
+  <div class="collection-products" data-size="{{ size }}">
+    <div class="collection-products-inner">
+      {% for link in linklists.collections.links %}
+        {% if link.type == 'collection_link' %}
+          {% assign collection = link.object %}
+
+          {% liquid
+            for product in collection.products
+              assign media = product.featured_image
+              assign image_sizes = '(min-width: 768px) 11vw, 100vw'
+              render 'collection-product', product: product, media: media, image_sizes: image_sizes
+            endfor
+          %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="collection-details"></div>
+</div>

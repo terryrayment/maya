@@ -1,0 +1,19 @@
+{% liquid
+  assign stack_item_allergy = all_products['supplement-allergy']
+  assign stack_item_digestive = all_products['supplement-digestivecare']
+  assign stack_item_joint = all_products['supplement-hipandjoint']
+  assign stack_item_skin = all_products['supplement-skinandcoat']
+  assign stack_individual_sum_cents = 0
+  if stack_item_allergy and stack_item_allergy.selected_or_first_available_variant
+    assign stack_individual_sum_cents = stack_individual_sum_cents | plus: stack_item_allergy.selected_or_first_available_variant.price
+  endif
+  if stack_item_digestive and stack_item_digestive.selected_or_first_available_variant
+    assign stack_individual_sum_cents = stack_individual_sum_cents | plus: stack_item_digestive.selected_or_first_available_variant.price
+  endif
+  if stack_item_joint and stack_item_joint.selected_or_first_available_variant
+    assign stack_individual_sum_cents = stack_individual_sum_cents | plus: stack_item_joint.selected_or_first_available_variant.price
+  endif
+  if stack_item_skin and stack_item_skin.selected_or_first_available_variant
+    assign stack_individual_sum_cents = stack_individual_sum_cents | plus: stack_item_skin.selected_or_first_available_variant.price
+  endif
+%}

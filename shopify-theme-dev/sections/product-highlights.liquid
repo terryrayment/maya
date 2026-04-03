@@ -1,0 +1,185 @@
+{%- comment -%}
+  Product highlights — shows all 4 supplements with purpose and price.
+  Sales-forward without being generic.
+{%- endcomment -%}
+
+{%- assign wellness = collections['wellness'] -%}
+
+<div class="highlights">
+  <div class="highlights-header">
+    <p class="highlights-label">The collection</p>
+    <h2 class="highlights-title">Four problems. Four formulas.</h2>
+    <p class="highlights-desc">Each supplement addresses a specific condition. No overlap. No redundancy.</p>
+  </div>
+  <div class="highlights-grid">
+    {%- for product in wellness.products -%}
+      {%- if product.type == 'Supplement Chew' -%}
+        <a href="{{ product.url }}" class="highlights-card">
+          <div class="highlights-card-image">
+            {%- if product.featured_image -%}
+              {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy' }}
+            {%- endif -%}
+          </div>
+          <div class="highlights-card-info">
+            <h3 class="highlights-card-title">{{ product.title }}</h3>
+            <p class="highlights-card-price">{{ product.price | money_without_trailing_zeros }}</p>
+          </div>
+        </a>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+<style>
+  .highlights {
+    padding: 1.5rem var(--side-padding);
+    position: relative;
+    z-index: 10;
+    background: var(--bg, #fdfbf7);
+  }
+  .highlights-header {
+    margin-bottom: 2rem;
+    max-width: 30rem;
+  }
+  .highlights-label {
+    font-size: 0.7em;
+    letter-spacing: 0.12em;
+    opacity: 0.4;
+    margin-bottom: 0.5rem;
+  }
+  .highlights-title {
+    font-size: 1.3em;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+  .highlights-desc {
+    font-size: 0.8em;
+    opacity: 0.5;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+  }
+  .highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    margin-bottom: 2rem;
+    background: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+    background-position: top;
+    padding-top: 1px;
+  }
+  @media (min-width: 768px) {
+    .highlights-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .highlights-card {
+    text-decoration: none;
+    color: inherit;
+    padding: 1.5rem 1rem;
+    display: block;
+    transition: opacity 0.2s;
+  }
+  .highlights-card:hover {
+    opacity: 0.7;
+  }
+  .highlights-card-image {
+    margin-bottom: 1rem;
+  }
+  .highlights-card-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .highlights-card-title {
+    font-size: 0.75em;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.25rem;
+  }
+  .highlights-card-price {
+    font-size: 0.7em;
+    opacity: 0.5;
+    letter-spacing: 0.04em;
+  }
+  .highlights-bundle {
+    background: linear-gradient(to right, #000 50%, transparent 50%) top;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+    padding: 2.5rem 0;
+  }
+  .highlights-bundle-inner {
+    max-width: 30rem;
+  }
+  .highlights-bundle-label {
+    font-size: 0.65em;
+    letter-spacing: 0.12em;
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    padding: 0.15em 0.6em;
+    margin-bottom: 0.75rem;
+  }
+  .highlights-bundle-title {
+    font-size: 1.2em;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+  }
+  .highlights-bundle-desc {
+    font-size: 0.8em;
+    opacity: 0.6;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.2rem;
+  }
+  .highlights-bundle-sub {
+    font-size: 0.7em;
+    opacity: 0.35;
+    letter-spacing: 0.03em;
+    margin-bottom: 1rem;
+  }
+  .highlights-bundle-price {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .highlights-bundle-price-current {
+    font-size: 1.1em;
+    letter-spacing: 0.04em;
+  }
+  .highlights-bundle-price-compare {
+    font-size: 0.85em;
+    opacity: 0.4;
+    letter-spacing: 0.04em;
+  }
+  .highlights-bundle-cta {
+    display: inline-block;
+    position: relative;
+    padding: 0.714rem 1.4rem;
+    letter-spacing: 0.08em;
+    font-size: 0.8em;
+    text-decoration: none;
+    color: inherit;
+  }
+  .highlights-bundle-cta .button-border {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  .highlights-bundle-cta .button-border rect {
+    x: 1; y: 1;
+    fill: none;
+    stroke: #000;
+    stroke-width: 1;
+    stroke-dasharray: 2px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Product Highlights",
+  "tag": "section",
+  "class": "product-highlights-section"
+}
+{% endschema %}

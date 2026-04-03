@@ -1,0 +1,39 @@
+<div class="anc-banner-inner">
+  {% for block in section.blocks %}
+    <div class="anc-banner-item">
+      <p>
+        {% if block.settings.url != empty %}
+          <a class="anc-banner-item-inner" href="{{ block.settings.url }}">{{ block.settings.text }}</a>
+        {% else %}
+          <span class="anc-banner-item-inner">{{ block.settings.text }}</span>
+        {% endif %}
+      </p>
+    </div>
+  {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "Announcement banner",
+  "tag": "div",
+  "class": "anc-banner",
+  "blocks": [
+    {
+      "type": "banner",
+      "name": "Banner",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "url",
+          "label": "URL"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

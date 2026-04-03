@@ -2,6 +2,7 @@
 
 import { useCart } from "@/context/cart-context";
 import Image from "next/image";
+import { vetSealImageClass } from "@/lib/product-images";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -81,7 +82,7 @@ export function CartDrawer() {
                         src={item.image}
                         alt={item.title}
                         fill
-                        className="cart-item-img"
+                        className={`cart-item-img ${vetSealImageClass(item.image)}`}
                         sizes="70px"
                         style={{ objectFit: "cover" }}
                       />

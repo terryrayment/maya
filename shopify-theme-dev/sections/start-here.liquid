@@ -1,0 +1,89 @@
+<div class="start-here">
+  <div class="start-here-inner">
+    <p class="start-here-label">Start here</p>
+    <h2 class="start-here-title">
+      <a href="/products/complete-wellness-stack">Complete Wellness Stack</a>
+    </h2>
+    <p class="start-here-desc">Everything your dog needs in one routine.</p>
+    <p class="start-here-sub">Start here if you're unsure which product to choose.</p>
+    <a href="/products/complete-wellness-stack" class="start-here-cta">
+      <svg class="button-border">
+        <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" />
+      </svg>
+      Shop the stack — $199
+    </a>
+  </div>
+</div>
+
+<style>
+  .start-here {
+    padding: 4rem var(--side-padding);
+    background: linear-gradient(to right, #000 50%, transparent 50%) top,
+                linear-gradient(to right, #000 50%, transparent 50%) bottom;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+  }
+  .start-here-inner {
+    max-width: 32rem;
+  }
+  .start-here-label {
+    font-size: 0.75em;
+    letter-spacing: 0.1em;
+    opacity: 0.5;
+    margin-bottom: 0.5rem;
+  }
+  .start-here-title {
+    font-size: 1.4em;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .start-here-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .start-here-desc {
+    font-size: 0.85em;
+    opacity: 0.7;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.04em;
+  }
+  .start-here-sub {
+    font-size: 0.75em;
+    opacity: 0.4;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.04em;
+  }
+  .start-here-cta {
+    display: inline-block;
+    position: relative;
+    padding: 0.714rem 1.4rem;
+    letter-spacing: 0.08em;
+    font-size: 0.85em;
+    text-decoration: none;
+    color: inherit;
+  }
+  .start-here-cta .button-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .start-here-cta .button-border rect {
+    x: 1;
+    y: 1;
+    fill: none;
+    stroke: #000;
+    stroke-width: 1;
+    stroke-dasharray: 2px;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Start Here",
+  "tag": "section",
+  "class": "start-here-section"
+}
+{% endschema %}

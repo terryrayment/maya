@@ -1,0 +1,16 @@
+{% assign products = product.metafields.custom.recommended_products.value %}
+
+{% if products %}
+  <div class="product-recommended">
+    <h2 class="product-recommended-title" data-text="Complete the routine">Complete the routine</h2>
+    <div class="product-recommended-list">
+      {% liquid
+        for product in products
+          assign media = product.featured_image
+          assign image_sizes = '(min-width: 768px) 11vw, 100vw'
+          render 'collection-product', product: product, media: media, image_sizes: image_sizes
+        endfor
+      %}
+    </div>
+  </div>
+{% endif %}

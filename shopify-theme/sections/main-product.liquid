@@ -1,0 +1,466 @@
+{% liquid
+  assign details = product.metafields.custom.details
+  assign sustainability = product.metafields.custom.sustainability
+  assign dimensions = product.metafields.custom.dimensions
+  assign sizing = product.metafields.custom.sizing | metafield_tag
+  assign materials = product.metafields.custom.materials_richtext | metafield_tag
+  assign how_to_use = product.metafields.custom.how_to_use
+  assign ingredients = product.metafields.custom.ingredients
+  assign care = product.metafields.custom.care_richtext | metafield_tag
+  assign shipping_returns = product.metafields.custom.shipping_returns
+  assign badges = product.metafields.custom.badges
+  assign gift_card_recipient_feature_active = false
+  if product.gift_card?
+    assign gift_card_recipient_feature_active = true
+  endif
+%}
+
+{% render 'vite' with '/resources/js/pubsub.js' %}
+{% render 'vite' with '/resources/js/product-form.js' %}
+
+<article
+  class="product {% if gift_card_recipient_feature_active %}-gift{% endif %}"
+  id="MainProduct-{{ section.id }}"
+  data-section="{{ section.id }}"
+  data-url="{{ product.url }}"
+>
+  <div class="product-columns">
+    <div class="product-column -images">
+      {% render 'product-images' %}
+    </div>
+    <div class="product-column">
+      <div class="product-column-inner">
+        <div class="product-header">
+          <h1 class="product-title">
+            {{ product.title }}
+            <span class="product-title-rating"></span>
+          </h1>
+          <div class="product-description">{{ product.description }}</div>
+        </div>
+        <div class="product-details">
+          <product-form class="product-form">
+            <div class="product-form-inner">
+              {%- assign product_form_id = 'product-form-' | append: section.id -%}
+              <div class="product-form-error product-form__error-message-wrapper" role="alert" hidden>
+                <span class="product-form__error-message"></span>
+              </div>
+              {%- unless product.has_only_default_variant -%}
+                <div class="product-variants">
+                  <div data-section="{{ section.id }}" data-url="{{ product.url }}">
+                    <div class="product-variants-inner">
+                      {%- for option in product.options_with_values -%}
+                        {% comment %} {% unless option.name == 'Color' %}{% endunless %} {% endcomment %}
+
+                        <fieldset class="variant-select-wrapper" data-name="{{ option.name }}">
+                          <span class="variant-select-value">{{ option.selected_value }}</span>
+                          <select class="variant-select" name="{{ option.name }}">
+                            <optgroup label="{{ option.name }}">
+                              {%- for value in option.values -%}
+                                <option
+                                  value="{{ value | escape }}"
+                                  form="{{ product_form_id }}"
+                                  {% if option.selected_value == value %}
+                                    selected
+                                  {% endif %}
+                                >
+                                  {{ value }}
+                                </option>
+                              {%- endfor -%}
+                            </optgroup>
+                          </select>
+                          <svg class="variant-select-chevron" viewBox="0 0 13 8">
+                            <path d="m1 1 5.346 5.345L11.691 1"/>
+                          </svg>
+                        </fieldset>
+
+                        {% comment %}
+                          <fieldset class="variant-radios" data-name="{{ option.name }}">
+                            <h3 class="variant-radios-legend">
+                              <strong>{{ option.name }}</strong>:
+                              <span class="variant-radios-value">{{ option.selected_value }}</span>
+                            </h3>
+                            <div class="variant-radios-items-outer">
+                              <div class="variant-radios-items-wrapper">
+                                <div class="variant-radios-items">
+                                  {%- for value in option.values -%}
+                                    <label class="variant-radios-item">
+                                      <input
+                                        type="radio"
+                                        class="variant-radios-item-input"
+                                        name="{{ option.name }}"
+                                        value="{{ value | escape }}"
+                                        form="{{ product_form_id }}"
+                                        {% if option.selected_value == value %}
+                                          checked
+                                        {% endif %}
+                                      >
+                                      <span class="variant-radios-item-inner">
+                                        {{ value }}
+                                      </span>
+                                    </label>
+                                  {%- endfor -%}
+                                </div>
+                              </div>
+                            </div>
+                          </fieldset>
+                        {% endcomment %}
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                  <script type="application/json">
+                    {{ product.variants | json }}
+                  </script>
+                </div>
+              {%- endunless -%}
+
+              {%- form 'product',
+                product,
+                id: product_form_id,
+                class: 'form',
+                novalidate: 'novalidate',
+                data-type: 'add-to-cart-form'
+              -%}
+                <input
+                  type="hidden"
+                  name="id"
+                  value="{{ product.selected_or_first_available_variant.id }}"
+                  disabled
+                >
+                {%- if gift_card_recipient_feature_active -%}
+                  {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
+                {%- endif -%}
+                <div class="product-form-details">
+                  <h1 class="product-form-details-title">{{ product.title }}</h1>
+                </div>
+                <div class="product-form-rating"></div>
+                <div class="product-form-buttons">
+                  {% if product.metafields.custom.waitlist %}
+                    <button
+                      type="button"
+                      class="button product-buy-button product-waitlist-button"
+                    >
+                      <svg class="button-border">
+                        <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" />
+                      </svg>
+                      <span class="product-form-submit-text"> Join the waitlist </span>
+                    </button>
+                  {% else %}
+                    <button
+                      type="submit"
+                      name="add"
+                      class="button product-buy-button product-form-submit"
+                      {% if product.selected_or_first_available_variant.available == false %}
+                        disabled
+                      {% endif %}
+                    >
+                      <svg class="button-border">
+                        <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" />
+                      </svg>
+                      <span class="product-form-submit-text">
+                        {%- if product.selected_or_first_available_variant.available -%}
+                          {% if product.metafields.custom.preorder %}
+                            Pre-order
+                          {% else %}
+                            Add to cart
+                          {% endif %}
+                        {%- else -%}
+                          Sold out
+                        {%- endif -%}
+                      </span>
+                      <div class="loading-overlay__spinner hidden"></div>
+                      <span class="product-price" id="price-{{ section.id }}">
+                        {%- unless product.metafields.custom.email_for_price -%}
+                          {{- product.selected_or_first_available_variant.price | money_without_trailing_zeros -}}
+                          {% if product.selected_or_first_available_variant.compare_at_price %}
+                            <del>
+                              {{-
+                                product.selected_or_first_available_variant.compare_at_price
+                                | money_without_trailing_zeros
+                              -}}
+                            </del>
+                          {% endif %}
+                        {%- endunless -%}
+                      </span>
+                    </button>
+                  {% endif %}
+                </div>
+              {%- endform -%}
+            </div>
+          </product-form>
+
+          <div class="product-info">
+            <div class="product-info-accordion">
+              {% if details != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Details</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ details }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if sizing != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Sizing</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <div class="product-info-value-inner-2">{{ sizing }}</div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if dimensions != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Dimensions</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ dimensions }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if materials != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Materials</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <div class="product-info-value-inner-2">{{ materials }}</div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if ingredients != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Ingredients</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ ingredients }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if how_to_use != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">How to use</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ how_to_use }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if care != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Care</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <div class="product-info-value-inner-2">{{ care }}</div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if sustainability != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Impact</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ sustainability }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if shipping_returns != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Shipping & returns</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ shipping_returns }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+            <div class="product-info-tabs-wrapper">
+              <div class="product-info-tabs">
+                {% if details != blank %}
+                  <h3 class="product-info-tab">Details</h3>
+                {% endif %}
+                {% if sizing != blank %}
+                  <h3 class="product-info-tab">Sizing</h3>
+                {% endif %}
+                {% if dimensions != blank %}
+                  <h3 class="product-info-tab">Dimensions</h3>
+                {% endif %}
+                {% if materials != blank %}
+                  <h3 class="product-info-tab">Materials</h3>
+                {% endif %}
+                {% if ingredients != blank %}
+                  <h3 class="product-info-tab">Ingredients</h3>
+                {% endif %}
+                {% if how_to_use != blank %}
+                  <h3 class="product-info-tab">How to use</h3>
+                {% endif %}
+                {% if care != blank %}
+                  <h3 class="product-info-tab">Care</h3>
+                {% endif %}
+                {% if sustainability != blank %}
+                  <h3 class="product-info-tab">Impact</h3>
+                {% endif %}
+                {% if shipping_returns != blank %}
+                  <h3 class="product-info-tab">Shipping & returns</h3>
+                {% endif %}
+              </div>
+              <div class="product-info-panes">
+                {% if details != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ details }}</p>
+                  </div>
+                {% endif %}
+                {% if sizing != blank %}
+                  <div class="product-info-pane">
+                    <div>{{ sizing }}</div>
+                  </div>
+                {% endif %}
+                {% if dimensions != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ dimensions }}</p>
+                  </div>
+                {% endif %}
+                {% if materials != blank %}
+                  <div class="product-info-pane">
+                    <div>{{ materials }}</div>
+                  </div>
+                {% endif %}
+                {% if ingredients != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ ingredients }}</p>
+                  </div>
+                {% endif %}
+                {% if how_to_use != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ how_to_use }}</p>
+                  </div>
+                {% endif %}
+                {% if care != blank %}
+                  <div class="product-info-pane">
+                    <div>{{ care }}</div>
+                  </div>
+                {% endif %}
+                {% if sustainability != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ sustainability }}</p>
+                  </div>
+                {% endif %}
+                {% if shipping_returns != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ shipping_returns }}</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% if badges %}
+            <ul class="product-badges">
+              {% for badge in badges.value %}
+                <li class="product-badge">
+                  <svg viewBox="0 0 14 10">
+                    <path  d="M13.443 1.442 5.5 9.383.559 4.442l.883-.884 4.059 4.058L12.559.558l.884.883Z" />
+                  </svg>
+                  {{ badge }}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% render 'recommended-products' %}
+
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Product",
+      "name": {{ product.title | json }},
+      "url": {{ request.origin | append: product.url | json }},
+      "description": {{ product.description | strip_html | json }},
+      {% if product.selected_or_first_available_variant.sku != blank -%}
+        "sku": {{ product.selected_or_first_available_variant.sku | json }},
+      {%- endif %}
+      "brand": {
+        "@type": "Brand",
+        "name": {{ product.vendor | json }}
+      },
+      "offers": [
+        {%- for variant in product.variants -%}
+          {
+            "@type" : "Offer",
+            {%- if variant.sku != blank -%}
+              "sku": {{ variant.sku | json }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 12 -%}
+              "gtin12": {{ variant.barcode }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 13 -%}
+              "gtin13": {{ variant.barcode }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 14 -%}
+              "gtin14": {{ variant.barcode }},
+            {%- endif -%}
+            "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+            "price" : {{ variant.price | divided_by: 100.00 | json }},
+            "priceCurrency" : {{ cart.currency.iso_code | json }},
+            "url" : {{ request.origin | append: variant.url | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+</article>
+
+{% if product.metafields.custom.waitlist %}
+  <div class="product-waitlist-popup">
+    <div class="product-waitlist-popup-overlay"></div>
+    <div class="product-waitlist-popup-container">
+      <div class="product-waitlist-popup-header">
+        <h2 class="product-waitlist-popup-title">Join the waitlist</h2>
+        <button class="product-waitlist-popup-close">(Close)</button>
+      </div>
+      <p class="product-waitlist-popup-desc">
+        Register your email address below to receive a notification as soon as the Maya Brush One is available.
+      </p>
+      <form
+        class="product-waitlist-popup-form"
+        action="https://officeofmaya.us22.list-manage.com/subscribe/post-json?u=30fbe462ad0fc59a89b1a06a6&id=be9eec8269&f_id=0097cfe1f0"
+        data-action-newsletter="http://officeofmaya.us22.list-manage.com/subscribe/post-json?u=30fbe462ad0fc59a89b1a06a6&id=0c6bb8e4ec&f_id=0096cfe1f0"
+        accept-charset="UTF-8"
+        method="get"
+      >
+        <input class="product-waitlist-popup-input" type="email" name="EMAIL" placeholder="Email address" required>
+        <label class="product-waitlist-popup-agree">
+          <input class="product-waitlist-popup-agree-checkbox" type="checkbox">
+          <span class="product-waitlist-popup-agree-control">
+            <svg viewBox="0 0 9 6">
+              <path d="m1.25 2.48 2.513 2.513L8.25.506" />
+            </svg>
+          </span>
+          <span>I agree to receive Maya updates</span>
+        </label>
+        <button
+          type="submit"
+          class="button product-waitlist-popup-button"
+        >
+          <svg class="button-border">
+            <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" />
+          </svg>
+          <span class="product-form-submit-text">Join the waitlist</span>
+        </button>
+      </form>
+      <p class="product-waitlist-popup-terms">
+        By joining the waitlist you accept our <a href="/pages/terms-of-service" target="_blank">Terms</a>.
+      </p>
+    </div>
+  </div>
+{% endif %}

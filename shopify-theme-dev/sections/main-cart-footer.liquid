@@ -1,0 +1,127 @@
+{% comment %} {{ 'component-cart.css' | asset_url | stylesheet_tag }} {% endcomment %}
+{% comment %} {{ 'component-totals.css' | asset_url | stylesheet_tag }} {% endcomment %}
+{% comment %} {{ 'component-price.css' | asset_url | stylesheet_tag }} {% endcomment %}
+{% comment %} {{ 'component-discounts.css' | asset_url | stylesheet_tag }} {% endcomment %}
+<div id="main-cart-footer" data-id="{{ section.id }}">
+  <div class="container{% if cart == empty %} is-empty{% endif %}">
+    <div>
+      <div class="cart-footer">
+        <div class="cart-blocks">
+          <div class="js-contents" {{ block.shopify_attributes }}>
+            <div class="cart-footer-totals">
+              <h3 class="cart-footer-totals-subtotal">Subtotal</h3>
+              <p class="cart-footer-totals-subtotal-value">{{ cart.total_price | money_without_trailing_zeros }}</p>
+            </div>
+
+            {% comment %}
+               <div>
+                {%- if cart.cart_level_discount_applications.size > 0 -%}
+                  <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                    {%- for discount in cart.cart_level_discount_applications -%}
+                      <li class="discounts__discount discounts__discount--end">
+                        {{ discount.title }}
+                        (-{{ discount.total_allocated_amount | money }})
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- endif -%}
+              </div>
+            {% endcomment %}
+
+            {% comment %}
+              <small class="tax-note caption-large rte">
+                {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                  {{ 'sections.cart.taxes_included_and_shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                {%- elsif cart.taxes_included -%}
+                  {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+                {%- elsif shop.shipping_policy.body != blank -%}
+                  {{ 'sections.cart.taxes_and_shipping_policy_at_checkout_html' | t: link: shop.shipping_policy.url }}
+                {%- else -%}
+                  {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+                {%- endif -%}
+              </small>
+            {% endcomment %}
+          </div>
+
+          <p class="cart-footer-note">Shipping calculated at checkout.</p>
+
+          <div class="cart-ctas" {{ block.shopify_attributes }}>
+            <noscript>
+              <button type="submit" class="cart__update-button button button--secondary" form="cart">Update</button>
+            </noscript>
+
+            <button
+              type="submit"
+              id="checkout"
+              class="cart-footer-button button"
+              name="checkout"
+              {% if cart == empty %}
+                disabled
+              {% endif %}
+              form="cart"
+            >
+              <svg class="button-border">
+                <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" />
+              </svg>
+              Checkout
+            </button>
+
+            <a class="cart-footer-close" href="/" onclick="event.preventDefault(); document.querySelector('.mini-cart')?.classList.remove('active'); document.body.classList.remove('cart-open');">Close</a>
+          </div>
+
+          {% comment %}
+             {%- if additional_checkout_buttons -%}
+              <div class="cart-footer-dynamic-checkout-buttons additional-checkout-buttons">
+                {{ content_for_additional_checkout_buttons }}
+              </div>
+            {%- endif -%}
+          {% endcomment %}
+          <div id="cart-errors" class="cart-errors"></div>
+        </div>
+      </div>
+      {% comment %}
+        <div class="cart-footer-recommended">
+          <h3 class="cart-footer-recommended-title" data-text="Recommended Items">Recommended Items</h3>
+          <div class="product-recommended-list">
+            {% liquid
+              for product in collections['recommended-cart'].products
+                assign media = product.featured_image
+                assign image_sizes = '(min-width: 768px) 11vw, 100vw'
+                render 'collection-product', product: product, media: media, image_sizes: image_sizes
+              endfor
+            %}
+          </div>
+        </div>
+      {% endcomment %}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    function isIE() {
+      const ua = window.navigator.userAgent
+      const msie = ua.indexOf('MSIE ')
+      const trident = ua.indexOf('Trident/')
+
+      return msie > 0 || trident > 0
+    }
+
+    if (!isIE()) return
+    const cartSubmitInput = document.createElement('input')
+    cartSubmitInput.setAttribute('name', 'checkout')
+    cartSubmitInput.setAttribute('type', 'hidden')
+    document.querySelector('#cart').appendChild(cartSubmitInput)
+    document.querySelector('#checkout').addEventListener('click', function (event) {
+      document.querySelector('#cart').submit()
+    })
+  })
+</script>
+
+{% schema %}
+{
+  "name": "Cart footer",
+  "class": "section-cart-footer",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,120 @@
+<div class="collection">
+  <p class="breadcrumbs">
+    <a class="breadcrumbs-link" href="/collections">Shop All</a>
+    {% for link in linklists.collections.links %}
+      {% if link.type == 'collection_link' %}
+        {% assign item = link.object %}
+        <span class="breadcrumbs-separator">/</span>
+        <a class="breadcrumbs-link {% if item.title == collection.title %}-active{% endif %}" href="{{ item.url }}">
+          {{- item.title -}}
+        </a>
+      {% endif %}
+    {% endfor %}
+  </p>
+
+  <div class="collection-products" data-size="{{ collection.products | size }}">
+    <div class="collection-products-inner">
+      {% liquid
+        for product in collection.products
+          assign media = product.featured_image
+          if collection.products.size == 4
+            assign image_sizes = '(min-width: 1024px) 24vw, (min-width: 768px) 40vw, 100vw'
+          else
+            assign image_sizes = '(min-width: 768px) 11vw, 100vw'
+          endif
+          render 'collection-product', product: product, media: media, image_sizes: image_sizes
+        endfor
+      %}
+    </div>
+  </div>
+
+  <div class="collection-details"></div>
+</div>
+
+<style>
+  .collection-product-data {
+    display: block !important;
+    padding: 0.5rem 0 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    text-align: left !important;
+    width: 100% !important;
+  }
+  .collection-details-title {
+    display: block !important;
+    font-size: 0.7em !important;
+    letter-spacing: 0.04em !important;
+    text-align: left !important;
+    order: 1 !important;
+  }
+  .collection-details-price {
+    display: block !important;
+    font-size: 0.7em !important;
+    letter-spacing: 0.04em !important;
+    opacity: 0.45 !important;
+    text-align: left !important;
+    margin-top: 0.1rem !important;
+    order: 2 !important;
+  }
+  .collection-details-price del {
+    opacity: 0.5;
+    margin-left: 0.3rem;
+  }
+  .collection-details-category {
+    display: none !important;
+  }
+  /* Hide products without images */
+  .collection-product:has(.collection-product-image-container:empty) {
+    display: none;
+  }
+
+  /* Four-product collections: base compiled CSS uses 1/6-width columns, so four items float small in the middle */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .collection-products[data-size="4"] .collection-products-inner {
+      --column-gap: 1.5rem;
+      gap: 1.5rem 1.5rem !important;
+    }
+    .collection-products[data-size="4"] .collection-product {
+      width: calc((100% - var(--column-gap) * 1) / 2);
+    }
+    .collection-products[data-size="4"] .collection-product .button-border rect {
+      width: calc((100vw - var(--side-padding) * 2 - var(--column-gap) * 1) / 2 - 2px) !important;
+      height: calc((100vw - var(--side-padding) * 2 - var(--column-gap) * 1) / 2 / 0.74 - 2px) !important;
+    }
+  }
+  @media (min-width: 1024px) {
+    .collection-products[data-size="4"] {
+      align-items: flex-start;
+      padding-top: 1.5rem;
+      padding-bottom: 2.5rem;
+    }
+    .collection-products[data-size="4"] .collection-products-inner {
+      --column-gap: 2rem;
+      --row-gap: 1.25rem;
+      gap: var(--row-gap) var(--column-gap) !important;
+      max-width: 92rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .collection-products[data-size="4"] .collection-product {
+      width: calc((100% - var(--column-gap) * 3) / 4);
+    }
+    .collection-products[data-size="4"] .collection-product .button-border rect {
+      width: calc((100vw - var(--side-padding) * 2 - var(--column-gap) * 3) / 4 - 2px) !important;
+      height: calc((100vw - var(--side-padding) * 2 - var(--column-gap) * 3) / 4 / 0.74 - 2px) !important;
+    }
+    .collection-products[data-size="4"] .collection-details-title {
+      font-size: 0.88em !important;
+      letter-spacing: 0.055em !important;
+    }
+    .collection-products[data-size="4"] .collection-details-price {
+      font-size: 0.8em !important;
+    }
+  }
+  @media (min-width: 1300px) {
+    .collection-products[data-size="4"] .collection-product .button-border rect {
+      width: calc((87.14285714285714rem - var(--column-gap) * 3) / 4 - 2px) !important;
+      height: calc((87.14285714285714rem - var(--column-gap) * 3) / 4 / 0.74 - 2px) !important;
+    }
+  }
+</style>

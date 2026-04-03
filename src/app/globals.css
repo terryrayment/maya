@@ -205,3 +205,8 @@ a {
   transform: scale(1.02);
   transition: transform 0.3s ease;
 }
+
+/* Baked-in corner seal on _Vet/_VET Shopify filenames — clip bottom-right */
+.product-photo--hide-vet-seal {
+  clip-path: polygon(0 0, 100% 0, 100% 84%, 84% 100%, 0 100%);
+}

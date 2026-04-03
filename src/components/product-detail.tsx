@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useCart } from "@/context/cart-context";
 import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
+import { pickPrimaryProductImage, vetSealImageClass } from "@/lib/product-images";
 
 const FAQS = [
   {
@@ -43,7 +44,7 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
 
   function handleAddToCart() {
     if (!selectedVariant) return;
-    const image = images[0]?.url || "";
+    const image = pickPrimaryProductImage(images)?.url || images[0]?.url || "";
 
     addItem({
       variantId: selectedVariant.id,
@@ -77,7 +78,7 @@ export function ProductDetail({ product }: { product: ShopifyProduct }) {
                 alt={img.altText || product.title}
                 width={800}
                 height={800}
-                className="product-images-media"
+                className={`product-images-media ${vetSealImageClass(img.url)}`}
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority={i === 0}
                 style={{ width: "100%", height: "auto", objectFit: "cover", display: "block" }}

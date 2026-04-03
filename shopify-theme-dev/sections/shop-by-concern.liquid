@@ -1,0 +1,113 @@
+<div class="concerns">
+  <div class="concerns-header">
+    <p class="concerns-label">What does your dog need?</p>
+  </div>
+  <div class="concerns-grid">
+    <a href="/products/supplement-allergy" class="concerns-item">
+      <span class="concerns-item-title">Itching &amp; Allergies</span>
+      <span class="concerns-item-desc">Seasonal scratching, red skin, hot spots</span>
+      <span class="concerns-item-link">Allergy support →</span>
+    </a>
+    <a href="/products/supplement-digestivecare" class="concerns-item">
+      <span class="concerns-item-title">Digestion &amp; Gut</span>
+      <span class="concerns-item-desc">Gas, bloating, loose stool, low energy</span>
+      <span class="concerns-item-link">Digestive support →</span>
+    </a>
+    <a href="/products/supplement-hipandjoint" class="concerns-item">
+      <span class="concerns-item-title">Joints &amp; Mobility</span>
+      <span class="concerns-item-desc">Stiffness, reluctance to jump, slowing down</span>
+      <span class="concerns-item-link">Joint support →</span>
+    </a>
+    <a href="/products/supplement-skinandcoat" class="concerns-item">
+      <span class="concerns-item-title">Skin &amp; Coat</span>
+      <span class="concerns-item-desc">Shedding, dry skin, dull coat</span>
+      <span class="concerns-item-link">Skin &amp; coat support →</span>
+    </a>
+  </div>
+  <div class="concerns-unsure">
+    <p>Not sure where to start? <a href="/products/complete-wellness-stack">Get the Complete Wellness Stack →</a></p>
+  </div>
+</div>
+
+<style>
+  .concerns {
+    padding: var(--section-gap, 3rem) var(--side-padding);
+    position: relative;
+    z-index: 10;
+    background: var(--bg, #fdfbf7);
+    background: linear-gradient(to right, #000 50%, transparent 50%) top;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+  }
+  .concerns-header {
+    margin-bottom: 1.5rem;
+  }
+  .concerns-label {
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+  }
+  .concerns-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+  }
+  @media (min-width: 768px) {
+    .concerns-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .concerns-item {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s;
+    background: linear-gradient(to right, #000 50%, transparent 50%) bottom;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+  }
+  .concerns-item:hover {
+    opacity: 0.6;
+  }
+  .concerns-item-title {
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.3rem;
+  }
+  .concerns-item-desc {
+    font-size: 0.7em;
+    opacity: 0.4;
+    letter-spacing: 0.03em;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .concerns-item-link {
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+    margin-top: auto;
+  }
+  .concerns-unsure {
+    margin-top: 1.5rem;
+  }
+  .concerns-unsure p {
+    font-size: 0.75em;
+    opacity: 0.4;
+    letter-spacing: 0.04em;
+  }
+  .concerns-unsure a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Shop by Concern",
+  "tag": "section",
+  "class": "shop-by-concern-section"
+}
+{% endschema %}

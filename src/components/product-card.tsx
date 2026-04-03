@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCart } from "@/context/cart-context";
 import { formatPrice, type ShopifyProduct } from "@/lib/shopify";
+import { pickPrimaryProductImage, vetSealImageClass } from "@/lib/product-images";
 
 export function ProductCard({ product }: { product: ShopifyProduct }) {
   const { addItem } = useCart();
-  const image = product.images.edges[0]?.node;
+  const allImages = product.images.edges.map((e) => e.node);
+  const image = pickPrimaryProductImage(allImages);
   const firstVariant = product.variants.edges[0]?.node;
   const price = product.priceRange.minVariantPrice;
 
@@ -36,7 +38,7 @@ export function ProductCard({ product }: { product: ShopifyProduct }) {
               src={image.url}
               alt={image.altText || product.title}
               fill
-              className="collection-product-img"
+              className={`collection-product-img ${vetSealImageClass(image.url)}`}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
               style={{ objectFit: "cover" }}
             />

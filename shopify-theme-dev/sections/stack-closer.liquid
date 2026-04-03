@@ -1,0 +1,236 @@
+{%- comment -%}
+  Stack closer — centered, balanced promotion of the Complete Wellness Stack.
+{%- endcomment -%}
+
+{% render 'stack-individual-sum' %}
+{% liquid
+  assign stack_closer_product = all_products['complete-wellness-stack']
+  assign stack_closer_variant_price = 0
+  if stack_closer_product and stack_closer_product.selected_or_first_available_variant
+    assign stack_closer_variant_price = stack_closer_product.selected_or_first_available_variant.price
+  endif
+  assign stack_closer_save_cents = 0
+  if stack_closer_variant_price > 0 and stack_individual_sum_cents > 0
+    assign stack_closer_save_cents = stack_individual_sum_cents | minus: stack_closer_variant_price
+  endif
+  if stack_closer_save_cents < 0
+    assign stack_closer_save_cents = 0
+  endif
+%}
+
+<div class="stack-closer">
+  <div class="stack-closer-inner">
+    <p class="stack-closer-label">Complete coverage</p>
+    <h2 class="stack-closer-title">Four supplements. One plan.<br>Every system covered.</h2>
+    <div class="stack-closer-products">
+      <a href="/products/supplement-allergy" class="stack-closer-product">
+        <span class="stack-closer-product-name">Allergy</span>
+        <span class="stack-closer-product-concern">Itching &middot; Redness &middot; Sensitivity</span>
+      </a>
+      <a href="/products/supplement-digestivecare" class="stack-closer-product">
+        <span class="stack-closer-product-name">Digestive</span>
+        <span class="stack-closer-product-concern">Gas &middot; Bloating &middot; Absorption</span>
+      </a>
+      <a href="/products/supplement-hipandjoint" class="stack-closer-product">
+        <span class="stack-closer-product-name">Joint</span>
+        <span class="stack-closer-product-concern">Stiffness &middot; Mobility &middot; Cartilage</span>
+      </a>
+      <a href="/products/supplement-skinandcoat" class="stack-closer-product">
+        <span class="stack-closer-product-name">Skin & Coat</span>
+        <span class="stack-closer-product-concern">Shedding &middot; Dryness &middot; Softness</span>
+      </a>
+    </div>
+    <div class="stack-closer-bottom">
+      <div class="stack-closer-pricing">
+        {%- if stack_closer_variant_price > 0 -%}
+          <span class="stack-closer-price">{{ stack_closer_variant_price | money_without_trailing_zeros }}</span>
+          {%- if stack_individual_sum_cents > stack_closer_variant_price -%}
+            <del class="stack-closer-compare">{{ stack_individual_sum_cents | money_without_trailing_zeros }}</del>
+          {%- endif -%}
+          {%- if stack_closer_save_cents > 0 -%}
+            <span class="stack-closer-save">Save {{ stack_closer_save_cents | money_without_trailing_zeros }}</span>
+          {%- endif -%}
+        {%- else -%}
+          <span class="stack-closer-price">—</span>
+        {%- endif -%}
+      </div>
+      {%- if stack_closer_variant_price > 0 -%}
+        <p class="stack-closer-daily">{{ stack_closer_variant_price | divided_by: 30 | money_without_trailing_zeros }}/day for complete wellness</p>
+      {%- endif -%}
+      <div class="stack-closer-actions">
+        <a href="/products/complete-wellness-stack" class="stack-closer-cta">
+          <svg class="button-border"><rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" /></svg>
+          Shop the stack
+        </a>
+        <a href="/collections/wellness" class="stack-closer-alt">Or shop individually →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .stack-closer {
+    padding: 3rem var(--side-padding);
+    position: relative;
+    z-index: 10;
+    background: #1a1a1a;
+    color: #f5f2ed;
+  }
+  .stack-closer-inner {
+    max-width: 64rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .stack-closer-label {
+    font-size: 0.7em;
+    letter-spacing: 0.12em;
+    opacity: 0.4;
+    margin-bottom: 0.5rem;
+  }
+  .stack-closer-title {
+    font-size: 1.3em;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    margin-bottom: 2rem;
+  }
+  .stack-closer-products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 2rem;
+  }
+  .stack-closer-product {
+    padding: 1.25rem 1rem;
+    text-decoration: none;
+    color: #f5f2ed;
+    text-align: center;
+    background-image: linear-gradient(to bottom, rgba(245,242,237,0.12) 50%, transparent 50%);
+    background-size: 1px 4px;
+    background-repeat: repeat-y;
+    background-position: right;
+    transition: background-color 0.3s ease;
+  }
+  .stack-closer-product:last-child {
+    background-image: none;
+  }
+  .stack-closer-product:hover {
+    background-color: rgba(245,242,237,0.05);
+  }
+  .stack-closer-product-name {
+    display: block;
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.3rem;
+  }
+  .stack-closer-product-concern {
+    display: block;
+    font-size: 0.6em;
+    letter-spacing: 0.03em;
+    opacity: 0.4;
+    line-height: 1.4;
+  }
+  .stack-closer-bottom {
+    text-align: center;
+  }
+  .stack-closer-pricing {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.3rem;
+  }
+  .stack-closer-price {
+    font-size: 2em;
+    letter-spacing: 0.02em;
+  }
+  .stack-closer-compare {
+    font-size: 0.85em;
+    opacity: 0.35;
+  }
+  .stack-closer-save {
+    font-size: 0.65em;
+    letter-spacing: 0.06em;
+    opacity: 0.7;
+    background: rgba(245,242,237,0.1);
+    padding: 0.2rem 0.5rem;
+  }
+  .stack-closer-daily {
+    font-size: 0.65em;
+    letter-spacing: 0.04em;
+    opacity: 0.35;
+    margin-bottom: 1.5rem;
+  }
+  .stack-closer-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .stack-closer-cta {
+    display: inline-block;
+    position: relative;
+    padding: 0.714rem 1.8rem;
+    font-size: 0.75em;
+    letter-spacing: 0.08em;
+    color: #f5f2ed;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .stack-closer-cta:hover {
+    opacity: 0.7;
+  }
+  .stack-closer-cta .button-border {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: rgba(245,242,237,0.4);
+    stroke-width: 1;
+    stroke-dasharray: 4 4;
+    pointer-events: none;
+  }
+  .stack-closer-alt {
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    color: #f5f2ed;
+    opacity: 0.4;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .stack-closer-alt:hover {
+    opacity: 0.7;
+  }
+  @media (max-width: 600px) {
+    .stack-closer-products {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .stack-closer-product:nth-child(2) {
+      background-image: none;
+    }
+    .stack-closer-product:nth-child(3),
+    .stack-closer-product:nth-child(4) {
+      background-image: linear-gradient(to right, rgba(245,242,237,0.12) 50%, transparent 50%);
+      background-size: 4px 1px;
+      background-repeat: repeat-x;
+      background-position: top;
+    }
+    .stack-closer-product:nth-child(3) {
+      background-image:
+        linear-gradient(to right, rgba(245,242,237,0.12) 50%, transparent 50%),
+        linear-gradient(to bottom, rgba(245,242,237,0.12) 50%, transparent 50%);
+      background-size: 4px 1px, 1px 4px;
+      background-repeat: repeat-x, repeat-y;
+      background-position: top, right;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Stack Closer",
+  "tag": "section",
+  "class": "stack-closer-section"
+}
+{% endschema %}

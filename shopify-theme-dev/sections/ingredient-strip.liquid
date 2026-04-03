@@ -1,0 +1,138 @@
+{%- comment -%}
+  Ingredient strip — grid of hero ingredients with hover background images.
+{%- endcomment -%}
+
+{%- assign cdn = "https://cdn.shopify.com/s/files/1/0759/9515/2693/files/" -%}
+
+<div class="ingredients-strip">
+  <div class="ingredients-strip-header">
+    <p class="ingredients-strip-label">What's inside</p>
+  </div>
+  <div class="ingredients-strip-grid">
+    <div class="ingredients-strip-item" style="--bg-img: url('{{ cdn }}MAYA_KELP.png')">
+      <div class="ingredients-strip-bg"></div>
+      <span class="ingredients-strip-name">Kelp Extract</span>
+      <span class="ingredients-strip-benefit">Supports immune response and reduces seasonal sensitivity</span>
+    </div>
+    <div class="ingredients-strip-item" style="--bg-img: url('{{ cdn }}MAYA_COLSTRUM.png')">
+      <div class="ingredients-strip-bg"></div>
+      <span class="ingredients-strip-name">Colostrum</span>
+      <span class="ingredients-strip-benefit">Strengthens gut lining and supports healthy digestion</span>
+    </div>
+    <div class="ingredients-strip-item" style="--bg-img: url('{{ cdn }}MAYA_GLUCOSOMINE.png')">
+      <div class="ingredients-strip-bg"></div>
+      <span class="ingredients-strip-name">Glucosamine + MSM</span>
+      <span class="ingredients-strip-benefit">Supports joint comfort and cartilage maintenance</span>
+    </div>
+    <div class="ingredients-strip-item" style="--bg-img: url('{{ cdn }}MAYA_OMEGA3BIOTIN.png')">
+      <div class="ingredients-strip-bg"></div>
+      <span class="ingredients-strip-name">Omega-3 + Biotin</span>
+      <span class="ingredients-strip-benefit">Supports coat softness and skin comfort</span>
+    </div>
+    <div class="ingredients-strip-item" style="--bg-img: url('{{ cdn }}MAYA_PROBIOTICS.png')">
+      <div class="ingredients-strip-bg"></div>
+      <span class="ingredients-strip-name">Probiotics</span>
+      <span class="ingredients-strip-benefit">Supports healthy gut flora and nutrient absorption</span>
+    </div>
+    <div class="ingredients-strip-item" style="--bg-img: url('{{ cdn }}MAYA_BEE_POLLEN.png')">
+      <div class="ingredients-strip-bg"></div>
+      <span class="ingredients-strip-name">Bee Pollen</span>
+      <span class="ingredients-strip-benefit">Supports natural immune balance and seasonal wellness</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  .ingredients-strip {
+    padding: 2.5rem var(--side-padding) 1rem;
+    position: relative;
+    z-index: 10;
+    background: var(--bg, #fdfbf7);
+    background-image: linear-gradient(to right, #000 50%, transparent 50%);
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+    background-position: top;
+  }
+  .ingredients-strip-header {
+    margin-bottom: 1.5rem;
+  }
+  .ingredients-strip-label {
+    font-size: 0.85em;
+    letter-spacing: 0.06em;
+    opacity: 0.6;
+  }
+  .ingredients-strip-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px dotted rgba(0,0,0,0.15);
+    border-left: 1px dotted rgba(0,0,0,0.15);
+  }
+  @media (min-width: 768px) {
+    .ingredients-strip-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .ingredients-strip-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+  .ingredients-strip-item {
+    padding: 1.25rem;
+    border-right: 1px dotted rgba(0,0,0,0.15);
+    border-bottom: 1px dotted rgba(0,0,0,0.15);
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+  .ingredients-strip-bg {
+    position: absolute;
+    inset: 0;
+    background-image: var(--bg-img);
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+  }
+  .ingredients-strip-item:hover .ingredients-strip-bg {
+    opacity: 0.3;
+  }
+  .ingredients-strip-item:hover {
+    transform: translateY(-2px);
+  }
+  .ingredients-strip-name {
+    display: block;
+    font-size: 0.8em;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+  .ingredients-strip-item:hover .ingredients-strip-name {
+    opacity: 1;
+  }
+  .ingredients-strip-benefit {
+    display: block;
+    font-size: 0.65em;
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+    opacity: 0.4;
+    position: relative;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+  .ingredients-strip-item:hover .ingredients-strip-benefit {
+    opacity: 0.7;
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Ingredient Strip",
+  "tag": "section",
+  "class": "ingredient-strip-section"
+}
+{% endschema %}

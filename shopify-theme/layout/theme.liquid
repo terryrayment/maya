@@ -1,0 +1,143 @@
+<!doctype html>
+<html
+  lang="{{ shop.locale }}"
+  class="{% if request.design_mode %}design-mode{% else %}live-mode{% endif %}"
+  data-template="{{ template }}"
+>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link
+      rel="shortcut icon"
+      href="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/favicon_26383ce8-47b6-45b4-8162-c554aa70150e.ico?v=1717705581"
+    >
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    <meta name="description" content="">
+    <meta name="theme-color" content="#fdfbf7">
+
+    {%- liquid
+      render 'vite' with 'theme.scss', preload_stylesheet: false
+    -%}
+
+    {% comment %} {% render 'vite' with '@/components/product' %} {% endcomment %}
+
+    {% comment %} {% render 'vite' with '/resources/js/jquery.min.js' %} {% endcomment %}
+    {% render 'vite' with 'theme.js' %}
+
+    {% comment %}
+      {%- liquid
+        render 'vite' with 'theme.scss', preload_stylesheet: true
+        render 'vite' with 'theme.ts'
+        render 'vite' with '@/foo.ts'
+        render 'vite' with '~/bar.ts'
+        render 'vite' with '/resources/js/baz.js'
+        render 'vite' with '@modules/qux.ts'
+      -%}
+    {% endcomment %}
+
+    {{ content_for_header }}
+  </head>
+
+  <body>
+    <div
+      class="page-overlay"
+      style="width: 100%; height: 100%; position: fixed; top: 0; left: 0; z-index: 20; background-color: #fdfbf7; pointer-events: none; transition: 0.3s ease-out; transition-property: visibility, opacity;"
+    ></div>
+
+    {% section 'announcement-banner' %}
+    {% section 'header' %}
+    {% comment %} {%- section 'cart-drawer' -%} {% endcomment %}
+
+    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% comment %} {% section 'hero-product' %} {% endcomment %}
+    {% section 'camera-roll' %}
+    {% section 'footer' %}
+
+    {% render 'vite' with '/resources/js/cart.js' %}
+    {% liquid
+      unless template == 'cart'
+        render 'mini-cart'
+      endunless
+    %}
+
+    {% unless request.path == '/cart' %}
+      {% render 'vite' with '/resources/js/cart-notification.js' %}
+      {%- render 'cart-notification' -%}
+    {% endunless %}
+
+    <script>
+      window.shopUrl = '{{ request.origin }}'
+      window.routes = {
+        cart_add_url: '{{ routes.cart_add_url }}',
+        cart_change_url: '{{ routes.cart_change_url }}',
+        cart_update_url: '{{ routes.cart_update_url }}',
+        cart_url: '{{ routes.cart_url }}',
+        predictive_search_url: '{{ routes.predictive_search_url }}',
+      }
+
+      window.cartStrings = {
+        error: `Error`,
+        quantityError: `Quantity error`,
+      }
+
+      window.variantStrings = {
+        addToCart: `Add to cart`,
+        soldOut: `Sold out`,
+        unavailable: `Unavailable`,
+      }
+
+      window.accessibilityStrings = {
+        imageAvailable: `Image available`,
+        shareSuccess: `Share success`,
+        pauseSlideshow: `Pause slideshow`,
+        playSlideshow: `Play slideshow`,
+      }
+    </script>
+
+    <script>
+      class QuantityInput extends HTMLElement {
+        constructor() {
+          super()
+          this.input = this.querySelector('input')
+          this.changeEvent = new Event('change', { bubbles: true })
+
+          this.querySelectorAll('button').forEach((button) =>
+            button.addEventListener('click', this.onButtonClick.bind(this))
+          )
+        }
+
+        onButtonClick(event) {
+          event.preventDefault()
+          const previousValue = this.input.value
+
+          event.target.name === 'plus' ? this.input.stepUp() : this.input.stepDown()
+          if (previousValue !== this.input.value) this.input.dispatchEvent(this.changeEvent)
+        }
+      }
+
+      customElements.define('quantity-input', QuantityInput)
+    </script>
+
+    {% render 'vite' with '/resources/js/shopify-common.js' %}
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"
+      defer
+    ></script>
+    {% render 'junip-store-key' %}
+  </body>
+</html>

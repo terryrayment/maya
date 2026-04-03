@@ -1,0 +1,144 @@
+{
+  "frontend/bar.ts": {
+    "file": "bar-f5d605dc.js",
+    "imports": [
+      "frontend/foo.ts"
+    ],
+    "isEntry": true,
+    "src": "frontend/bar.ts"
+  },
+  "frontend/components/icon-bag.css": {
+    "file": "icon-bag-d022114f.css",
+    "src": "frontend/components/icon-bag.css"
+  },
+  "frontend/components/icon-bag.ts": {
+    "css": [
+      "icon-bag-d022114f.css"
+    ],
+    "file": "icon-bag-bc17d12d.js",
+    "isDynamicEntry": true,
+    "src": "frontend/components/icon-bag.ts"
+  },
+  "frontend/entrypoints/customers.ts": {
+    "file": "customers-8c7a45a9.js",
+    "imports": [
+      "frontend/foo.ts"
+    ],
+    "isEntry": true,
+    "src": "frontend/entrypoints/customers.ts"
+  },
+  "frontend/entrypoints/theme.js": {
+    "file": "theme-2fd4d1e7.js",
+    "imports": [
+      "frontend/foo.ts"
+    ],
+    "isEntry": true,
+    "src": "frontend/entrypoints/theme.js"
+  },
+  "frontend/entrypoints/theme.scss": {
+    "file": "theme-7bd878af.css",
+    "isEntry": true,
+    "src": "frontend/entrypoints/theme.scss"
+  },
+  "frontend/entrypoints/theme.ts": {
+    "assets": [
+      "vite-4a748afd.svg",
+      "shopify-ab6ef553.svg"
+    ],
+    "dynamicImports": [
+      "frontend/components/icon-bag.ts"
+    ],
+    "file": "theme-dd0cf477.js",
+    "imports": [
+      "frontend/foo.ts"
+    ],
+    "isEntry": true,
+    "src": "frontend/entrypoints/theme.ts"
+  },
+  "frontend/entrypoints/vendor/junip.scss": {
+    "file": "junip-6bbab094.css",
+    "isEntry": true,
+    "src": "frontend/entrypoints/vendor/junip.scss"
+  },
+  "frontend/entrypoints/vendor/plyr.scss": {
+    "file": "plyr-f478280c.css",
+    "isEntry": true,
+    "src": "frontend/entrypoints/vendor/plyr.scss"
+  },
+  "frontend/entrypoints/vendor/swiper.scss": {
+    "file": "swiper-1c5bbff7.css",
+    "isEntry": true,
+    "src": "frontend/entrypoints/vendor/swiper.scss"
+  },
+  "frontend/fonts/Unica-77-Mono-Low-LL-TT.woff2": {
+    "file": "Unica-77-Mono-Low-LL-TT-175026d0.woff2",
+    "src": "frontend/fonts/Unica-77-Mono-Low-LL-TT.woff2"
+  },
+  "frontend/foo.ts": {
+    "file": "foo-3cfb730f.js",
+    "isEntry": true,
+    "src": "frontend/foo.ts"
+  },
+  "frontend/images/shopify.svg": {
+    "file": "shopify-ab6ef553.svg",
+    "src": "frontend/images/shopify.svg"
+  },
+  "frontend/images/vite.svg": {
+    "file": "vite-4a748afd.svg",
+    "src": "frontend/images/vite.svg"
+  },
+  "frontend/modules/qux.ts": {
+    "file": "qux-8c7a45a9.js",
+    "imports": [
+      "frontend/foo.ts"
+    ],
+    "isEntry": true,
+    "src": "frontend/modules/qux.ts"
+  },
+  "resources/js/baz.js": {
+    "file": "baz-8c7a45a9.js",
+    "imports": [
+      "frontend/foo.ts"
+    ],
+    "isEntry": true,
+    "src": "resources/js/baz.js"
+  },
+  "resources/js/cart-drawer.js": {
+    "file": "cart-drawer-8c7a45a9.js",
+    "imports": [
+      "frontend/foo.ts"
+    ],
+    "isEntry": true,
+    "src": "resources/js/cart-drawer.js"
+  },
+  "resources/js/cart-notification.js": {
+    "file": "cart-notification-88d14d63.js",
+    "isEntry": true,
+    "src": "resources/js/cart-notification.js"
+  },
+  "resources/js/cart.js": {
+    "file": "cart-d5a1f7a3.js",
+    "isEntry": true,
+    "src": "resources/js/cart.js"
+  },
+  "resources/js/product-form.js": {
+    "file": "product-form-da0669e7.js",
+    "isEntry": true,
+    "src": "resources/js/product-form.js"
+  },
+  "resources/js/pubsub.js": {
+    "file": "pubsub-9885f087.js",
+    "isEntry": true,
+    "src": "resources/js/pubsub.js"
+  },
+  "resources/js/recipient-form.js": {
+    "file": "recipient-form-d2bf40f5.js",
+    "isEntry": true,
+    "src": "resources/js/recipient-form.js"
+  },
+  "resources/js/shopify-common.js": {
+    "file": "shopify-common-8d05683a.js",
+    "isEntry": true,
+    "src": "resources/js/shopify-common.js"
+  }
+}

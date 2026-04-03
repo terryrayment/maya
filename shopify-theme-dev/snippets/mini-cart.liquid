@@ -1,0 +1,35 @@
+<section class="mini-cart">
+  <header class="mini-cart-header">
+    <h2 class="mini-cart-title">
+      Cart
+      <span class="header-cart-count">
+        <svg class="button-border">
+          <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="99" />
+        </svg>
+        <span class="mini-cart-badge" id="mini-cart-badge">{{ cart.item_count }}</span>
+      </span>
+    </h2>
+    <div class="header-logo-wrapper">
+      <h1>
+        <a href="/" aria-label="Maya">
+          <svg class="header-logo" fill="none" viewBox="0 0 60 19">
+            <text class="visually-hidden" font-size="0">Maya</text>
+            <path fill-rule="evenodd" d="M6.493 13.91h.212L10.189 0h2.903v18.297h-2.164l.053-14.338h-.159l-3.59 14.338H5.86L2.27 3.96h-.158l.052 14.338H0V0h3.01l3.483 13.91Zm9.634 4.387L22.673 0h2.64l6.44 18.297h-2.639l-1.69-5.108h-6.968l-1.69 5.108h-2.639Zm7.76-15.515-2.718 8.24h5.542l-2.718-8.24h-.105ZM53.56 0h-2.64l-6.546 18.297h2.64l1.689-5.108h6.968l1.69 5.108H60L53.56 0Zm-4.145 11.021 2.718-8.239h.106l2.718 8.24h-5.542ZM38.223 8.588 42.763 0h2.64l-6.046 10.726v7.571H36.77v-7.57L30.937 0h2.851l4.224 8.588h.21Z"/>
+          </svg>
+        </a>
+      </h1>
+    </div>
+    <div class="mini-cart-close-wrapper">
+      <button class="mini-cart-close mini-cart-toggle" type="button">
+        <svg class="hidden-mobile" viewBox="0 0 22 22">
+          <path fill-rule="evenodd" d="m20.47 21.53-20-20L1.53.47l20 20-1.06 1.06Z" clip-rule="evenodd"/>
+          <path fill-rule="evenodd" d="m21.53 1.53-20 20-1.06-1.06 20-20 1.06 1.06Z" clip-rule="evenodd"/>
+        </svg>
+        <span class="hidden-desktop">Close</span>
+      </button>
+    </div>
+  </header>
+  {% section 'main-cart-items' %}
+  {% section 'main-cart-footer' %}
+</section>
+<div class="mini-cart-close-area mini-cart-toggle"></div>

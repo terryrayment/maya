@@ -1,0 +1,60 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "hero": {
+      "type": "homepage-hero",
+      "settings": {
+        "video": "shopify:\/\/files\/videos\/6bab4cab30f147f7802c53ce5f7b05b4.HD-1080p-7.2Mbps-26707206.mp4",
+        "image": "shopify:\/\/shop_images\/Monty-Pond-2520x1449_80a23225-9013-439a-9733-f731efb9e987.webp"
+      }
+    },
+    "product_highlights": {
+      "type": "product-highlights",
+      "settings": {
+      }
+    },
+    "apparel_showcase": {
+      "type": "apparel-showcase",
+      "settings": {
+      }
+    },
+    "ingredient_strip": {
+      "type": "ingredient-strip",
+      "settings": {}
+    },
+    "comparison_table": {
+      "type": "comparison-table",
+      "settings": {}
+    },
+    "subscribe_incentive": {
+      "type": "subscribe-incentive",
+      "settings": {}
+    },
+    "video_bar": {
+      "type": "video-bar",
+      "settings": {
+        "title": "Watch Now",
+        "desc": "\u201cA Portrait of My Dog\u201d\na film by Danny Geritz",
+        "image": "shopify:\/\/shop_images\/Maya_Video-Cover-2_7666faf4-2ca6-48d6-91a7-21b2ddab59e4.webp",
+        "video_url": "https:\/\/vimeo.com\/944612214"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "ingredient_strip",
+    "product_highlights",
+    "comparison_table",
+    "apparel_showcase",
+    "subscribe_incentive",
+    "video_bar"
+  ]
+}

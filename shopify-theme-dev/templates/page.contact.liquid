@@ -1,0 +1,7 @@
+{% assign content = page.content | replace: '<h2>', '</div><div class="page-contact-row"><h2>' %}
+
+<div class="page-contact">
+  <div class="page-contact-intro">
+    {{ content }}
+  </div>
+</div>

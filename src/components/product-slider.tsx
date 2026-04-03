@@ -7,6 +7,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel, Keyboard } from "swiper/modules";
 import type { SwiperRef } from "swiper/react";
 import "swiper/css";
+import { vetSealImageClass } from "@/lib/product-images";
 
 type Slide = {
   number: number;
@@ -98,7 +99,7 @@ export function ProductSlider({
                   src={slide.image}
                   alt={slide.caption}
                   fill
-                  className="product-slide-media"
+                  className={`product-slide-media ${vetSealImageClass(slide.image)}`}
                   sizes="100vmin"
                   priority={i === 0}
                   style={{ objectFit: "cover" }}

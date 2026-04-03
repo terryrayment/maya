@@ -1,0 +1,1134 @@
+{% liquid
+  assign details = product.metafields.custom.details
+  assign sustainability = product.metafields.custom.sustainability
+  assign dimensions = product.metafields.custom.dimensions
+  assign sizing = product.metafields.custom.sizing | metafield_tag
+  assign materials = product.metafields.custom.materials_richtext | metafield_tag
+  assign how_to_use = product.metafields.custom.how_to_use
+  assign ingredients = product.metafields.custom.ingredients
+  assign care = product.metafields.custom.care_richtext | metafield_tag
+  assign shipping_returns = product.metafields.custom.shipping_returns
+  assign badges = product.metafields.custom.badges
+  assign gift_card_recipient_feature_active = false
+  if product.gift_card?
+    assign gift_card_recipient_feature_active = true
+  endif
+  assign wellness_stack_product = all_products['complete-wellness-stack']
+  assign bundle_savings_onetime_line = ''
+  assign bundle_savings_sub_line = ''
+  assign stack_item_allergy = all_products['supplement-allergy']
+  assign stack_item_digestive = all_products['supplement-digestivecare']
+  assign stack_item_joint = all_products['supplement-hipandjoint']
+  assign stack_item_skin = all_products['supplement-skinandcoat']
+  assign stack_individual_sum_cents = 0
+  if stack_item_allergy and stack_item_allergy.selected_or_first_available_variant
+    assign stack_individual_sum_cents = stack_individual_sum_cents | plus: stack_item_allergy.selected_or_first_available_variant.price
+  endif
+  if stack_item_digestive and stack_item_digestive.selected_or_first_available_variant
+    assign stack_individual_sum_cents = stack_individual_sum_cents | plus: stack_item_digestive.selected_or_first_available_variant.price
+  endif
+  if stack_item_joint and stack_item_joint.selected_or_first_available_variant
+    assign stack_individual_sum_cents = stack_individual_sum_cents | plus: stack_item_joint.selected_or_first_available_variant.price
+  endif
+  if stack_item_skin and stack_item_skin.selected_or_first_available_variant
+    assign stack_individual_sum_cents = stack_individual_sum_cents | plus: stack_item_skin.selected_or_first_available_variant.price
+  endif
+%}
+
+{% render 'vite' with '/resources/js/pubsub.js' %}
+{% render 'vite' with '/resources/js/product-form.js' %}
+
+<article
+  class="product {% if gift_card_recipient_feature_active %}-gift{% endif %}"
+  id="MainProduct-{{ section.id }}"
+  data-section="{{ section.id }}"
+  data-url="{{ product.url }}"
+>
+  <div class="product-columns {% if product.images.size == 0 and product.handle != 'complete-wellness-stack' %}product-columns--no-images{% endif %}">
+    {% if product.handle == 'complete-wellness-stack' %}
+      <div class="product-column -images">
+        <div class="bundle-image-grid">
+          <a href="/products/supplement-allergy" class="bundle-image-item">
+            <img src="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Allergy_Vet.jpg?v=1733098818&width=600" alt="MAYA Allergy Supplement" loading="lazy" width="300" height="375">
+            <span class="bundle-image-label">Allergy</span>
+          </a>
+          <a href="/products/supplement-digestivecare" class="bundle-image-item">
+            <img src="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Digestive_VET.jpg?v=1733098869&width=600" alt="MAYA Digestive Care Supplement" loading="lazy" width="300" height="375">
+            <span class="bundle-image-label">Digestive</span>
+          </a>
+          <a href="/products/supplement-hipandjoint" class="bundle-image-item">
+            <img src="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Joint_Vet.jpg?v=1733098928&width=600" alt="MAYA Joint Care Supplement" loading="lazy" width="300" height="375">
+            <span class="bundle-image-label">Joint</span>
+          </a>
+          <a href="/products/supplement-skinandcoat" class="bundle-image-item">
+            <img src="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/MAYA_SKINCOAT_FRONT_2700_VET_2.jpg?v=1733098735&width=600" alt="MAYA Skin and Coat Supplement" loading="lazy" width="300" height="375">
+            <span class="bundle-image-label">Skin & Coat</span>
+          </a>
+        </div>
+      </div>
+    {% elsif product.images.size > 0 %}
+      <div class="product-column -images">
+        {% render 'product-images' %}
+      </div>
+    {% endif %}
+    <div class="product-column">
+      <div class="product-column-inner">
+        <div class="product-header">
+          <h1 class="product-title">
+            {{ product.title }}
+            <span class="product-title-rating"></span>
+          </h1>
+          {%- comment -%} Description hidden - content rendered in accordion below {%- endcomment -%}
+
+          {%- if product.handle == 'complete-wellness-stack' -%}
+            {%- assign stack_onetime_cents = product.selected_or_first_available_variant.price -%}
+            {%- assign stack_sub_cents = stack_onetime_cents | times: 80 | divided_by: 100 -%}
+            {%- assign stack_save_onetime_cents = stack_individual_sum_cents | minus: stack_onetime_cents -%}
+            {%- assign stack_save_sub_cents = stack_individual_sum_cents | minus: stack_sub_cents -%}
+            {%- if stack_save_onetime_cents < 0 -%}{%- assign stack_save_onetime_cents = 0 -%}{%- endif -%}
+            {%- if stack_save_sub_cents < 0 -%}{%- assign stack_save_sub_cents = 0 -%}{%- endif -%}
+            <div class="bundle-includes">
+              <p class="bundle-includes-title">What's included</p>
+              <div class="bundle-includes-grid">
+                {%- liquid
+                  assign jar_allergy = 'https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Allergy_Vet.jpg?v=1733098818&width=700'
+                  assign jar_digestive = 'https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Digestive_VET.jpg?v=1733098869&width=700'
+                  assign jar_joint = 'https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Joint_Vet.jpg?v=1733098928&width=700'
+                  assign jar_skin = 'https://cdn.shopify.com/s/files/1/0759/9515/2693/files/MAYA_SKINCOAT_FRONT_2700_VET_2.jpg?v=1733098735&width=700'
+                  if stack_item_allergy and stack_item_allergy.featured_image
+                    assign jar_allergy = stack_item_allergy.featured_image | image_url: width: 700
+                  endif
+                  if stack_item_digestive and stack_item_digestive.featured_image
+                    assign jar_digestive = stack_item_digestive.featured_image | image_url: width: 700
+                  endif
+                  if stack_item_joint and stack_item_joint.featured_image
+                    assign jar_joint = stack_item_joint.featured_image | image_url: width: 700
+                  endif
+                  if stack_item_skin and stack_item_skin.featured_image
+                    assign jar_skin = stack_item_skin.featured_image | image_url: width: 700
+                  endif
+                -%}
+                <div class="bundle-includes-cell">
+                  <a href="/products/supplement-allergy" class="bundle-includes-item">
+                    <span class="bundle-includes-item-name">Allergy</span>
+                    <span class="bundle-includes-item-concern">Itching, redness, seasonal sensitivity</span>
+                    <span class="bundle-includes-item-price">{% if stack_item_allergy and stack_item_allergy.selected_or_first_available_variant %}{{ stack_item_allergy.selected_or_first_available_variant.price | money_without_trailing_zeros }}{% else %}—{% endif %} individually</span>
+                  </a>
+                  <div class="bundle-includes-hover-lightbox" aria-hidden="true">
+                    <div class="bundle-includes-hover-lightbox__inner">
+                      <img src="{{ jar_allergy }}" alt="{% if stack_item_allergy %}{{ stack_item_allergy.title | escape }}{% else %}MAYA Allergy supplement{% endif %}" loading="lazy" width="700" height="875" decoding="async">
+                    </div>
+                  </div>
+                </div>
+                <div class="bundle-includes-cell">
+                  <a href="/products/supplement-digestivecare" class="bundle-includes-item">
+                    <span class="bundle-includes-item-name">Digestive Care</span>
+                    <span class="bundle-includes-item-concern">Gas, bloating, nutrient absorption</span>
+                    <span class="bundle-includes-item-price">{% if stack_item_digestive and stack_item_digestive.selected_or_first_available_variant %}{{ stack_item_digestive.selected_or_first_available_variant.price | money_without_trailing_zeros }}{% else %}—{% endif %} individually</span>
+                  </a>
+                  <div class="bundle-includes-hover-lightbox" aria-hidden="true">
+                    <div class="bundle-includes-hover-lightbox__inner">
+                      <img src="{{ jar_digestive }}" alt="{% if stack_item_digestive %}{{ stack_item_digestive.title | escape }}{% else %}MAYA Digestive Care supplement{% endif %}" loading="lazy" width="700" height="875" decoding="async">
+                    </div>
+                  </div>
+                </div>
+                <div class="bundle-includes-cell">
+                  <a href="/products/supplement-hipandjoint" class="bundle-includes-item">
+                    <span class="bundle-includes-item-name">Joint Care</span>
+                    <span class="bundle-includes-item-concern">Stiffness, mobility, cartilage</span>
+                    <span class="bundle-includes-item-price">{% if stack_item_joint and stack_item_joint.selected_or_first_available_variant %}{{ stack_item_joint.selected_or_first_available_variant.price | money_without_trailing_zeros }}{% else %}—{% endif %} individually</span>
+                  </a>
+                  <div class="bundle-includes-hover-lightbox" aria-hidden="true">
+                    <div class="bundle-includes-hover-lightbox__inner">
+                      <img src="{{ jar_joint }}" alt="{% if stack_item_joint %}{{ stack_item_joint.title | escape }}{% else %}MAYA Joint Care supplement{% endif %}" loading="lazy" width="700" height="875" decoding="async">
+                    </div>
+                  </div>
+                </div>
+                <div class="bundle-includes-cell">
+                  <a href="/products/supplement-skinandcoat" class="bundle-includes-item">
+                    <span class="bundle-includes-item-name">Skin & Coat</span>
+                    <span class="bundle-includes-item-concern">Shedding, dry skin, coat softness</span>
+                    <span class="bundle-includes-item-price">{% if stack_item_skin and stack_item_skin.selected_or_first_available_variant %}{{ stack_item_skin.selected_or_first_available_variant.price | money_without_trailing_zeros }}{% else %}—{% endif %} individually</span>
+                  </a>
+                  <div class="bundle-includes-hover-lightbox" aria-hidden="true">
+                    <div class="bundle-includes-hover-lightbox__inner">
+                      <img src="{{ jar_skin }}" alt="{% if stack_item_skin %}{{ stack_item_skin.title | escape }}{% else %}MAYA Skin &amp; Coat supplement{% endif %}" loading="lazy" width="700" height="875" decoding="async">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {%- capture bundle_savings_onetime_line -%}
+Save {{ stack_save_onetime_cents | money_without_trailing_zeros }} vs buying individually ({{ stack_individual_sum_cents | money_without_trailing_zeros }} → {{ stack_onetime_cents | money_without_trailing_zeros }}) · {{ stack_onetime_cents | divided_by: 30 | money_without_trailing_zeros }}/day for complete coverage
+              {%- endcapture -%}
+              {%- capture bundle_savings_sub_line -%}
+Save {{ stack_save_sub_cents | money_without_trailing_zeros }} vs buying individually ({{ stack_individual_sum_cents | money_without_trailing_zeros }} → {{ stack_sub_cents | money_without_trailing_zeros }}) · {{ stack_sub_cents | divided_by: 30 | money_without_trailing_zeros }}/day for complete coverage
+              {%- endcapture -%}
+              <p class="bundle-savings" id="bundle-savings-{{ section.id }}">{{ bundle_savings_onetime_line | strip }}</p>
+            </div>
+          {%- endif -%}
+        </div>
+        <div class="product-details">
+          <product-form class="product-form">
+            <div class="product-form-inner">
+              {%- assign product_form_id = 'product-form-' | append: section.id -%}
+              <div class="product-form-error product-form__error-message-wrapper" role="alert" hidden>
+                <span class="product-form__error-message"></span>
+              </div>
+              {%- unless product.has_only_default_variant -%}
+                <div class="product-variants">
+                  <div data-section="{{ section.id }}" data-url="{{ product.url }}">
+                    <div class="product-variants-inner">
+                      {%- for option in product.options_with_values -%}
+                        {% comment %} {% unless option.name == 'Color' %}{% endunless %} {% endcomment %}
+
+                        <fieldset class="variant-select-wrapper" data-name="{{ option.name }}">
+                          <span class="variant-select-value">{{ option.selected_value }}</span>
+                          <select class="variant-select" name="{{ option.name }}">
+                            <optgroup label="{{ option.name }}">
+                              {%- for value in option.values -%}
+                                <option
+                                  value="{{ value | escape }}"
+                                  form="{{ product_form_id }}"
+                                  {% if option.selected_value == value %}
+                                    selected
+                                  {% endif %}
+                                >
+                                  {{ value }}
+                                </option>
+                              {%- endfor -%}
+                            </optgroup>
+                          </select>
+                          <svg class="variant-select-chevron" viewBox="0 0 13 8">
+                            <path d="m1 1 5.346 5.345L11.691 1"/>
+                          </svg>
+                        </fieldset>
+
+                        {% comment %}
+                          <fieldset class="variant-radios" data-name="{{ option.name }}">
+                            <h3 class="variant-radios-legend">
+                              <strong>{{ option.name }}</strong>:
+                              <span class="variant-radios-value">{{ option.selected_value }}</span>
+                            </h3>
+                            <div class="variant-radios-items-outer">
+                              <div class="variant-radios-items-wrapper">
+                                <div class="variant-radios-items">
+                                  {%- for value in option.values -%}
+                                    <label class="variant-radios-item">
+                                      <input
+                                        type="radio"
+                                        class="variant-radios-item-input"
+                                        name="{{ option.name }}"
+                                        value="{{ value | escape }}"
+                                        form="{{ product_form_id }}"
+                                        {% if option.selected_value == value %}
+                                          checked
+                                        {% endif %}
+                                      >
+                                      <span class="variant-radios-item-inner">
+                                        {{ value }}
+                                      </span>
+                                    </label>
+                                  {%- endfor -%}
+                                </div>
+                              </div>
+                            </div>
+                          </fieldset>
+                        {% endcomment %}
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                  <script type="application/json">
+                    {{ product.variants | json }}
+                  </script>
+                </div>
+              {%- endunless -%}
+
+              {%- form 'product',
+                product,
+                id: product_form_id,
+                class: 'form',
+                novalidate: 'novalidate',
+                data-type: 'add-to-cart-form'
+              -%}
+              {%- if product.selling_plan_groups.size > 0 -%}
+                {%- assign selling_plan_group = product.selling_plan_groups.first -%}
+                {%- assign selling_plan = selling_plan_group.selling_plans.first -%}
+                {%- assign original_price = product.selected_or_first_available_variant.price -%}
+                {%- assign sub_price = original_price | times: 80 | divided_by: 100 -%}
+              {%- endif -%}
+                <input
+                  type="hidden"
+                  name="id"
+                  value="{{ product.selected_or_first_available_variant.id }}"
+                  disabled
+                >
+                {%- if product.selling_plan_groups.size > 0 and product.metafields.custom.waitlist == blank -%}
+                  <input type="hidden" name="selling_plan" value="">
+                {%- endif -%}
+                {%- if gift_card_recipient_feature_active -%}
+                  {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
+                {%- endif -%}
+                <div class="product-form-details">
+                  <h1 class="product-form-details-title">{{ product.title }}</h1>
+                </div>
+                <div class="product-form-buttons">
+                  {% if product.metafields.custom.waitlist %}
+                    <button
+                      type="button"
+                      class="button product-buy-button product-waitlist-button"
+                    >
+                      <svg class="button-border">
+                        <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="6" />
+                      </svg>
+                      <span class="product-form-submit-text"> Join the waitlist </span>
+                    </button>
+                  {% else %}
+                    <button
+                      type="submit"
+                      name="add"
+                      class="button product-buy-button product-form-submit"
+                      {% if product.selected_or_first_available_variant.available == false %}
+                        disabled
+                      {% endif %}
+                    >
+                      <svg class="button-border">
+                        <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="6" />
+                      </svg>
+                      <span class="product-form-submit-text">
+                        {%- if product.selected_or_first_available_variant.available -%}
+                          {% if product.metafields.custom.preorder %}
+                            Pre-order
+                          {% else %}
+                            Add to cart
+                          {% endif %}
+                        {%- else -%}
+                          Sold out
+                        {%- endif -%}
+                      </span>
+                      <div class="loading-overlay__spinner hidden"></div>
+                      <span class="product-price" id="price-{{ section.id }}">
+                        {%- unless product.metafields.custom.email_for_price -%}
+                          <span id="btn-price">{{- product.selected_or_first_available_variant.price | money_without_trailing_zeros -}}</span>
+                          <del id="btn-compare" style="display:none;margin-left:0.3em;opacity:0.5">
+                            {{- product.selected_or_first_available_variant.price | money_without_trailing_zeros -}}
+                          </del>
+                        {%- endunless -%}
+                      </span>
+                    </button>
+                  {% endif %}
+                </div>
+
+                {%- if product.selling_plan_groups.size > 0 and product.metafields.custom.waitlist == blank -%}
+                  {%- assign savings = original_price | minus: sub_price -%}
+                  <div class="product-purchase-type" id="purchase-type-toggle">
+                    <label class="purchase-option purchase-option--onetime" data-selected>
+                      <input type="radio" name="purchase_type" value="onetime" checked>
+                      <span class="purchase-option-label">One-time</span>
+                      <span class="purchase-option-price">{{ original_price | money_without_trailing_zeros }}</span>
+                    </label>
+                    <label class="purchase-option purchase-option--sub">
+                      <input type="radio" name="purchase_type" value="subscription">
+                      <span class="purchase-option-label">Subscribe &middot; Save 20%</span>
+                      <span class="purchase-option-price">{{ sub_price | money_without_trailing_zeros }}</span>
+                      <span class="purchase-option-detail">Every 12 weeks &middot; Cancel anytime</span>
+                    </label>
+                  </div>
+                  <script>
+                    (function(){
+                      var toggle = document.getElementById('purchase-type-toggle');
+                      if(!toggle) return;
+                      var radios = toggle.querySelectorAll('input[type=radio]');
+                      var sellingPlanInput = document.querySelector('[name=selling_plan]');
+                      var btnPrice = document.getElementById('btn-price');
+                      var btnCompare = document.getElementById('btn-compare');
+                      var bundleSavings = document.getElementById('bundle-savings-{{ section.id }}');
+                      var bundleLineOnetime = {{ bundle_savings_onetime_line | strip | json }};
+                      var bundleLineSub = {{ bundle_savings_sub_line | strip | json }};
+                      radios.forEach(function(radio){
+                        radio.addEventListener('change', function(){
+                          toggle.querySelectorAll('.purchase-option').forEach(function(opt){
+                            opt.removeAttribute('data-selected');
+                          });
+                          this.closest('.purchase-option').setAttribute('data-selected','');
+                          if(this.value === 'subscription'){
+                            if(sellingPlanInput) sellingPlanInput.value = '{{ selling_plan.id }}';
+                            if(btnPrice) btnPrice.innerHTML = '{{ sub_price | money_without_trailing_zeros }}';
+                            if(btnCompare) btnCompare.style.display = 'inline';
+                            if(bundleSavings && bundleLineSub) bundleSavings.textContent = bundleLineSub;
+                          } else {
+                            if(sellingPlanInput) sellingPlanInput.value = '';
+                            if(btnPrice) btnPrice.innerHTML = '{{ original_price | money_without_trailing_zeros }}';
+                            if(btnCompare) btnCompare.style.display = 'none';
+                            if(bundleSavings && bundleLineOnetime) bundleSavings.textContent = bundleLineOnetime;
+                          }
+                        });
+                      });
+                    })();
+                  </script>
+                {%- endif -%}
+
+              {%- endform -%}
+
+              {%- comment -%} Hide any old or app-injected selling plan UI {%- endcomment -%}
+              <style>
+                .shopify-subscription-widget,
+                [id*="shopify-subscription"],
+                .selling-plan-widget,
+                shopify-selling-plan-widget,
+                .shopify-app-block [data-shopify-selling-plan],
+                .product-selling-plan {
+                  display: none !important;
+                }
+              </style>
+
+              {%- comment -%} Trust stack + price-per-day {%- endcomment -%}
+              {%- if product.type == 'Supplement Chew' -%}
+                <p class="product-per-day">Less than {{ product.price | divided_by: 30 | money_without_trailing_zeros }} per day &middot; 30-day supply</p>
+              {%- endif -%}
+              <div class="product-trust-stack">
+                {%- if product.type == 'Supplement Chew' -%}
+                  <p>Vet-formulated &middot; USDA certified &middot; Made in Los Angeles</p>
+                  <p>30-day guarantee &middot; Free shipping over $100</p>
+                {%- else -%}
+                  <p>Made in Los Angeles &middot; 30-day guarantee</p>
+                  <p>Free shipping over $100</p>
+                {%- endif -%}
+              </div>
+
+              {%- if product.type == 'Supplement Chew' -%}
+                <div class="product-why-different">
+                  <p class="product-why-different-title">Approach</p>
+                  <ul>
+                    <li>No fillers, binders, or artificial flavoring</li>
+                    <li>Produced in small batches in Los Angeles</li>
+                    <li>Each ingredient sourced and tested individually</li>
+                    <li>Formulated for function, not marketing</li>
+                  </ul>
+                </div>
+                <div class="product-why-different">
+                  <p class="product-why-different-title">What to expect</p>
+                  <ul>
+                    <li>This is not an instant fix</li>
+                    <li>Visible improvement typically within 2–4 weeks</li>
+                    <li>Consistency is required for meaningful results</li>
+                    <li>Effects compound with continued daily use</li>
+                  </ul>
+                </div>
+                <div class="product-why-different">
+                  <p class="product-why-different-title">What we don't include</p>
+                  <ul>
+                    <li>No artificial flavors or colors</li>
+                    <li>No grain-based fillers</li>
+                    <li>No synthetic preservatives</li>
+                    <li>No ingredients without a functional purpose</li>
+                  </ul>
+                </div>
+                <div class="product-why-different">
+                  <p class="product-why-different-title">Why this exists</p>
+                  <p class="product-why-different-text">Most supplement brands optimize for shelf price and label claims. We saw dogs with real issues being given products full of fillers and underdosed ingredients. MAYA exists because we believe the standard should be higher — and that the difference should be measurable.</p>
+                </div>
+                <p class="product-usage-signal">Used daily by owners managing allergies, digestion, and joint health.</p>
+              {%- endif -%}
+
+              {%- if product.handle == 'complete-wellness-stack' -%}
+                <div class="product-bundle-info">
+                  <div class="product-why-different">
+                    <p class="product-why-different-title">Four supplements. One routine.</p>
+                    <p class="product-why-different-text">The Complete Wellness Stack covers allergy, digestion, joint, and skin & coat support. Each formula addresses a specific condition. No overlap. No filler.</p>
+                  </div>
+                  <div class="product-why-different">
+                    <p class="product-why-different-title">What's included</p>
+                    <ul>
+                      <li>Allergy — seasonal scratching, red skin, hot spots</li>
+                      <li>Digestive Care — gas, bloating, loose stool</li>
+                      <li>Joint Care — stiffness, reluctance to jump</li>
+                      <li>Skin & Coat — shedding, dry skin, dull coat</li>
+                    </ul>
+                  </div>
+                  <div class="product-why-different">
+                    <p class="product-why-different-title">Why the stack</p>
+                    <p class="product-why-different-text">Most dogs benefit from more than one formula. Allergy and skin issues overlap. Digestion affects coat health. Joint support matters before you see the limp. The stack covers the full picture.</p>
+                  </div>
+                  <div class="product-why-different">
+                    <p class="product-why-different-title">Stack savings</p>
+                    <p class="product-why-different-text">One-time {{ stack_onetime_cents | money_without_trailing_zeros }} for all four (save {{ stack_save_onetime_cents | money_without_trailing_zeros }} vs {{ stack_individual_sum_cents | money_without_trailing_zeros }} individually){% if product.selling_plan_groups.size > 0 %}, or {{ stack_sub_cents | money_without_trailing_zeros }} on subscribe &amp; save (save {{ stack_save_sub_cents | money_without_trailing_zeros }}){% endif %}. Each supplement is a full 30-day supply.</p>
+                  </div>
+                  <div class="product-why-different">
+                    <p class="product-why-different-title">Approach</p>
+                    <ul>
+                      <li>No fillers, binders, or artificial flavoring</li>
+                      <li>Produced in small batches in Los Angeles</li>
+                      <li>Each ingredient sourced and tested individually</li>
+                      <li>Vet-formulated. USDA certified.</li>
+                    </ul>
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+          </product-form>
+
+          <div class="product-info">
+            <div class="product-info-accordion">
+              {% if details != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Details</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ details }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if sizing != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Sizing</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <div class="product-info-value-inner-2">{{ sizing }}</div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if dimensions != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Dimensions</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ dimensions }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if materials != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Materials</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <div class="product-info-value-inner-2">{{ materials }}</div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if ingredients != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Ingredients</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ ingredients }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if how_to_use != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">How to use</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ how_to_use }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if care != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Care</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <div class="product-info-value-inner-2">{{ care }}</div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if sustainability != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Impact</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ sustainability }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+              {% if shipping_returns != blank %}
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Shipping & returns</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">{{ shipping_returns }}</p>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
+            </div>
+            <div class="product-info-tabs-wrapper">
+              <div class="product-info-tabs">
+                {% if details != blank %}
+                  <h3 class="product-info-tab">Details</h3>
+                {% endif %}
+                {% if sizing != blank %}
+                  <h3 class="product-info-tab">Sizing</h3>
+                {% endif %}
+                {% if dimensions != blank %}
+                  <h3 class="product-info-tab">Dimensions</h3>
+                {% endif %}
+                {% if materials != blank %}
+                  <h3 class="product-info-tab">Materials</h3>
+                {% endif %}
+                {% if ingredients != blank %}
+                  <h3 class="product-info-tab">Ingredients</h3>
+                {% endif %}
+                {% if how_to_use != blank %}
+                  <h3 class="product-info-tab">How to use</h3>
+                {% endif %}
+                {% if care != blank %}
+                  <h3 class="product-info-tab">Care</h3>
+                {% endif %}
+                {% if sustainability != blank %}
+                  <h3 class="product-info-tab">Impact</h3>
+                {% endif %}
+                {% if shipping_returns != blank %}
+                  <h3 class="product-info-tab">Shipping & returns</h3>
+                {% endif %}
+              </div>
+              <div class="product-info-panes">
+                {% if details != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ details }}</p>
+                  </div>
+                {% endif %}
+                {% if sizing != blank %}
+                  <div class="product-info-pane">
+                    <div>{{ sizing }}</div>
+                  </div>
+                {% endif %}
+                {% if dimensions != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ dimensions }}</p>
+                  </div>
+                {% endif %}
+                {% if materials != blank %}
+                  <div class="product-info-pane">
+                    <div>{{ materials }}</div>
+                  </div>
+                {% endif %}
+                {% if ingredients != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ ingredients }}</p>
+                  </div>
+                {% endif %}
+                {% if how_to_use != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ how_to_use }}</p>
+                  </div>
+                {% endif %}
+                {% if care != blank %}
+                  <div class="product-info-pane">
+                    <div>{{ care }}</div>
+                  </div>
+                {% endif %}
+                {% if sustainability != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ sustainability }}</p>
+                  </div>
+                {% endif %}
+                {% if shipping_returns != blank %}
+                  <div class="product-info-pane">
+                    <p>{{ shipping_returns }}</p>
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% if badges %}
+            <ul class="product-badges">
+              {% for badge in badges.value %}
+                <li class="product-badge">
+                  <svg viewBox="0 0 14 10">
+                    <path  d="M13.443 1.442 5.5 9.383.559 4.442l.883-.884 4.059 4.058L12.559.558l.884.883Z" />
+                  </svg>
+                  {{ badge }}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {%- if product.type == 'Supplement Chew' -%}
+            <div class="product-faq">
+              <div class="product-info-accordion">
+                <div class="product-info-row">
+                  <h3 class="product-info-title">How long before I see results?</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">Most dogs show improvement within 2-4 weeks of daily use. Results vary by dog and condition severity.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product-info-row">
+                  <h3 class="product-info-title">Is it safe for daily use?</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">Yes. Formulated for daily use with natural, vet-grade ingredients. Safe for all breeds and sizes.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="product-info-row">
+                  <h3 class="product-info-title">What size dog is this for?</h3>
+                  <div class="product-info-value">
+                    <div class="product-info-value-inner">
+                      <p class="product-info-value-inner-2">Suitable for all breeds and sizes. Adjust serving based on your dog's weight. See packaging for dosing guide.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% render 'recommended-products' %}
+
+  {%- if product.type == 'Supplement Chew' -%}
+    <div class="product-seo-content" style="padding: 3rem var(--side-padding); max-width: 48rem;">
+      <div class="product-info-accordion">
+        <div class="product-info-row">
+          <h3 class="product-info-title">Who is this for?</h3>
+          <div class="product-info-value">
+            <div class="product-info-value-inner">
+              <p class="product-info-value-inner-2">Designed for dogs of all breeds and sizes. Whether your dog is a puppy or a senior, our vet-formulated supplements support long-term wellness. Adjust serving size based on weight.</p>
+            </div>
+          </div>
+        </div>
+        <div class="product-info-row">
+          <h3 class="product-info-title">Why MAYA supplements cost more</h3>
+          <div class="product-info-value">
+            <div class="product-info-value-inner">
+              <p class="product-info-value-inner-2">We use only natural, vet-grade ingredients sourced responsibly. No fillers, no artificial flavors, no cheap substitutes. Every batch is USDA certified, vegan, and made in the USA. This is what real quality costs.</p>
+            </div>
+          </div>
+        </div>
+        <div class="product-info-row">
+          <h3 class="product-info-title">Complete your dog's wellness</h3>
+          <div class="product-info-value">
+            <div class="product-info-value-inner">
+              <p class="product-info-value-inner-2">For comprehensive coverage, try the <a href="/products/complete-wellness-stack" style="text-decoration:underline">Complete Wellness Stack</a> — all four supplements at {% if wellness_stack_product and wellness_stack_product.selected_or_first_available_variant %}{{ wellness_stack_product.selected_or_first_available_variant.price | money_without_trailing_zeros }}{% else %}our bundle price{% endif %} ({{ stack_individual_sum_cents | money_without_trailing_zeros }} combined if purchased individually). Or explore our <a href="/collections/wellness" style="text-decoration:underline">full wellness collection</a>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Product",
+      "name": {{ product.title | json }},
+      "url": {{ request.origin | append: product.url | json }},
+      "description": {{ product.description | strip_html | json }},
+      {% if product.selected_or_first_available_variant.sku != blank -%}
+        "sku": {{ product.selected_or_first_available_variant.sku | json }},
+      {%- endif %}
+      "brand": {
+        "@type": "Brand",
+        "name": {{ product.vendor | json }}
+      },
+      "offers": [
+        {%- for variant in product.variants -%}
+          {
+            "@type" : "Offer",
+            {%- if variant.sku != blank -%}
+              "sku": {{ variant.sku | json }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 12 -%}
+              "gtin12": {{ variant.barcode }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 13 -%}
+              "gtin13": {{ variant.barcode }},
+            {%- endif -%}
+            {%- if variant.barcode.size == 14 -%}
+              "gtin14": {{ variant.barcode }},
+            {%- endif -%}
+            "availability" : "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+            "price" : {{ variant.price | divided_by: 100.00 | json }},
+            "priceCurrency" : {{ cart.currency.iso_code | json }},
+            "url" : {{ request.origin | append: variant.url | json }}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+</article>
+
+{% if product.metafields.custom.waitlist %}
+  <div class="product-waitlist-popup">
+    <div class="product-waitlist-popup-overlay"></div>
+    <div class="product-waitlist-popup-container">
+      <div class="product-waitlist-popup-header">
+        <h2 class="product-waitlist-popup-title">Join the waitlist</h2>
+        <button class="product-waitlist-popup-close">(Close)</button>
+      </div>
+      <p class="product-waitlist-popup-desc">
+        Register your email address below to receive a notification as soon as the Maya Brush One is available.
+      </p>
+      <form
+        class="product-waitlist-popup-form"
+        action="https://officeofmaya.us22.list-manage.com/subscribe/post-json?u=30fbe462ad0fc59a89b1a06a6&id=be9eec8269&f_id=0097cfe1f0"
+        data-action-newsletter="http://officeofmaya.us22.list-manage.com/subscribe/post-json?u=30fbe462ad0fc59a89b1a06a6&id=0c6bb8e4ec&f_id=0096cfe1f0"
+        accept-charset="UTF-8"
+        method="get"
+      >
+        <input class="product-waitlist-popup-input" type="email" name="EMAIL" placeholder="Email address" required>
+        <label class="product-waitlist-popup-agree">
+          <input class="product-waitlist-popup-agree-checkbox" type="checkbox">
+          <span class="product-waitlist-popup-agree-control">
+            <svg viewBox="0 0 9 6">
+              <path d="m1.25 2.48 2.513 2.513L8.25.506" />
+            </svg>
+          </span>
+          <span>I agree to receive Maya updates</span>
+        </label>
+        <button
+          type="submit"
+          class="button product-waitlist-popup-button"
+        >
+          <svg class="button-border">
+            <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="6" />
+          </svg>
+          <span class="product-form-submit-text">Join the waitlist</span>
+        </button>
+      </form>
+      <p class="product-waitlist-popup-terms">
+        By joining the waitlist you accept our <a href="/pages/terms-of-service" target="_blank">Terms</a>.
+      </p>
+    </div>
+  </div>
+{% endif %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.product-info-value-inner-2, .product-description').forEach(function(el) {
+      el.innerHTML = el.innerHTML
+        .replace(/WHY IT COSTS MORE/gi, 'MADE IN LOS ANGELES')
+        .replace(/Why It Costs More/gi, 'Made in Los Angeles');
+    });
+  });
+</script>
+
+<style>
+  .product-form-details {
+    order: 1 !important;
+    margin-bottom: 0.5rem;
+  }
+  .product-form-buttons {
+    order: 2 !important;
+    margin-bottom: 0.5rem;
+  }
+  .product-purchase-type {
+    order: 3 !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 0.25rem;
+    margin-bottom: 2.5rem;
+  }
+  .purchase-option {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0;
+    cursor: pointer;
+    padding: 0.6rem 0.75rem !important;
+    opacity: 0.35;
+    transition: opacity 0.25s ease, border-color 0.25s ease;
+    border: 1.5px dashed rgba(0,0,0,0.15) !important;
+    border-radius: 8px !important;
+    margin-bottom: 0.35rem;
+  }
+  .purchase-option[data-selected] {
+    opacity: 0.65;
+    border-color: rgba(0,0,0,0.4) !important;
+  }
+  .purchase-option:hover {
+    opacity: 0.55;
+    border-color: rgba(0,0,0,0.3) !important;
+  }
+  /* Override Shopify Subscriptions app styling */
+  .shopify-subscription-widget,
+  [data-shopify-selling-plan-app] {
+    display: none !important;
+  }
+  /* Force rounded corners on ALL dotted-border elements sitewide */
+  .button-border rect {
+    rx: 8 !important;
+  }
+  .purchase-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .purchase-option-label {
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+  }
+  .purchase-option-price {
+    font-size: 0.7em;
+    letter-spacing: 0.04em;
+  }
+  .purchase-option-detail {
+    width: 100%;
+    font-size: 0.6em;
+    opacity: 0.6;
+    letter-spacing: 0.04em;
+    margin-top: 0.15rem;
+  }
+  .product-faq {
+    margin-top: 1.4285714285714286rem;
+    padding-top: 1.4285714285714286rem;
+  }
+  .product-trust-stack {
+    margin-top: 0;
+    padding-top: 0;
+    font-size: 0.75em;
+    opacity: 0.45;
+    line-height: 1.5;
+    letter-spacing: 0.06em;
+  }
+  .product-trust-stack p {
+    margin: 0;
+  }
+  .product-seo-content {
+    border-top: none;
+  }
+  .product-seo-content .product-info-accordion {
+    max-width: 48rem;
+  }
+  .product-why-different {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    background: linear-gradient(to right, #000 50%, transparent 50%) top;
+    background-size: 4px 1px;
+    background-repeat: repeat-x;
+  }
+  .product-why-different-title {
+    font-size: 0.75em;
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+    margin-bottom: 0.4rem;
+  }
+  .product-why-different ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .product-why-different li {
+    font-size: 0.75em;
+    opacity: 0.5;
+    padding: 0.15rem 0;
+    letter-spacing: 0.04em;
+  }
+  .product-why-different li::before {
+    content: "— ";
+    opacity: 0.4;
+  }
+  .product-why-different-text {
+    font-size: 0.75em;
+    opacity: 0.5;
+    line-height: 1.6;
+    letter-spacing: 0.03em;
+  }
+  .product-per-day {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    font-size: 0.75em;
+    letter-spacing: 0.06em;
+    opacity: 0.5;
+  }
+  .product-usage-signal {
+    margin-top: 1rem;
+    font-size: 0.7em;
+    opacity: 0.35;
+    letter-spacing: 0.04em;
+    font-style: italic;
+  }
+  /* Bundle image grid */
+  .bundle-image-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(0,0,0,0.06);
+    height: 100%;
+    min-height: 50vh;
+    position: sticky;
+    top: 0;
+  }
+  .bundle-image-item {
+    background: var(--bg, #fdfbf7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.3s;
+  }
+  .bundle-image-item:hover {
+    background: rgba(0,0,0,0.02);
+  }
+  .bundle-image-item img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    max-height: 28vh;
+  }
+  .bundle-image-label {
+    display: block;
+    font-size: 0.65em;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+  @media (max-width: 768px) {
+    .bundle-image-grid {
+      min-height: auto;
+      position: relative;
+    }
+    .bundle-image-item img {
+      max-height: 20vh;
+    }
+  }
+  /* No-image product layout (gift card, etc) */
+  .product-columns--no-images {
+    display: block !important;
+  }
+  .product-columns--no-images .product-column {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem var(--side-padding);
+    text-align: center;
+  }
+  .product-columns--no-images .product-column-inner {
+    position: relative !important;
+  }
+  .product-columns--no-images .product-form-buttons {
+    max-width: 28rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .product-columns--no-images .product-trust-stack,
+  .product-columns--no-images .product-why-different,
+  .product-columns--no-images .product-per-day {
+    text-align: center;
+  }
+  /* Bundle includes block */
+  .bundle-includes {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .bundle-includes-title {
+    font-size: 0.7em;
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+    margin-bottom: 0.75rem;
+  }
+  .bundle-includes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .bundle-includes-cell {
+    position: relative;
+    min-height: 0;
+  }
+  .bundle-includes-item {
+    display: block;
+    height: 100%;
+    padding: 0.75rem;
+    border: 1px dotted rgba(0,0,0,0.12);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s;
+  }
+  .bundle-includes-item:hover {
+    background: rgba(0,0,0,0.02);
+  }
+  .bundle-includes-hover-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(1rem, 4vw, 2.5rem);
+    background: rgba(253, 251, 247, 0.94);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+    pointer-events: none;
+  }
+  .bundle-includes-hover-lightbox__inner {
+    max-width: min(28rem, 92vw);
+    max-height: min(85vh, 36rem);
+    padding: 1rem;
+    background: #fff;
+    border: 1px dotted rgba(0,0,0,0.12);
+    box-shadow: 0 28px 90px rgba(0,0,0,0.1);
+  }
+  .bundle-includes-hover-lightbox__inner img {
+    width: 100%;
+    height: auto;
+    max-height: min(78vh, 32rem);
+    object-fit: contain;
+    display: block;
+    vertical-align: middle;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .bundle-includes-cell:hover .bundle-includes-hover-lightbox {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+  @media (hover: none), (pointer: coarse) {
+    .bundle-includes-hover-lightbox {
+      display: none !important;
+    }
+  }
+  .bundle-includes-item-name {
+    display: block;
+    font-size: 0.75em;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.2rem;
+  }
+  .bundle-includes-item-concern {
+    display: block;
+    font-size: 0.6em;
+    letter-spacing: 0.03em;
+    opacity: 0.4;
+  }
+  .bundle-includes-item-price {
+    display: block;
+    font-size: 0.6em;
+    letter-spacing: 0.04em;
+    opacity: 0.35;
+    margin-top: 0.3rem;
+  }
+  .bundle-savings {
+    margin-top: 0.5rem;
+    font-size: 0.7em;
+    letter-spacing: 0.06em;
+    opacity: 0.5;
+    text-align: center;
+    padding: 0.5rem;
+    background: rgba(0,0,0,0.02);
+    border: 1px dotted rgba(0,0,0,0.1);
+    border-radius: 8px;
+  }
+</style>

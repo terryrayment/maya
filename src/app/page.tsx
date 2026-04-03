@@ -1,6 +1,6 @@
 import Link from "next/link";
-import Image from "next/image";
-import { getAllProducts, formatPrice, type ShopifyProduct } from "@/lib/shopify";
+import { getAllProducts } from "@/lib/shopify";
+import { pickPrimaryProductImage } from "@/lib/product-images";
 import { ProductGrid } from "@/components/product-grid";
 import { EmailCapture } from "@/components/email-capture";
 import { ProductSlider } from "@/components/product-slider";
@@ -33,12 +33,10 @@ export default async function HomePage() {
   const wellnessProducts =
     supplements.length > 0 ? supplements.slice(0, 4) : products.slice(0, 4);
 
-  const featuredImage = featuredProduct?.images.edges[0]?.node;
-
   // Build product image map for slider
   const productImages: Record<string, string> = {};
   for (const p of products) {
-    const img = p.images.edges[0]?.node?.url;
+    const img = pickPrimaryProductImage(p.images.edges.map((e) => e.node))?.url;
     if (!img) continue;
     const h = p.handle.toLowerCase();
     const t = p.title.toLowerCase();
@@ -46,7 +44,7 @@ export default async function HomePage() {
     if (h.includes("gift") || t.includes("gift")) productImages["gift card"] = img;
   }
   for (const p of products) {
-    const img = p.images.edges[0]?.node?.url;
+    const img = pickPrimaryProductImage(p.images.edges.map((e) => e.node))?.url;
     if (!img) continue;
     if (
       p.productType?.toLowerCase().includes("supplement") ||

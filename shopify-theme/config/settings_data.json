@@ -1,0 +1,160 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "checkout_input_background_color_mode": "white",
+    "checkout_sidebar_background_color": "#f5f5f5",
+    "sections": {
+      "header": {
+        "type": "header",
+        "custom_css": [],
+        "settings": {
+          "menu_image_mobile": "shopify://shop_images/Violet-786x1318.jpg",
+          "menu_image_shop": "shopify://shop_images/Dog-Hover-2.jpg",
+          "menu_image_about": "shopify://shop_images/Dog-Hover-4_10cd6898-a099-42a4-a463-6b74775e3879.jpg"
+        }
+      },
+      "camera-roll": {
+        "type": "camera-roll",
+        "blocks": {
+          "77d8a344-ade7-40b5-a23a-74d0c4f6ecd5": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-6.jpg"
+            }
+          },
+          "9f525d12-64a3-4680-a7cc-4ca8b9a8d708": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-8.jpg"
+            }
+          },
+          "560056a9-0820-431f-a571-ca6ae9043bef": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-5.jpg"
+            }
+          },
+          "767a2db0-e81e-4afa-a851-7fc274061190": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-10.jpg"
+            }
+          },
+          "7d8e2c5e-18b7-48d7-b9a0-c69321f31403": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-9_81c0a9b2-6538-4646-80d7-3b02d4ca47a1.jpg"
+            }
+          },
+          "8668ee53-d530-409e-b184-cabe019424c1": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-1.jpg"
+            }
+          },
+          "2348d774-1917-432c-a505-24a5bc9a517b": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-14.jpg"
+            }
+          },
+          "f9f9ac7b-a818-42db-a17c-6030a27e5bc3": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-12.jpg"
+            }
+          },
+          "slide_ecnbVL": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-11.jpg"
+            }
+          },
+          "da4a2e72-41bf-41dd-b817-9b7d035f5bd0": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-3.jpg"
+            }
+          },
+          "a3dc01fc-f92d-4098-8ca8-79ea0c7156cb": {
+            "type": "slide",
+            "settings": {
+              "slide_image": "shopify://shop_images/Maya-Dog-Footer-4.jpg"
+            }
+          }
+        },
+        "block_order": [
+          "77d8a344-ade7-40b5-a23a-74d0c4f6ecd5",
+          "9f525d12-64a3-4680-a7cc-4ca8b9a8d708",
+          "560056a9-0820-431f-a571-ca6ae9043bef",
+          "767a2db0-e81e-4afa-a851-7fc274061190",
+          "7d8e2c5e-18b7-48d7-b9a0-c69321f31403",
+          "8668ee53-d530-409e-b184-cabe019424c1",
+          "2348d774-1917-432c-a505-24a5bc9a517b",
+          "f9f9ac7b-a818-42db-a17c-6030a27e5bc3",
+          "slide_ecnbVL",
+          "da4a2e72-41bf-41dd-b817-9b7d035f5bd0",
+          "a3dc01fc-f92d-4098-8ca8-79ea0c7156cb"
+        ],
+        "settings": {}
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "footer_text": "All furs ∙ Todos pieles"
+        }
+      },
+      "main-cart-items": {
+        "type": "main-cart-items",
+        "settings": {}
+      },
+      "main-cart-footer": {
+        "type": "main-cart-footer",
+        "settings": {}
+      },
+      "announcement-banner": {
+        "type": "announcement-banner",
+        "blocks": {
+          "banner_E3pejJ": {
+            "type": "banner",
+            "settings": {
+              "text": "Sign up for 10% off your first order",
+              "url": "#newsletter"
+            }
+          },
+          "banner_4NDe8N": {
+            "type": "banner",
+            "settings": {
+              "text": "Free shipping on orders over $100",
+              "url": ""
+            }
+          }
+        },
+        "block_order": [
+          "banner_E3pejJ",
+          "banner_4NDe8N"
+        ],
+        "settings": {}
+      }
+    },
+    "content_for_index": [],
+    "blocks": {
+      "6614979280454233053": {
+        "type": "shopify://apps/preorder-now-pre-order-pq/blocks/app-embed/551fab2c-3af6-4a8f-ba21-736a71cb4540",
+        "disabled": false,
+        "settings": {}
+      }
+    }
+  },
+  "presets": {
+    "Default": {}
+  }
+}

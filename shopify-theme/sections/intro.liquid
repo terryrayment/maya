@@ -1,0 +1,73 @@
+<div class="intro-inner">
+  <h2 class="intro-title" style="opacity: 0">Click to enter</h2>
+  <div class="intro-swiper swiper">
+    <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="intro-slide swiper-slide">
+          {% assign image = block.settings.image %}
+          {% assign image_mobile = block.settings.image_mobile %}
+          <img
+            class="intro-image {% if image_mobile %}hidden-mobile{% endif %}"
+            style="opacity: 0"
+            width="{{ image.width }}"
+            height="{{ image.height }}"
+            srcset="{{ image | image_url: width: 1000 }} 1000w, {{ image | image_url: width: 1200 }} 1200w, {{ image | image_url: width: 1400 }} 1400w, {{ image | image_url: width: 1800 }} 1800w, {{ image | image_url: width: 2200 }} 2200w"
+            sizes="100vw"
+            src="{{ image | image_url: width: 1000 }}"
+            alt="{{ image.alt | escape }}"
+            loading="eager"
+            fetchpriority="high"
+            onload="javascript:document.querySelector('.intro').classList.add('-img-loaded')"
+          >
+          {% if image_mobile %}
+            <img
+              class="intro-image hidden-desktop"
+              style="opacity: 0"
+              width="{{ image_mobile.width }}"
+              height="{{ image_mobile.height }}"
+              srcset="{{ image_mobile | image_url: width: 1000 }} 1000w, {{ image_mobile | image_url: width: 1200 }} 1200w, {{ image_mobile | image_url: width: 1400 }} 1400w, {{ image_mobile | image_url: width: 1800 }} 1800w, {{ image_mobile | image_url: width: 2200 }} 2200w"
+              sizes="100vw"
+              src="{{ image_mobile | image_url: width: 1000 }}"
+              alt="{{ image_mobile.alt | escape }}"
+              loading="eager"
+              fetchpriority="high"
+              onload="javascript:document.querySelector('.intro').classList.add('-img-loaded')"
+            >
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <svg class="intro-logo" style="opacity: 0" viewBox="0 0 1622 495">
+    <path d="M181.737 375.744H176.033L81.914 0H0.629883V494.248H59.0974L57.6714 106.943H61.9495L158.92 494.248H195.997L292.968 106.943H297.246L295.82 494.248H354.287V0H275.855L181.737 375.744Z"/>
+    <path d="M613.089 0L436.261 494.248H507.563L553.196 356.254H741.433L787.066 494.248H858.368L684.391 0H613.089ZM572.467 297.705L645.888 75.1488H648.74L722.162 297.705H572.428H572.467Z"/>
+    <path d="M1155.71 0L1033.07 231.969H1027.37L913.287 0H836.281L993.839 289.737V494.248H1063.71V289.737L1227.02 0H1155.71Z"/>
+    <path d="M1447.39 0H1376.09L1199.26 494.248H1270.57L1316.2 356.254H1504.44L1550.07 494.248H1621.37L1447.39 0ZM1335.43 297.705L1408.85 75.1488H1411.7L1485.13 297.705H1335.39H1335.43Z"/>
+  </svg>
+</div>
+
+{% schema %}
+{
+  "name": "Intro",
+  "tag": "div",
+  "class": "intro",
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image (desktop)"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Image (mobile)"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

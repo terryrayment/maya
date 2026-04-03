@@ -1,0 +1,20 @@
+{%- comment -%} Param: product — apparel-showcase card {%- endcomment -%}
+<a href="{{ product.url }}" class="apparel-showcase-item">
+  <div class="apparel-showcase-img">
+    {%- if product.handle == 'crewneck' -%}
+      <img src="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Product_4.jpg?width=800" alt="MAYA Crew lifestyle" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+    {%- elsif product.handle == 'short-sleeve-tee' -%}
+      <img src="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Product_2.jpg?width=800" alt="MAYA T Shirt lifestyle" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+    {%- elsif product.handle == 'crazy-dog-cap' -%}
+      <img src="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Product_3.jpg?width=800" alt="Crazy Dog Hat lifestyle" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+    {%- elsif product.handle == 'maya-ls-shirt' or product.title contains 'LS' or product.title contains 'Long Sleeve' -%}
+      <img src="https://cdn.shopify.com/s/files/1/0759/9515/2693/files/Maya_Product_5.jpg?width=800" alt="MAYA LS Shirt lifestyle" loading="lazy" style="width:100%;height:100%;object-fit:cover;">
+    {%- else -%}
+      {{ product.featured_image | image_url: width: 800 | image_tag: loading: 'lazy' }}
+    {%- endif -%}
+  </div>
+  <div class="apparel-showcase-info">
+    <span class="apparel-showcase-name">{{ product.title }}</span>
+    <span class="apparel-showcase-price">{{ product.price | money_without_trailing_zeros }}</span>
+  </div>
+</a>

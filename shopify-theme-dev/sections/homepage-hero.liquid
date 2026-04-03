@@ -1,0 +1,222 @@
+{%- comment -%}
+  Homepage hero — video background with image fallback.
+{%- endcomment -%}
+
+<div class="hero">
+  <div class="hero-bg">
+    {%- if section.settings.image -%}
+      <img
+        class="hero-bg-img"
+        src="{{ section.settings.image | image_url: width: 1920 }}"
+        alt="MAYA"
+        loading="eager"
+        fetchpriority="high"
+      >
+    {%- else -%}
+      <div class="hero-bg-img" style="background:#1a1a1a"></div>
+    {%- endif -%}
+    <video
+      class="hero-bg-video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster="{{ section.settings.image | image_url: width: 1920 }}"
+      style="opacity:0"
+    >
+      <source src="https://cdn.shopify.com/videos/c/o/v/870905b4bae74af0918f2de9773f1ddb.mp4" type="video/mp4">
+    </video>
+  </div>
+  <script>
+    // Fade in video once it starts playing
+    var heroVid = document.querySelector('.hero-bg-video');
+    if (heroVid) {
+      heroVid.addEventListener('canplay', function() {
+        heroVid.style.transition = 'opacity 1s ease';
+        heroVid.style.opacity = '1';
+      }, { once: true });
+    }
+  </script>
+  <div class="hero-content">
+    <p class="hero-label">Vet-formulated dog supplements</p>
+    <h1 class="hero-title">Built for the dog you'd do anything for.</h1>
+    <p class="hero-desc">Four targeted formulas for allergy, digestion, joints, and coat. Small batch. No fillers. Results in 2–4 weeks.</p>
+    <p class="hero-proof">Formulated by a veterinary nutritionist &middot; Trusted by thousands of dog owners across the US</p>
+    <div class="hero-actions">
+      <a href="/products/complete-wellness-stack" class="hero-cta hero-cta-primary">
+        Shop the stack — $199
+      </a>
+      <a href="/collections/wellness" class="hero-cta hero-cta-secondary">
+        Shop individually
+      </a>
+    </div>
+    <p class="hero-micro">Subscribe &amp; save 20% on every order &middot; Free shipping over $100</p>
+  </div>
+</div>
+
+<style>
+  .hero {
+    position: relative;
+    z-index: 10;
+    min-height: 85vh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: #111;
+  }
+  .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .hero-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.9);
+    z-index: 1;
+  }
+  .hero-bg-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 177.78vh;
+    height: 100vh;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%) scale(1.15);
+    z-index: 2;
+    pointer-events: none;
+    border: 0;
+    filter: brightness(0.95);
+  }
+  /* Only darken behind the text content area, not the whole video */
+  .hero-content {
+    position: relative;
+    z-index: 3;
+    padding: 3rem var(--side-padding);
+    padding-bottom: 4rem;
+    color: #fff;
+    max-width: 36rem;
+  }
+  .hero-content::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100vw;
+    height: 120%;
+    background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 40%, transparent 80%);
+    z-index: -1;
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 0.7em;
+    letter-spacing: 0.12em;
+    opacity: 0.6;
+    margin-bottom: 0.75rem;
+  }
+  .hero-title {
+    font-size: 1.6em;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.6rem;
+    line-height: 1.2;
+  }
+  .hero-desc {
+    font-size: 0.8em;
+    line-height: 1.6;
+    opacity: 0.7;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.03em;
+  }
+  .hero-proof {
+    font-size: 0.65em;
+    letter-spacing: 0.06em;
+    opacity: 0.45;
+    margin-bottom: 1.5rem;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .hero-cta {
+    display: inline-block;
+    position: relative;
+    padding: 0.714rem 1.4rem;
+    letter-spacing: 0.08em;
+    font-size: 0.8em;
+    text-decoration: none;
+    color: #fff;
+    transition: background 0.3s ease, transform 0.2s ease, letter-spacing 0.3s ease;
+  }
+  .hero-cta:hover {
+    background: rgba(255,255,255,0.2);
+    transform: translateY(-1px);
+    letter-spacing: 0.12em;
+  }
+  .hero-cta:active {
+    transform: translateY(0);
+  }
+  .hero-cta {
+    border: 1.5px dashed rgba(255,255,255,0.5);
+    border-radius: 8px;
+  }
+  .hero-cta-primary {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.6);
+  }
+  .hero-cta-primary:hover {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+  }
+  .hero-cta-secondary {
+    opacity: 0.7;
+    border-color: rgba(255,255,255,0.4);
+  }
+  .hero-cta-secondary:hover {
+    opacity: 1;
+    border-color: rgba(255,255,255,0.7);
+  }
+  .hero-micro {
+    font-size: 0.65em;
+    opacity: 0.4;
+    letter-spacing: 0.05em;
+  }
+  @media (min-width: 768px) {
+    .hero-title {
+      font-size: 2em;
+    }
+    .hero-content {
+      padding-bottom: 5rem;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Homepage Hero",
+  "tag": "section",
+  "class": "homepage-hero-section",
+  "settings": [
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Hero video"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Fallback image (shown while video loads)"
+    }
+  ]
+}
+{% endschema %}

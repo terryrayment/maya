@@ -1,0 +1,176 @@
+<div class="header-menu-toggle-wrapper">
+  <button class="header-menu-toggle">Menu</button>
+</div>
+
+<div class="header-logo-wrapper">
+  <h1>
+    <a href="/" aria-label="Maya">
+      <svg class="header-logo" fill="none" viewBox="0 0 60 19">
+        <text class="visually-hidden" font-size="0">Maya</text>
+        <path fill-rule="evenodd" d="M6.493 13.91h.212L10.189 0h2.903v18.297h-2.164l.053-14.338h-.159l-3.59 14.338H5.86L2.27 3.96h-.158l.052 14.338H0V0h3.01l3.483 13.91Zm9.634 4.387L22.673 0h2.64l6.44 18.297h-2.639l-1.69-5.108h-6.968l-1.69 5.108h-2.639Zm7.76-15.515-2.718 8.24h5.542l-2.718-8.24h-.105ZM53.56 0h-2.64l-6.546 18.297h2.64l1.689-5.108h6.968l1.69 5.108H60L53.56 0Zm-4.145 11.021 2.718-8.239h.106l2.718 8.24h-5.542ZM38.223 8.588 42.763 0h2.64l-6.046 10.726v7.571H36.77v-7.57L30.937 0h2.851l4.224 8.588h.21Z"/>
+      </svg>
+    </a>
+  </h1>
+</div>
+
+<ul class="header-menu">
+  {% for link in linklists['main-menu'].links %}
+    <li class="header-menu-item">
+      {%- if link.title == 'Shop' -%}
+        {% assign image = section.settings.menu_image_shop %}
+      {%- elsif link.title == 'About' -%}
+        {% assign image = section.settings.menu_image_about %}
+      {%- endif -%}
+      {%- if link.title == 'Shop' or link.title == 'About' -%}
+        <img
+          class="header-menu-bg"
+          width="{{ image.width }}"
+          height="{{ image.height }}"
+          src="{{ image | img_url: '200x' }}"
+          srcset="{{ image | img_url: '800x' }} 800w, {{ image | img_url: '900x' }} 900w, {{ image | img_url: '1000x' }} 1000w, {{ image | img_url: '1100x' }} 1100w, {{ image | img_url: '1200x' }} 1200w, {{ image | img_url: '1500x' }} 1500w, {{ image | img_url: '1800x' }} 1800w, {{ image | img_url: '2100x' }} 2100w, {{ image | img_url: '2400x' }} 2400w, {{ image | img_url: '2800x' }} 2800w"
+          sizes="100vw"
+          alt="{{ image.alt | escape }}"
+        >
+      {%- endif -%}
+      <div class="header-menu-item-inner">
+        <a
+          class="header-menu-link"
+          href="{{ link.url }}"
+          {% if link.active %}
+            aria-current="page"
+          {% endif %}
+        >
+          {{- link.title -}}
+        </a>
+        {%- if link.links != blank -%}
+          <ul class="header-submenu">
+            {%- for child_link in link.links -%}
+              <li>
+                <a
+                  class="header-submenu-link"
+                  href="{{ child_link.url }}"
+                  {% if child_link.active %}
+                    aria-current="page"
+                  {% endif %}
+                >
+                  {{ child_link.title }}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </div>
+    </li>
+  {% endfor %}
+  <li class="header-menu-item -cart">
+    <a class="header-menu-link mini-cart-toggle" href="/cart">
+      Cart
+      <span class="header-cart-count">
+        <svg class="button-border">
+          <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="99" />
+        </svg>
+        <span id="cart-icon-bubble">{{ cart.item_count }}</span>
+      </span>
+    </a>
+  </li>
+</ul>
+<div class="header-menu-overlay"></div>
+
+<div class="header-mobile-menu">
+  {% assign image = section.settings.menu_image_mobile %}
+  <img
+    class="header-mobile-menu-bg"
+    width="{{ image.width }}"
+    height="{{ image.height }}"
+    src="{{ image | img_url: '200x' }}"
+    srcset="{{ image | img_url: '800x' }} 800w, {{ image | img_url: '900x' }} 900w, {{ image | img_url: '1000x' }} 1000w, {{ image | img_url: '1100x' }} 1100w, {{ image | img_url: '1200x' }} 1200w, {{ image | img_url: '1500x' }} 1500w, {{ image | img_url: '1800x' }} 1800w, {{ image | img_url: '2100x' }} 2100w, {{ image | img_url: '2400x' }} 2400w, {{ image | img_url: '2800x' }} 2800w"
+    sizes="100vw"
+    alt="{{ image.alt | escape }}"
+  >
+  <div class="header-mobile-menu-inner">
+    <div class="header-mobile-menu-close-wrapper"><button class="header-mobile-menu-close">(Close)</button></div>
+    <ul class="header-mobile-menu-list">
+      {% for link in linklists['main-menu'].links %}
+        <li class="header-mobile-menu-item">
+          {%- if link.title == 'Shop' -%}
+            {% assign image = section.settings.menu_image_shop %}
+          {%- elsif link.title == 'About' -%}
+            {% assign image = section.settings.menu_image_about %}
+          {%- endif -%}
+          {%- if link.title == 'Shop' or link.title == 'About' -%}
+            <img
+              class="header-menu-bg"
+              width="{{ image.width }}"
+              height="{{ image.height }}"
+              src="{{ image | img_url: '200x' }}"
+              srcset="{{ image | img_url: '800x' }} 800w, {{ image | img_url: '900x' }} 900w, {{ image | img_url: '1000x' }} 1000w, {{ image | img_url: '1100x' }} 1100w, {{ image | img_url: '1200x' }} 1200w, {{ image | img_url: '1500x' }} 1500w, {{ image | img_url: '1800x' }} 1800w, {{ image | img_url: '2100x' }} 2100w, {{ image | img_url: '2400x' }} 2400w, {{ image | img_url: '2800x' }} 2800w"
+              sizes="100vw"
+              alt="{{ image.alt | escape }}"
+            >
+          {%- endif -%}
+          <a
+            class="header-mobile-menu-link"
+            href="{{ link.url }}"
+            {% if link.active %}
+              aria-current="page"
+            {% endif %}
+          >
+            {{- link.title -}}
+          </a>
+          {%- if link.links != blank -%}
+            <ul class="header-mobile-submenu">
+              {%- for child_link in link.links -%}
+                <li>
+                  <a
+                    class="header-mobile-submenu-link"
+                    href="{{ child_link.url }}"
+                    {% if child_link.active %}
+                      aria-current="page"
+                    {% endif %}
+                  >
+                    {{ child_link.title }}
+                  </a>
+                </li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+        </li>
+      {% endfor %}
+    </ul>
+    {% comment %}
+      <div>
+        <a href="/">
+          <svg class="header-mobile-menu-logo" fill="none" viewBox="0 0 60 19">
+            <text class="visually-hidden" font-size="0">Maya</text>
+            <path fill-rule="evenodd" d="M6.493 13.91h.212L10.189 0h2.903v18.297h-2.164l.053-14.338h-.159l-3.59 14.338H5.86L2.27 3.96h-.158l.052 14.338H0V0h3.01l3.483 13.91Zm9.634 4.387L22.673 0h2.64l6.44 18.297h-2.639l-1.69-5.108h-6.968l-1.69 5.108h-2.639Zm7.76-15.515-2.718 8.24h5.542l-2.718-8.24h-.105ZM53.56 0h-2.64l-6.546 18.297h2.64l1.689-5.108h6.968l1.69 5.108H60L53.56 0Zm-4.145 11.021 2.718-8.239h.106l2.718 8.24h-5.542ZM38.223 8.588 42.763 0h2.64l-6.046 10.726v7.571H36.77v-7.57L30.937 0h2.851l4.224 8.588h.21Z"/>
+          </svg>
+        </a>
+      </div>
+    {% endcomment %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "header",
+  "class": "header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "menu_image_mobile",
+      "label": "Menu image: Mobile"
+    },
+    {
+      "type": "image_picker",
+      "id": "menu_image_shop",
+      "label": "Menu image: Shop"
+    },
+    {
+      "type": "image_picker",
+      "id": "menu_image_about",
+      "label": "Menu image: About"
+    }
+  ]
+}
+{% endschema %}

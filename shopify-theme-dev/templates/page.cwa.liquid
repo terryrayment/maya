@@ -1,0 +1,112 @@
+<div class="page-cwa">
+  <div class="page-cwa-top">
+    <header class="page-cwa-header">
+      <div class="page-cwa-details">
+        <div class="page-cwa-details-column">
+          <div class="page-cwa-details-text">
+            {{ page.content }}
+          </div>
+        </div>
+        <div class="page-cwa-details-column">
+          <div class="page-cwa-details-column-header hidden-desktop">
+            <h3 class="page-cwa-details-title">Adoptions Now</h3>
+            <span class="page-cwa-details-close">Close</span>
+          </div>
+          <div class="page-cwa-details-swiper swiper">
+            <div class="page-cwa-details-swiper-wrapper swiper-wrapper">
+              {% assign adoptions = shop.metaobjects.adoptions %}
+              {% paginate adoptions.values by 50 %}
+                {% for adoption in adoptions.values %}
+                  {% assign image = adoption.image %}
+                  <a
+                    class="page-cwa-details-slide swiper-slide"
+                    href="{{ adoption.organization.value.url }}"
+                    target="_blank"
+                  >
+                    <div class="page-cwa-details-slide-columns">
+                      <div class="page-cwa-details-slide-column">
+                        <h2 class="page-cwa-details-title hidden-mobile">Adoptions Now</h2>
+                        <div class="page-cwa-details-text">
+                          {{ adoption.text | metafield_tag }}
+                        </div>
+                      </div>
+                      <div class="page-cwa-details-slide-column">
+                        <img
+                          width="{{ image.width }}"
+                          height="{{ image.height }}"
+                          class="page-cwa-details-image"
+                          src="{{ image | image_url: width: 200 }}"
+                          srcset="{{ image | image_url: width: 300 }} 300w, {{ image | image_url: width: 400 }} 400w, {{ image | image_url: width: 500 }} 500w, {{ image | image_url: width: 600 }} 600w, {{ image | image_url: width: 700 }} 700w, {{ image | image_url: width: 800 }} 800w, {{ image | image_url: width: 900 }} 900w, {{ image | image_url: width: 1000 }} 1000w"
+                          sizes="(min-width: 1024px) 15vw, 100vw"
+                          alt="{{ image.alt | escape }}"
+                          loading="eager"
+                        >
+                      </div>
+                    </div>
+                    <p class="page-cwa-details-slide-footer">
+                      {{ forloop.index }}/{{ paginate.items }}
+                      {{ adoption.organization.value.name }}, {{ adoption.organization.value.city }},
+                      {{ adoption.organization.value.state.value.name }}
+                    </p>
+                  </a>
+                {% endfor %}
+              {% endpaginate %}
+            </div>
+            <div class="page-cwa-details-nav">
+              <button class="page-cwa-details-nav-prev" type="button">←</button>
+              <button class="page-cwa-details-nav-next" type="button">→</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  </div>
+  <div class="cwa-menu"></div>
+  <div class="cwa-items">
+    {% paginate shop.metaobjects.cwa.values by 1000 %}
+      {% for cwa in shop.metaobjects.cwa.values %}
+        {% assign state = cwa.state.value %}
+        {% assign country = state.country.value %}
+        {% assign website = cwa.url %}
+        {% if website %}
+          <a
+            class="cwa-item"
+            href="{{ website }}"
+            target="_blank"
+            data-country="{{ country.name }}"
+            data-state="{{ state.name }}"
+          >
+        {% else %}
+          <div class="cwa-item" data-country="{{ country.name }}" data-state="{{ state.name }}">
+        {% endif %}
+        <h4 class="cwa-item-name">
+          <span class="hidden-desktop">{{ cwa.name }},</span>
+          <span class="hidden-mobile">{{ cwa.name }}</span>
+        </h4>
+        <div class="cwa-item-city-website">
+          <p class="cwa-item-city">
+            {{ cwa.city -}}
+            <span class="hidden-mobile">, {{ state.name }}</span>
+          </p>
+          <p class="cwa-item-website">
+            {{ website }}
+          </p>
+        </div>
+        {% if website %}
+          </a>
+        {% else %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% endpaginate %}
+  </div>
+
+  <button class="page-cwa-up" type="button">
+    <svg class="button-border">
+      <rect width="calc(100% - 2px)" height="calc(100% - 2px)" rx="5" />
+    </svg>
+    <svg class="page-cwa-up-icon" fill="none" viewBox="0 0 7 14">
+      <path d="M3.85 14H2.842V1.834L0 4.774v-1.4L3.346 0l3.346 3.374v1.4L3.85 1.834V14Z"/>
+    </svg>
+  </button>
+</div>

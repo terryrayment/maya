@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getProductByHandle, getAllProducts } from "@/lib/shopify";
+import { pickPrimaryProductImage } from "@/lib/product-images";
 import { ProductDetail } from "@/components/product-detail";
 import type { Metadata } from "next";
 
@@ -30,9 +31,12 @@ export async function generateMetadata({
     openGraph: {
       title: `${product.title} — MAYA`,
       description: product.description?.slice(0, 160),
-      images: product.images.edges[0]?.node
-        ? [{ url: product.images.edges[0].node.url }]
-        : undefined,
+      images: (() => {
+        const img = pickPrimaryProductImage(
+          product.images.edges.map((e) => e.node)
+        );
+        return img ? [{ url: img.url }] : undefined;
+      })(),
     },
   };
 }
