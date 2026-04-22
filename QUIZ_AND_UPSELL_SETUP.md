@@ -1,7 +1,24 @@
 # Quiz + Post-Purchase Upsell — Final Setup
 
-Both features are built, tested, and live in the code. To turn them on in
-production, you need **three manual steps, ~5 minutes total.**
+## ✅ Status as of April 22, 2026
+
+| Step | Status | Notes |
+|------|--------|-------|
+| UPSELL20 discount code | ✅ Created | 20% off entire order, unlimited uses |
+| QUIZ10 discount code | ✅ Created | 10% off entire order, unlimited uses |
+| MailerLite "MAYA Quiz Leads" group | ✅ Created | Group ID: 185489474360181800 |
+| MailerLite API key | ✅ Generated | Stored in `.env.local` (gitignored) |
+| MailerLite custom fields | ✅ Created | dog_name, quiz_top_formula, quiz_answers |
+| End-to-end quiz test | ✅ Passed | Submissions land in MailerLite with all fields populated |
+| Shopify order status redirect | ⚠️ Blocked | Shopify Checkout Extensibility removed "Additional Scripts" — needs Checkout UI Extension or 3rd-party app (ReConvert, Zipify) |
+
+The quiz is **fully operational in local dev**. When you deploy to Vercel,
+add the 2 env vars from `.env.local` to the Vercel dashboard under
+Settings → Environment Variables.
+
+---
+
+## Original Setup Instructions (for reference)
 
 ---
 
