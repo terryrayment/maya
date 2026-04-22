@@ -1,0 +1,39 @@
+{% comment %}
+  Paste this into: Shopify Admin → Settings → Checkout → Order status page → Additional scripts
+
+  What it does:
+  - After checkout completes, redirects customer to your Next.js /thank-you page
+  - Passes the order number and the handles of purchased products as query params
+  - The thank-you page uses ?purchased= to exclude already-owned products from the upsell
+
+  Uses a 2.5-second delay so the customer sees Shopify's confirmation briefly first
+  (this protects trust — a hard redirect feels spammy).
+
+  If you want an immediate redirect instead, remove the setTimeout and call the
+  redirect directly.
+{% endcomment %}
+
+<script>
+  (function() {
+    // Build comma-separated list of purchased product handles
+    var purchased = [
+      {% for line_item in line_items %}
+        "{{ line_item.product.handle | escape }}"{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ].join(",");
+
+    var orderNumber = "{{ order.order_number | escape }}";
+    var customerEmail = "{{ checkout.email | escape }}";
+
+    // Build destination URL — replace with your actual domain
+    var destination = "https://www.officeofmaya.com/thank-you" +
+      "?order_id=" + encodeURIComponent(orderNumber) +
+      "&purchased=" + encodeURIComponent(purchased) +
+      "&email=" + encodeURIComponent(customerEmail);
+
+    // Soft redirect after 2.5 seconds so the customer sees Shopify's confirmation
+    setTimeout(function() {
+      window.location.href = destination;
+    }, 2500);
+  })();
+</script>

@@ -108,9 +108,53 @@ export default async function HomePage() {
                     </svg>
                   </Link>
                 )}
+                <Link
+                  href="/quiz"
+                  className="button"
+                  style={{ position: "relative", background: "#1a1a1a", color: "#fdfbf7" }}
+                >
+                  Take the Quiz
+                  <svg className="button-border" viewBox="0 0 200 50" preserveAspectRatio="none" style={{ width: "100%", height: "100%", position: "absolute", top: 0, left: 0, pointerEvents: "none" }}>
+                    <rect width="198" height="48" x="1" y="1" rx="0" ry="0" fill="none" stroke="#fdfbf7" strokeWidth="1" strokeDasharray="2" />
+                  </svg>
+                </Link>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 3.5 Quiz CTA Strip */}
+      <section style={{ padding: "0 var(--side-padding)", marginBottom: "4rem" }}>
+        <div style={{ maxWidth: "80rem", margin: "0 auto" }}>
+          <Link
+            href="/quiz"
+            style={{
+              display: "block",
+              padding: "3rem 2rem",
+              background: "#1a1a1a",
+              color: "#fdfbf7",
+              textDecoration: "none",
+              textAlign: "center",
+              border: "1px dotted #fdfbf7",
+              outline: "1px solid #1a1a1a",
+              outlineOffset: "-1rem",
+            }}
+          >
+            <p style={{ fontSize: "0.75rem", letterSpacing: "0.15em", opacity: 0.6, marginBottom: "0.75rem" }}>
+              NOT SURE WHERE TO START?
+            </p>
+            <h2 style={{ fontSize: "2rem", fontWeight: 400, lineHeight: 1.1, marginBottom: "0.75rem" }}>
+              Find your dog&apos;s formula in 60 seconds.
+            </h2>
+            <p style={{ opacity: 0.7, maxWidth: "32rem", margin: "0 auto 1.5rem", lineHeight: 1.5, textTransform: "none" }}>
+              Answer 5 quick questions. We&apos;ll match your dog with the
+              right MAYA supplement and email you 10% off.
+            </p>
+            <span style={{ fontSize: "0.875rem", letterSpacing: "0.1em", textDecoration: "underline" }}>
+              TAKE THE QUIZ →
+            </span>
+          </Link>
         </div>
       </section>
 
