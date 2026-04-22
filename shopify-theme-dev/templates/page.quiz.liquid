@@ -1,0 +1,553 @@
+{% comment %}
+  MAYA Product Quiz — 5 questions, scores across 4 formulas, emails recommendation
+  via MailerLite form endpoint. Uses existing MAYA-FORM ID 185492455689291593.
+
+  This page is self-contained — all styles and JS are inline so it works without
+  theme modifications.
+{% endcomment %}
+
+<style>
+  .maya-quiz {
+    background: var(--ivory, #fdfbf7);
+    min-height: 80vh;
+    padding: 4rem var(--side-padding, 1.5rem);
+    font-family: inherit;
+    color: #1a1a1a;
+  }
+  .mq-container { max-width: 640px; margin: 0 auto; }
+
+  /* Progress bar */
+  .mq-progress {
+    height: 2px;
+    background: rgba(0,0,0,0.08);
+    margin-bottom: 3rem;
+    overflow: hidden;
+  }
+  .mq-progress-fill {
+    height: 100%;
+    background: #1a1a1a;
+    transition: width 300ms ease;
+    width: 0;
+  }
+
+  /* Typography */
+  .mq-eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    opacity: 0.5;
+    margin: 0 0 0.75rem 0;
+    text-transform: uppercase;
+  }
+  .mq-prompt {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 400;
+    margin: 0 0 0.75rem 0;
+  }
+  .mq-subtitle {
+    opacity: 0.6;
+    margin: 0 0 2rem 0;
+    line-height: 1.5;
+    font-size: 1rem;
+  }
+
+  /* Option buttons */
+  .mq-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+  .mq-option {
+    text-align: left;
+    padding: 1.25rem 1.5rem;
+    border: 1px dashed rgba(0,0,0,0.25);
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1rem;
+    color: #1a1a1a;
+    transition: all 150ms ease;
+  }
+  .mq-option:hover {
+    border-color: rgba(0,0,0,0.6);
+    background: rgba(0,0,0,0.02);
+  }
+  .mq-option.selected {
+    border-color: #1a1a1a;
+    background: #1a1a1a;
+    color: #fdfbf7;
+  }
+  .mq-back {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.875rem;
+    opacity: 0.5;
+    padding: 0.5rem 0;
+    color: #1a1a1a;
+  }
+  .mq-back:hover { opacity: 1; }
+
+  /* Email form */
+  .mq-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1.5rem 0 1rem;
+  }
+  .mq-input {
+    padding: 1rem 1.25rem;
+    border: 1px dashed rgba(0,0,0,0.25);
+    background: transparent;
+    font: inherit;
+    font-size: 1rem;
+    color: #1a1a1a;
+    font-family: inherit;
+  }
+  .mq-input:focus {
+    outline: none;
+    border-color: #1a1a1a;
+    border-style: solid;
+  }
+  .mq-btn-primary {
+    padding: 1rem 1.5rem;
+    background: #1a1a1a;
+    color: #fdfbf7;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity 150ms ease;
+  }
+  .mq-btn-primary:hover:not(:disabled) { opacity: 0.85; }
+  .mq-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .mq-btn-ghost {
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: 1px dashed rgba(0,0,0,0.3);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #1a1a1a;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .mq-btn-ghost:hover {
+    background: #1a1a1a;
+    color: #fdfbf7;
+  }
+  .mq-fine {
+    font-size: 0.75rem;
+    opacity: 0.5;
+    margin: 1rem 0 0 0;
+  }
+
+  /* Results */
+  .mq-results-title {
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.1;
+  }
+  .mq-results-subtitle {
+    opacity: 0.6;
+    margin: 0 0 3rem 0;
+  }
+  .mq-top-rec {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem 0;
+    border-top: 1px dashed rgba(0,0,0,0.2);
+    border-bottom: 1px dashed rgba(0,0,0,0.2);
+    margin-bottom: 3rem;
+  }
+  @media (min-width: 640px) {
+    .mq-top-rec { grid-template-columns: 1fr 1fr; align-items: center; }
+  }
+  .mq-top-rec img {
+    width: 100%;
+    height: auto;
+    max-width: 320px;
+    display: block;
+    margin: 0 auto;
+    object-fit: cover;
+  }
+  .mq-best-match {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    background: #1a1a1a;
+    color: #fdfbf7;
+    padding: 0.3rem 0.6rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+  .mq-product-title {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin: 0 0 0.5rem 0;
+  }
+  .mq-product-price {
+    font-size: 1.125rem;
+    margin: 0 0 1.5rem 0;
+  }
+  .mq-discount-box {
+    background: #1a1a1a;
+    color: #fdfbf7;
+    padding: 1.5rem;
+    text-align: center;
+    margin: 2rem 0;
+  }
+  .mq-discount-box p { margin: 0; }
+  .mq-discount-code {
+    font-size: 1.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin: 0.5rem 0;
+  }
+</style>
+
+<div class="maya-quiz" id="maya-quiz-root">
+  <div class="mq-container">
+
+    <!-- Progress bar -->
+    <div class="mq-progress" id="mq-progress">
+      <div class="mq-progress-fill" id="mq-progress-fill"></div>
+    </div>
+
+    <!-- Question screens (populated by JS) -->
+    <div id="mq-content"></div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ---------- Configuration ----------
+  var MAILERLITE_ACCOUNT_ID = '2029859';
+  var MAILERLITE_FORM_ID = '185492455689291593';
+  var MAILERLITE_SUBMIT_URL =
+    'https://assets.mailerlite.com/jsonp/' + MAILERLITE_ACCOUNT_ID +
+    '/forms/' + MAILERLITE_FORM_ID + '/subscribe';
+
+  // ---------- Products (pulled live from Shopify product metadata) ----------
+  // These product handles must exist in the store.
+  var PRODUCTS = {
+    allergy: {
+      handle: 'supplement-allergy',
+      title: 'Allergy Supplement',
+      image: null
+    },
+    digestive: {
+      handle: 'supplement-digestive',
+      title: 'Digestive Care Supplement',
+      image: null
+    },
+    joint: {
+      handle: 'supplement-joint',
+      title: 'Joint Care Supplement',
+      image: null
+    },
+    skin_coat: {
+      handle: 'supplement-skin-coat',
+      title: 'Skin & Coat Supplement',
+      image: null
+    }
+  };
+
+  {% comment %} Hydrate PRODUCTS with live Shopify data where handles match {% endcomment %}
+  {% for product in collections.all.products limit: 50 %}
+    {% assign h = product.handle %}
+    {% if h contains 'allerg' %}
+      PRODUCTS.allergy = {
+        handle: {{ product.handle | json }},
+        title: {{ product.title | json }},
+        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
+        price: {{ product.price_min | json }}
+      };
+    {% elsif h contains 'digest' or h contains 'gut' %}
+      PRODUCTS.digestive = {
+        handle: {{ product.handle | json }},
+        title: {{ product.title | json }},
+        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
+        price: {{ product.price_min | json }}
+      };
+    {% elsif h contains 'joint' or h contains 'mobility' %}
+      PRODUCTS.joint = {
+        handle: {{ product.handle | json }},
+        title: {{ product.title | json }},
+        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
+        price: {{ product.price_min | json }}
+      };
+    {% elsif h contains 'skin' or h contains 'coat' or h contains 'fur' %}
+      PRODUCTS.skin_coat = {
+        handle: {{ product.handle | json }},
+        title: {{ product.title | json }},
+        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
+        price: {{ product.price_min | json }}
+      };
+    {% endif %}
+  {% endfor %}
+
+  // ---------- Questions ----------
+  var QUESTIONS = [
+    {
+      id: 'age',
+      prompt: "How old is your dog?",
+      options: [
+        { label: "Puppy (under 1 year)", scores: { digestive: 2, skin_coat: 1 } },
+        { label: "Adult (1–7 years)", scores: { skin_coat: 1, allergy: 1 } },
+        { label: "Senior (7+ years)", scores: { joint: 3, skin_coat: 1 } }
+      ]
+    },
+    {
+      id: 'breed',
+      prompt: "What kind of dog do you have?",
+      subtitle: "We use this to tailor the recommendation — breeds have different tendencies.",
+      options: [
+        { label: "Flat-faced (Frenchie, Pug, Bulldog)", scores: { allergy: 3, skin_coat: 2 } },
+        { label: "Large breed (Golden, Lab, Shepherd)", scores: { joint: 3, skin_coat: 1 } },
+        { label: "Small breed (Chihuahua, Dachshund)", scores: { joint: 2, skin_coat: 1 } },
+        { label: "Mixed / Other", scores: { allergy: 1, digestive: 1, skin_coat: 1 } }
+      ]
+    },
+    {
+      id: 'concerns',
+      prompt: "What's your dog's biggest issue right now?",
+      subtitle: "Pick the one that's bothering them most.",
+      options: [
+        { label: "Itching, scratching, hot spots", scores: { allergy: 4, skin_coat: 2 } },
+        { label: "Upset stomach, gas, loose stool", scores: { digestive: 4 } },
+        { label: "Stiff joints, slow on walks", scores: { joint: 4 } },
+        { label: "Dull coat, excessive shedding", scores: { skin_coat: 4 } },
+        { label: "Nothing major — preventive care", scores: { allergy: 1, digestive: 1, joint: 1, skin_coat: 1 } }
+      ]
+    },
+    {
+      id: 'diet',
+      prompt: "What do you feed your dog?",
+      options: [
+        { label: "Kibble", scores: { digestive: 2, skin_coat: 1 } },
+        { label: "Fresh or raw", scores: { skin_coat: 1 } },
+        { label: "Home-cooked", scores: { digestive: 1, skin_coat: 1 } },
+        { label: "A mix of everything", scores: { digestive: 1 } }
+      ]
+    },
+    {
+      id: 'activity',
+      prompt: "How active is your dog?",
+      options: [
+        { label: "Very active — hikes, runs, agility", scores: { joint: 3, skin_coat: 1 } },
+        { label: "Moderate — daily walks", scores: { joint: 1, allergy: 1 } },
+        { label: "Low — short walks, lots of naps", scores: { joint: 2, digestive: 1 } }
+      ]
+    }
+  ];
+
+  var FORMULA_LABEL = {
+    allergy: 'Allergy',
+    digestive: 'Digestive Care',
+    joint: 'Joint Care',
+    skin_coat: 'Skin & Coat'
+  };
+
+  // ---------- State ----------
+  var state = {
+    step: 0,
+    answers: {},
+    scores: { allergy: 0, digestive: 0, joint: 0, skin_coat: 0 },
+    email: '',
+    dogName: ''
+  };
+
+  var root = document.getElementById('mq-content');
+  var progressFill = document.getElementById('mq-progress-fill');
+
+  var totalSteps = QUESTIONS.length + 1; // +1 for email gate
+
+  // ---------- Helpers ----------
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function(c) {
+      return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+    });
+  }
+
+  function formatPrice(cents) {
+    if (!cents) return '';
+    return '$' + Math.round(cents / 100);
+  }
+
+  function updateProgress() {
+    var pct = Math.round((state.step / totalSteps) * 100);
+    progressFill.style.width = pct + '%';
+  }
+
+  // ---------- Render ----------
+  function render() {
+    updateProgress();
+
+    if (state.step < QUESTIONS.length) {
+      renderQuestion();
+    } else if (state.step === QUESTIONS.length) {
+      renderEmailGate();
+    } else {
+      renderResults();
+    }
+  }
+
+  function renderQuestion() {
+    var q = QUESTIONS[state.step];
+    var html = '';
+    html += '<div>';
+    html += '  <p class="mq-eyebrow">Question ' + (state.step + 1) + ' of ' + QUESTIONS.length + '</p>';
+    html += '  <h1 class="mq-prompt">' + escapeHtml(q.prompt) + '</h1>';
+    if (q.subtitle) html += '  <p class="mq-subtitle">' + escapeHtml(q.subtitle) + '</p>';
+    html += '  <div class="mq-options">';
+    q.options.forEach(function(opt, i) {
+      html += '    <button type="button" class="mq-option" data-step="' + state.step + '" data-opt="' + i + '">' +
+              escapeHtml(opt.label) + '</button>';
+    });
+    html += '  </div>';
+    if (state.step > 0) {
+      html += '  <button type="button" class="mq-back" id="mq-back">&larr; Back</button>';
+    }
+    html += '</div>';
+    root.innerHTML = html;
+
+    // Wire up options
+    root.querySelectorAll('.mq-option').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var stepIdx = parseInt(btn.getAttribute('data-step'), 10);
+        var optIdx = parseInt(btn.getAttribute('data-opt'), 10);
+        handleAnswer(stepIdx, optIdx);
+      });
+    });
+    var back = document.getElementById('mq-back');
+    if (back) back.addEventListener('click', function() {
+      state.step = Math.max(0, state.step - 1);
+      render();
+    });
+  }
+
+  function renderEmailGate() {
+    var html = '';
+    html += '<form id="mq-email-form">';
+    html += '  <p class="mq-eyebrow">Almost done</p>';
+    html += '  <h1 class="mq-prompt">Where should we send the results?</h1>';
+    html += '  <p class="mq-subtitle">We\'ll email your personalized recommendation, plus a 10% off code for your first order.</p>';
+    html += '  <div class="mq-inputs">';
+    html += '    <input class="mq-input" type="text" id="mq-dog-name" placeholder="Your dog\'s name (optional)">';
+    html += '    <input class="mq-input" type="email" id="mq-email" placeholder="Your email" required>';
+    html += '    <button type="submit" class="mq-btn-primary" id="mq-submit">See my recommendation</button>';
+    html += '  </div>';
+    html += '  <p class="mq-fine">We\'ll never share your email. Unsubscribe any time.</p>';
+    html += '</form>';
+    root.innerHTML = html;
+
+    document.getElementById('mq-email-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      state.email = document.getElementById('mq-email').value.trim();
+      state.dogName = document.getElementById('mq-dog-name').value.trim();
+      if (!state.email) return;
+      var btn = document.getElementById('mq-submit');
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
+      submitToMailerLite().then(function() {
+        state.step = totalSteps;
+        render();
+      });
+    });
+  }
+
+  function renderResults() {
+    var topFormula = Object.keys(state.scores).sort(function(a, b) {
+      return state.scores[b] - state.scores[a];
+    })[0];
+    var product = PRODUCTS[topFormula];
+    var label = FORMULA_LABEL[topFormula] || topFormula;
+
+    var html = '';
+    html += '<div class="mq-results">';
+    html += '  <p class="mq-eyebrow">Your recommendation</p>';
+    var title = state.dogName ? (escapeHtml(state.dogName) + "'s formula") : "Your dog's formula";
+    html += '  <h1 class="mq-results-title">' + title + '</h1>';
+    html += '  <p class="mq-results-subtitle">Based on your answers, here\'s the formula we\'d start with.</p>';
+
+    if (product) {
+      html += '  <div class="mq-top-rec">';
+      html += '    <div>';
+      if (product.image) html += '      <img src="' + escapeHtml(product.image) + '" alt="' + escapeHtml(product.title) + '">';
+      html += '    </div>';
+      html += '    <div>';
+      html += '      <p class="mq-best-match">BEST MATCH &middot; ' + escapeHtml(label) + '</p>';
+      html += '      <h2 class="mq-product-title">' + escapeHtml(product.title) + '</h2>';
+      if (product.price) html += '      <p class="mq-product-price">' + formatPrice(product.price) + '</p>';
+      html += '      <a href="/products/' + escapeHtml(product.handle) + '" class="mq-btn-primary" style="text-decoration:none;display:inline-block;">Shop ' + escapeHtml(label) + ' &rarr;</a>';
+      html += '    </div>';
+      html += '  </div>';
+    }
+
+    html += '  <div class="mq-discount-box">';
+    html += '    <p style="font-size:0.7rem;letter-spacing:0.2em;opacity:0.7;">YOUR 10% OFF CODE</p>';
+    html += '    <p class="mq-discount-code">QUIZ10</p>';
+    html += '    <p style="font-size:0.75rem;opacity:0.7;">We emailed it to <strong>' + escapeHtml(state.email) + '</strong>. Check your inbox.</p>';
+    html += '  </div>';
+
+    html += '  <p style="text-align:center;margin-top:3rem;"><a href="/collections/all" class="mq-btn-ghost">Shop all MAYA</a></p>';
+    html += '</div>';
+    root.innerHTML = html;
+  }
+
+  // ---------- Logic ----------
+  function handleAnswer(stepIdx, optIdx) {
+    var q = QUESTIONS[stepIdx];
+    var opt = q.options[optIdx];
+    state.answers[q.id] = opt.label;
+    for (var f in opt.scores) {
+      if (Object.prototype.hasOwnProperty.call(opt.scores, f)) {
+        state.scores[f] = (state.scores[f] || 0) + opt.scores[f];
+      }
+    }
+    // Highlight selected briefly, then advance
+    var btn = root.querySelector('.mq-option[data-step="' + stepIdx + '"][data-opt="' + optIdx + '"]');
+    if (btn) btn.classList.add('selected');
+    setTimeout(function() {
+      state.step = stepIdx + 1;
+      render();
+    }, 180);
+  }
+
+  function submitToMailerLite() {
+    var topFormula = Object.keys(state.scores).sort(function(a, b) {
+      return state.scores[b] - state.scores[a];
+    })[0];
+
+    var body = new URLSearchParams();
+    body.append('fields[email]', state.email);
+    body.append('fields[dog_name]', state.dogName);
+    body.append('fields[quiz_top_formula]', FORMULA_LABEL[topFormula] || topFormula);
+    body.append('fields[quiz_answers]', JSON.stringify(state.answers));
+
+    return fetch(MAILERLITE_SUBMIT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+      mode: 'cors'
+    }).catch(function(err) {
+      // Non-blocking — still show results if submit fails
+      console.error('[maya-quiz] MailerLite submit failed', err);
+    });
+  }
+
+  // ---------- Init ----------
+  render();
+})();
+</script>
