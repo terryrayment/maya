@@ -121,6 +121,11 @@ export function Header() {
             </Link>
           </div>
           <div className="header-menu-item header-menu-item--nav">
+            <Link href="/quiz" className="header-menu-link">
+              Quiz
+            </Link>
+          </div>
+          <div className="header-menu-item header-menu-item--nav">
             <Link href="/about" className="header-menu-link">
               About
             </Link>
@@ -148,6 +153,9 @@ export function Header() {
           <div className="header-mobile-menu">
             <Link href="/shop" className="header-mobile-link" onClick={() => setMobileMenuOpen(false)}>
               Shop
+            </Link>
+            <Link href="/quiz" className="header-mobile-link" onClick={() => setMobileMenuOpen(false)}>
+              Quiz
             </Link>
             <Link href="/about" className="header-mobile-link" onClick={() => setMobileMenuOpen(false)}>
               About
