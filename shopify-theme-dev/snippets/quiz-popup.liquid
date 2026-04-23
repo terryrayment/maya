@@ -1,0 +1,248 @@
+{% comment %}
+  MAYA Quiz Popup — promotes /pages/quiz to first-time visitors.
+
+  Behavior:
+  - Shows 8 seconds after page load OR on exit-intent (mouse leaves viewport top)
+  - Once dismissed or clicked through, stores a 30-day cookie so it doesn't re-show
+  - Hidden on the quiz page itself and on checkout/cart pages
+  - Mobile-friendly with tap-outside-to-close
+
+  Include in layout/theme.liquid right before </body>:
+    {% render 'quiz-popup' %}
+{% endcomment %}
+
+{% unless request.path contains '/pages/quiz' or request.path contains '/checkout' or request.path contains '/cart' %}
+
+<div id="maya-quiz-popup" class="mqp-root" aria-hidden="true" role="dialog" aria-labelledby="mqp-title" data-state="hidden">
+  <div class="mqp-backdrop" data-mqp-dismiss="backdrop"></div>
+  <div class="mqp-modal" role="document">
+    <button class="mqp-close" type="button" aria-label="Close" data-mqp-dismiss="close">×</button>
+
+    <p class="mqp-eyebrow">Not sure where to start?</p>
+    <h2 class="mqp-title" id="mqp-title">Find your dog&rsquo;s formula in 60 seconds.</h2>
+    <p class="mqp-subtitle">
+      Answer 5 quick questions. We&rsquo;ll match your dog with the right
+      MAYA supplement and email you <strong>10% off</strong>.
+    </p>
+
+    <a href="/pages/quiz" class="mqp-cta" data-mqp-dismiss="cta">
+      Take the quiz &rarr;
+    </a>
+
+    <button class="mqp-skip" type="button" data-mqp-dismiss="skip">
+      Maybe later
+    </button>
+  </div>
+</div>
+
+<style>
+  .mqp-root {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .mqp-root[data-state="visible"] {
+    display: flex;
+    animation: mqpFadeIn 280ms ease;
+  }
+  .mqp-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .mqp-modal {
+    position: relative;
+    background: var(--ivory, #fdfbf7);
+    color: #1a1a1a;
+    padding: 3rem 2rem 2rem;
+    max-width: 440px;
+    width: 100%;
+    border: 1px dotted rgba(0, 0, 0, 0.3);
+    outline: 1rem solid var(--ivory, #fdfbf7);
+    outline-offset: -1.5rem;
+    text-align: center;
+    font-family: inherit;
+    animation: mqpPopIn 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes mqpFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes mqpPopIn {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .mqp-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    font-size: 1.75rem;
+    line-height: 1;
+    cursor: pointer;
+    color: #1a1a1a;
+    opacity: 0.4;
+    transition: opacity 150ms ease;
+  }
+  .mqp-close:hover { opacity: 1; }
+  .mqp-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin: 0 0 0.75rem 0;
+  }
+  .mqp-title {
+    font-family: inherit;
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 1.15;
+    margin: 0 0 0.75rem 0;
+    letter-spacing: 0;
+  }
+  @media (min-width: 480px) {
+    .mqp-title { font-size: 1.75rem; }
+  }
+  .mqp-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.7;
+    margin: 0 auto 1.75rem auto;
+    max-width: 320px;
+    text-transform: none;
+  }
+  .mqp-cta {
+    display: block;
+    background: #1a1a1a;
+    color: var(--ivory, #fdfbf7);
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    font-family: inherit;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 0.75rem 0;
+    transition: opacity 150ms ease;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+  }
+  .mqp-cta:hover {
+    opacity: 0.85;
+    color: var(--ivory, #fdfbf7);
+  }
+  .mqp-skip {
+    background: transparent;
+    border: none;
+    color: #1a1a1a;
+    opacity: 0.5;
+    font-family: inherit;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: opacity 150ms ease;
+  }
+  .mqp-skip:hover { opacity: 1; }
+</style>
+
+<script>
+  (function() {
+    'use strict';
+
+    var COOKIE_NAME = 'maya_quiz_popup_seen';
+    var COOKIE_DAYS = 30;
+    var SHOW_DELAY_MS = 8000;      // 8 seconds
+    var SESSION_COOLDOWN_MIN = 60; // don't re-show within 60 min same session
+
+    function hasSeen() {
+      var match = document.cookie.match(new RegExp('(?:^|; )' + COOKIE_NAME + '=([^;]*)'));
+      if (match) return true;
+      var session = sessionStorage.getItem(COOKIE_NAME + '_session');
+      if (session) {
+        var elapsed = (Date.now() - parseInt(session, 10)) / 60000;
+        if (elapsed < SESSION_COOLDOWN_MIN) return true;
+      }
+      return false;
+    }
+
+    function markSeen(persistent) {
+      if (persistent) {
+        var expires = new Date();
+        expires.setTime(expires.getTime() + COOKIE_DAYS * 24 * 60 * 60 * 1000);
+        document.cookie = COOKIE_NAME + '=1; expires=' + expires.toUTCString() + '; path=/; SameSite=Lax';
+      }
+      sessionStorage.setItem(COOKIE_NAME + '_session', String(Date.now()));
+    }
+
+    function init() {
+      var popup = document.getElementById('maya-quiz-popup');
+      if (!popup) return;
+
+      if (hasSeen()) return;
+
+      var shown = false;
+      var timer = null;
+
+      function show() {
+        if (shown) return;
+        shown = true;
+        if (timer) clearTimeout(timer);
+        popup.setAttribute('data-state', 'visible');
+        popup.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function hide(reason) {
+        popup.setAttribute('data-state', 'hidden');
+        popup.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        // 'cta' click = soft dismiss (session), other dismissals = persistent cookie
+        markSeen(reason !== 'cta');
+      }
+
+      // Trigger 1: time-based show
+      timer = setTimeout(show, SHOW_DELAY_MS);
+
+      // Trigger 2: exit intent (desktop only, mouse moves to top of viewport)
+      var handleMouseLeave = function(e) {
+        if (e.clientY < 8 && !shown) {
+          show();
+        }
+      };
+      document.addEventListener('mouseout', handleMouseLeave);
+
+      // Dismiss handlers
+      popup.addEventListener('click', function(e) {
+        var dismiss = e.target.closest('[data-mqp-dismiss]');
+        if (dismiss) {
+          hide(dismiss.getAttribute('data-mqp-dismiss'));
+        }
+      });
+
+      // Esc to close
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && shown) hide('esc');
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>
+
+{% endunless %}
