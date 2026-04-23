@@ -48,7 +48,7 @@ const QUESTIONS: Question[] = [
     prompt: "How old is your dog?",
     options: [
       { label: "Puppy (under 1 year)", value: "puppy", scores: { digestive: 2, skin_coat: 1 } },
-      { label: "Adult (1–7 years)", value: "adult", scores: { skin_coat: 1, allergy: 1 } },
+      { label: "Adult (1-7 years)", value: "adult", scores: { skin_coat: 1, allergy: 1 } },
       { label: "Senior (7+ years)", value: "senior", scores: { joint: 3, skin_coat: 1 } },
     ],
   },
@@ -518,8 +518,13 @@ function QuizStyles() {
     <style>{`
       .quiz-root {
         min-height: 80vh;
-        padding: 4rem var(--side-padding, 1.5rem);
+        padding: 8rem var(--side-padding, 1.5rem) 4rem;
         background: var(--ivory, #fdfbf7);
+      }
+      @media (min-width: 768px) {
+        .quiz-root {
+          padding-top: 10rem;
+        }
       }
       .quiz-container {
         max-width: 640px;
