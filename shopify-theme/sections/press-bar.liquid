@@ -1,0 +1,125 @@
+{% if section.settings.publication != blank %}
+<a
+  class="press-bar"
+  href="{{ section.settings.url }}"
+  {% if section.settings.url == blank %}aria-disabled="true" style="pointer-events:none;"{% endif %}
+>
+  <span class="press-bar-label">{{ section.settings.label | default: 'As Seen In' }}</span>
+  <span class="press-bar-pub">{{ section.settings.publication }}</span>
+  {% if section.settings.quote != blank %}
+    <span class="press-bar-divider" aria-hidden="true">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+    <span class="press-bar-quote">&ldquo;{{ section.settings.quote }}&rdquo;</span>
+    <span class="press-bar-arrow" aria-hidden="true">&nbsp;&rarr;</span>
+  {% endif %}
+</a>
+{% endif %}
+
+<style>
+  .press-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0.85rem var(--side-padding, 1.5rem);
+    background: var(--ivory, #fdfbf7);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: #1a1a1a;
+    font-family: inherit;
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+  }
+  .press-bar:hover .press-bar-quote {
+    opacity: 0.9;
+  }
+  .press-bar:hover .press-bar-arrow {
+    transform: translateX(3px);
+  }
+  .press-bar-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.45;
+    margin-right: 0.75rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .press-bar-pub {
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-right: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .press-bar-divider {
+    opacity: 0.25;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+  .press-bar-quote {
+    font-size: 0.72rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    font-style: normal;
+    transition: opacity 200ms ease;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .press-bar-arrow {
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    transition: transform 200ms ease;
+    opacity: 0.5;
+  }
+
+  /* Mobile: stack pub + quote on separate lines if needed */
+  @media (max-width: 540px) {
+    .press-bar-quote {
+      display: none;
+    }
+    .press-bar-divider {
+      display: none;
+    }
+    .press-bar-arrow {
+      display: none;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Press Bar",
+  "tag": "div",
+  "class": "press-bar-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "As Seen In"
+    },
+    {
+      "type": "text",
+      "id": "publication",
+      "label": "Publication name",
+      "default": "PAPER"
+    },
+    {
+      "type": "text",
+      "id": "quote",
+      "label": "Pull quote (optional)",
+      "default": "How Maya is turning dog wellness into a lifestyle movement"
+    },
+    {
+      "type": "url",
+      "id": "url",
+      "label": "Link URL (optional)"
+    }
+  ]
+}
+{% endschema %}

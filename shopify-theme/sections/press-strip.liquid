@@ -1,0 +1,123 @@
+{%- comment -%}
+  Press strip — featured press mention(s).
+  Currently features the PAPER Magazine article.
+{%- endcomment -%}
+
+<div class="press-strip">
+  <div class="press-strip__inner">
+    <p class="press-strip__eyebrow">As seen in</p>
+    <a
+      class="press-strip__feature"
+      href="https://www.papermag.com/making-pet-care-part-of-our-culture-how-maya-is-turning-dog-wellness-into-a-lifestyle-movement"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Read the PAPER Magazine article about Maya"
+    >
+      <span class="press-strip__logo">PAPER</span>
+      <span class="press-strip__divider" aria-hidden="true"></span>
+      <span class="press-strip__quote">&ldquo;How MAYA Is Turning Dog Wellness into a Lifestyle Movement&rdquo;</span>
+      <span class="press-strip__arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</div>
+
+<style>
+  .press-strip {
+    background: #f0ece6;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 1.1rem var(--side-padding, 1.5rem);
+    overflow: hidden;
+  }
+  .press-strip__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .press-strip__eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #666;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin: 0;
+    font-weight: 500;
+  }
+  .press-strip__feature {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+    flex: 1;
+    min-width: 0;
+  }
+  .press-strip__feature:hover {
+    opacity: 0.6;
+  }
+  .press-strip__logo {
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #111;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-style: normal;
+    line-height: 1;
+  }
+  .press-strip__divider {
+    display: block;
+    width: 1px;
+    height: 1.2rem;
+    background: rgba(0,0,0,0.25);
+    flex-shrink: 0;
+  }
+  .press-strip__quote {
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: #333;
+    line-height: 1.4;
+    font-style: normal;
+    text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    font-weight: 500;
+  }
+  .press-strip__arrow {
+    font-size: 0.85rem;
+    color: #555;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    font-weight: 600;
+  }
+  .press-strip__feature:hover .press-strip__arrow {
+    transform: translateX(4px);
+  }
+
+  @media (max-width: 600px) {
+    .press-strip__quote { display: none; }
+    .press-strip__logo { font-size: 1.2rem; }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "Press Strip",
+  "tag": "section",
+  "class": "press-strip-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Press Strip"
+    }
+  ]
+}
+{% endschema %}

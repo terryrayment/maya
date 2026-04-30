@@ -391,7 +391,7 @@
   // ---------- Configuration ----------
   // POSTs to the Next.js API which subscribes with status="active" to bypass
   // the shared MailerLite account's double opt-in (San Bernardino Tax Sales branding).
-  var QUIZ_SUBMIT_URL = 'https://officeofmaya.com/api/quiz-submit';
+  var QUIZ_SUBMIT_URL = 'https://maya-azure-pi.vercel.app/api/quiz-submit';
 
   // ---------- Products (pulled live from Shopify product metadata) ----------
   // These product handles must exist in the store.
@@ -713,36 +713,39 @@
 
       overlay.classList.add('visible');
       fill.style.width = '0%';
-      pctEl.textContent = '0%';
+      if (pctEl) pctEl.textContent = '0%';
 
-      var startTime = performance.now();
+      var startTime = Date.now();
       var duration = 1200;
       var fetchDone = false;
       var animDone = false;
+      var completed = false;
 
       fetchPromise.then(function() { fetchDone = true; if (animDone) complete(); })
                   .catch(function() { fetchDone = true; if (animDone) complete(); });
 
       function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
-      function tick(now) {
-        var elapsed = now - startTime;
+      // setInterval instead of rAF — fires even when tab is backgrounded
+      var timer = setInterval(function() {
+        var elapsed = Date.now() - startTime;
         var t = Math.min(elapsed / duration, 1);
         var val = Math.round(easeOutCubic(t) * 99);
         fill.style.width = val + '%';
-        pctEl.textContent = val + '%';
-        if (t < 1) {
-          requestAnimationFrame(tick);
-        } else {
+        if (pctEl) pctEl.textContent = val + '%';
+        if (t >= 1) {
+          clearInterval(timer);
           animDone = true;
           if (fetchDone) complete();
-          // else hold at 99% until fetchDone triggers complete()
         }
-      }
+      }, 16);
 
       function complete() {
+        if (completed) return;
+        completed = true;
+        clearInterval(timer);
         fill.style.width = '100%';
-        pctEl.textContent = '100%';
+        if (pctEl) pctEl.textContent = '100%';
         setTimeout(function() {
           overlay.style.opacity = '0';
           setTimeout(function() {
@@ -752,8 +755,6 @@
           }, 320);
         }, 180);
       }
-
-      requestAnimationFrame(tick);
     });
   }
 
