@@ -115,6 +115,8 @@ export async function POST(request: Request) {
         const errText = await mlResponse.text();
         console.error("[quiz-submit] MailerLite error", mlResponse.status, errText);
         // Still return ok to the client — we don't want to block results
+      } else {
+        console.log("[quiz-submit] subscribed", email, "formula:", topFormula, "status:active");
       }
     } else {
       console.log(
