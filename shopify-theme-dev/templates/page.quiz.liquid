@@ -8,7 +8,7 @@
 
 <style>
   .maya-quiz {
-    background: var(--ivory, #fdfbf7);
+    background: #ffffff;
     min-height: 80vh;
     padding: 4rem var(--side-padding, 1.5rem);
     font-family: inherit;
@@ -148,69 +148,171 @@
     margin: 1rem 0 0 0;
   }
 
-  /* Results */
-  .mq-results-title {
-    font-size: 2.5rem;
-    font-weight: 400;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.1;
-  }
-  .mq-results-subtitle {
-    opacity: 0.6;
-    margin: 0 0 3rem 0;
-  }
-  .mq-top-rec {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    padding: 2rem 0;
-    border-top: 1px dashed rgba(0,0,0,0.2);
-    border-bottom: 1px dashed rgba(0,0,0,0.2);
-    margin-bottom: 3rem;
-  }
-  @media (min-width: 640px) {
-    .mq-top-rec { grid-template-columns: 1fr 1fr; align-items: center; }
-  }
-  .mq-top-rec img {
-    width: 100%;
-    height: auto;
-    max-width: 320px;
-    display: block;
-    margin: 0 auto;
-    object-fit: cover;
-  }
-  .mq-best-match {
-    font-size: 0.7rem;
+  /* ---------- Results ---------- */
+  /* Layout: single editorial column, generous whitespace, no card chrome */
+  .maya-quiz.-results { padding-top: 6rem; padding-bottom: 6rem; }
+  .mq-results { max-width: 720px; margin: 0 auto; }
+
+  .mq-results-eyebrow {
+    font-size: 0.75rem;
     letter-spacing: 0.2em;
-    background: #1a1a1a;
-    color: #fdfbf7;
-    padding: 0.3rem 0.6rem;
-    display: inline-block;
-    margin-bottom: 1rem;
-  }
-  .mq-product-title {
-    font-size: 1.5rem;
-    font-weight: 400;
-    margin: 0 0 0.5rem 0;
-  }
-  .mq-product-price {
-    font-size: 1.125rem;
+    text-transform: uppercase;
+    opacity: 0.5;
     margin: 0 0 1.5rem 0;
   }
-  .mq-discount-box {
-    background: #1a1a1a;
-    color: #fdfbf7;
-    padding: 1.5rem;
+  .mq-results-title {
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+    margin: 0 0 1rem 0;
+    letter-spacing: -0.01em;
+  }
+  .mq-results-subtitle {
+    font-size: 1rem;
+    line-height: 1.5;
+    opacity: 0.6;
+    margin: 0 0 4rem 0;
+    max-width: 36ch;
+  }
+
+  /* Hero product feature */
+  .mq-hero {
+    margin: 0 0 4rem 0;
+  }
+  .mq-hero-image-wrap {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #ffffff;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mq-hero-image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .mq-hero-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .mq-hero-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    margin: 0;
+  }
+  .mq-hero-title {
+    font-size: clamp(1.5rem, 3.5vw, 2rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .mq-hero-price {
+    font-size: 1rem;
+    margin: 0.25rem 0 1.75rem 0;
+    opacity: 0.75;
+  }
+
+  /* Site-style button with animated SVG border (matches theme `.button`) */
+  .mq-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 10.7rem;
+    height: 3.57rem;
+    padding: 0 1.5rem;
+    position: relative;
+    -webkit-user-select: none;
+    user-select: none;
+    background: transparent;
+    color: #1a1a1a;
+    border: none;
+    cursor: pointer;
+    font: inherit;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    text-decoration: none;
     text-align: center;
-    margin: 2rem 0;
   }
-  .mq-discount-box p { margin: 0; }
-  .mq-discount-code {
-    font-size: 1.75rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    margin: 0.5rem 0;
+  .mq-button-border {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
   }
+  .mq-button-border rect {
+    fill: none;
+    stroke: #1a1a1a;
+    stroke-width: 1px;
+    stroke-dasharray: 800;
+    stroke-dashoffset: 800;
+    transition: stroke-dashoffset 600ms ease;
+  }
+  .mq-button:hover .mq-button-border rect,
+  .mq-button:focus-visible .mq-button-border rect {
+    stroke-dashoffset: 0;
+  }
+
+  /* Editorial divider between sections */
+  .mq-rule {
+    border: 0;
+    border-top: 1px solid rgba(0,0,0,0.12);
+    margin: 4rem 0;
+  }
+
+  /* Discount code — typography-only, no dark box */
+  .mq-code {
+    text-align: center;
+    margin: 0 0 4rem 0;
+  }
+  .mq-code-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin: 0 0 0.75rem 0;
+  }
+  .mq-code-value {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    letter-spacing: 0.18em;
+    margin: 0 0 1rem 0;
+    font-weight: 400;
+  }
+  .mq-code-note {
+    font-size: 0.8rem;
+    opacity: 0.55;
+    margin: 0;
+    line-height: 1.5;
+    overflow-wrap: anywhere; /* prevent layout overflow on very long emails */
+  }
+  .mq-code-note strong { font-weight: 400; opacity: 0.9; }
+
+  /* Footer CTA */
+  .mq-footer {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .mq-footer-link {
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    color: #1a1a1a;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+    padding-bottom: 0.15rem;
+    transition: opacity 150ms ease, border-color 150ms ease;
+  }
+  .mq-footer-link:hover { opacity: 1; border-color: #1a1a1a; }
 </style>
 
 <div class="maya-quiz" id="maya-quiz-root">
@@ -232,11 +334,16 @@
   'use strict';
 
   // ---------- Configuration ----------
-  var MAILERLITE_ACCOUNT_ID = '2029859';
-  var MAILERLITE_FORM_ID = '185492455689291593';
-  var MAILERLITE_SUBMIT_URL =
-    'https://assets.mailerlite.com/jsonp/' + MAILERLITE_ACCOUNT_ID +
-    '/forms/' + MAILERLITE_FORM_ID + '/subscribe';
+  // Quiz submissions POST to the MAYA Next.js API (not directly to
+  // MailerLite's JSONP form endpoint) so we can pass status="active" and
+  // bypass the account-wide double opt-in confirmation email — that email
+  // is sent from "San Bernardino Tax Sales" because the MailerLite account
+  // is shared across multiple brands. The Next.js handler subscribes the
+  // user server-side using MAILERLITE_API_KEY, then the active
+  // "MAYA - Quiz Welcome + 10% Off" automation sends the welcome email.
+  //
+  // ⚠️ Update QUIZ_SUBMIT_URL below to the production Next.js domain.
+  var QUIZ_SUBMIT_URL = 'https://officeofmaya.com/api/quiz-submit';
 
   // ---------- Products (pulled live from Shopify product metadata) ----------
   // These product handles must exist in the store.
@@ -264,35 +371,43 @@
   };
 
   {% comment %} Hydrate PRODUCTS with live Shopify data where handles match {% endcomment %}
+  {% comment %}
+    Hydrate PRODUCTS with live Shopify data. We use product.images.first
+    (the bottle render — the first image in admin, e.g. Maya_Joint_1.png)
+    rather than featured_image, and pre-format the price with Shopify's
+    money_without_trailing_zeros filter so it matches the storefront exactly.
+  {% endcomment %}
   {% for product in collections.all.products limit: 50 %}
     {% assign h = product.handle %}
+    {% assign img = product.images.first | default: product.featured_image %}
+    {% assign price_str = product.price_min | money_without_trailing_zeros %}
     {% if h contains 'allerg' %}
       PRODUCTS.allergy = {
         handle: {{ product.handle | json }},
         title: {{ product.title | json }},
-        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
-        price: {{ product.price_min | json }}
+        image: {{ img | img_url: '800x' | prepend: 'https:' | json }},
+        price: {{ price_str | json }}
       };
     {% elsif h contains 'digest' or h contains 'gut' %}
       PRODUCTS.digestive = {
         handle: {{ product.handle | json }},
         title: {{ product.title | json }},
-        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
-        price: {{ product.price_min | json }}
+        image: {{ img | img_url: '800x' | prepend: 'https:' | json }},
+        price: {{ price_str | json }}
       };
     {% elsif h contains 'joint' or h contains 'mobility' %}
       PRODUCTS.joint = {
         handle: {{ product.handle | json }},
         title: {{ product.title | json }},
-        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
-        price: {{ product.price_min | json }}
+        image: {{ img | img_url: '800x' | prepend: 'https:' | json }},
+        price: {{ price_str | json }}
       };
     {% elsif h contains 'skin' or h contains 'coat' or h contains 'fur' %}
       PRODUCTS.skin_coat = {
         handle: {{ product.handle | json }},
         title: {{ product.title | json }},
-        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
-        price: {{ product.price_min | json }}
+        image: {{ img | img_url: '800x' | prepend: 'https:' | json }},
+        price: {{ price_str | json }}
       };
     {% endif %}
   {% endfor %}
@@ -380,9 +495,16 @@
     });
   }
 
-  function formatPrice(cents) {
-    if (!cents) return '';
-    return '$' + Math.round(cents / 100);
+  function formatPrice(price) {
+    // Price comes from Shopify as a pre-formatted string (money_without_trailing_zeros)
+    // e.g. "$76", "$48.99". For backward-compat with raw cents, also handle numbers.
+    if (!price && price !== 0) return '';
+    if (typeof price === 'number') {
+      // Legacy fallback: treat as cents, preserve cents in output
+      var d = price / 100;
+      return '$' + (d % 1 === 0 ? d.toFixed(0) : d.toFixed(2));
+    }
+    return String(price);
   }
 
   function updateProgress() {
@@ -474,35 +596,65 @@
     var product = PRODUCTS[topFormula];
     var label = FORMULA_LABEL[topFormula] || topFormula;
 
+    // Editorial signature button used on the rest of the site — animated
+    // SVG border drawing on hover. Returns the button as an <a>.
+    function buttonLink(href, text) {
+      return '<a href="' + escapeHtml(href) + '" class="mq-button">' +
+             '<span>' + escapeHtml(text) + '</span>' +
+             '<svg class="mq-button-border" preserveAspectRatio="none">' +
+             '<rect x="0.5" y="0.5" width="calc(100% - 1px)" height="calc(100% - 1px)" rx="5" ry="5" />' +
+             '</svg>' +
+             '</a>';
+    }
+
+    // Switch the page wrapper into "results" mode for top/bottom padding.
+    var wrapper = document.querySelector('.maya-quiz');
+    if (wrapper) wrapper.classList.add('-results');
+    // Hide the progress bar on the final screen.
+    var progress = document.getElementById('mq-progress');
+    if (progress) progress.style.display = 'none';
+
+    var title = state.dogName
+      ? (escapeHtml(state.dogName) + "'s formula")
+      : "Your dog's formula";
+
     var html = '';
     html += '<div class="mq-results">';
-    html += '  <p class="mq-eyebrow">Your recommendation</p>';
-    var title = state.dogName ? (escapeHtml(state.dogName) + "'s formula") : "Your dog's formula";
+    html += '  <p class="mq-results-eyebrow">Your recommendation</p>';
     html += '  <h1 class="mq-results-title">' + title + '</h1>';
-    html += '  <p class="mq-results-subtitle">Based on your answers, here\'s the formula we\'d start with.</p>';
+    html += '  <p class="mq-results-subtitle">Based on your answers, this is the formula we\'d start with.</p>';
 
     if (product) {
-      html += '  <div class="mq-top-rec">';
-      html += '    <div>';
-      if (product.image) html += '      <img src="' + escapeHtml(product.image) + '" alt="' + escapeHtml(product.title) + '">';
-      html += '    </div>';
-      html += '    <div>';
-      html += '      <p class="mq-best-match">BEST MATCH &middot; ' + escapeHtml(label) + '</p>';
-      html += '      <h2 class="mq-product-title">' + escapeHtml(product.title) + '</h2>';
-      if (product.price) html += '      <p class="mq-product-price">' + formatPrice(product.price) + '</p>';
-      html += '      <a href="/products/' + escapeHtml(product.handle) + '" class="mq-btn-primary" style="text-decoration:none;display:inline-block;">Shop ' + escapeHtml(label) + ' &rarr;</a>';
+      html += '  <div class="mq-hero">';
+      if (product.image) {
+        html += '    <div class="mq-hero-image-wrap">';
+        html += '      <img src="' + escapeHtml(product.image) + '" alt="' + escapeHtml(product.title) + '">';
+        html += '    </div>';
+      }
+      html += '    <div class="mq-hero-meta">';
+      html += '      <p class="mq-hero-label">Best match &mdash; ' + escapeHtml(label) + '</p>';
+      html += '      <h2 class="mq-hero-title">' + escapeHtml(product.title) + '</h2>';
+      if (product.price) {
+        html += '      <p class="mq-hero-price">' + formatPrice(product.price) + '</p>';
+      }
+      html += '      <div>' + buttonLink('/products/' + product.handle, 'Shop ' + label) + '</div>';
       html += '    </div>';
       html += '  </div>';
     }
 
-    html += '  <div class="mq-discount-box">';
-    html += '    <p style="font-size:0.7rem;letter-spacing:0.2em;opacity:0.7;">YOUR 10% OFF CODE</p>';
-    html += '    <p class="mq-discount-code">QUIZ10</p>';
-    html += '    <p style="font-size:0.75rem;opacity:0.7;">We emailed it to <strong>' + escapeHtml(state.email) + '</strong>. Check your inbox.</p>';
+    html += '  <hr class="mq-rule">';
+
+    html += '  <div class="mq-code">';
+    html += '    <p class="mq-code-label">Your 10% off code</p>';
+    html += '    <p class="mq-code-value">QUIZ10</p>';
+    html += '    <p class="mq-code-note">We emailed it to <strong>' + escapeHtml(state.email) + '</strong>. Check your inbox.</p>';
     html += '  </div>';
 
-    html += '  <p style="text-align:center;margin-top:3rem;"><a href="/collections/all" class="mq-btn-ghost">Shop all MAYA</a></p>';
+    html += '  <p class="mq-footer">';
+    html += '    <a href="/collections/all" class="mq-footer-link">Shop all MAYA</a>';
+    html += '  </p>';
     html += '</div>';
+
     root.innerHTML = html;
   }
 
@@ -526,24 +678,21 @@
   }
 
   function submitToMailerLite() {
-    var topFormula = Object.keys(state.scores).sort(function(a, b) {
-      return state.scores[b] - state.scores[a];
-    })[0];
-
-    var body = new URLSearchParams();
-    body.append('fields[email]', state.email);
-    body.append('fields[dog_name]', state.dogName);
-    body.append('fields[quiz_top_formula]', FORMULA_LABEL[topFormula] || topFormula);
-    body.append('fields[quiz_answers]', JSON.stringify(state.answers));
-
-    return fetch(MAILERLITE_SUBMIT_URL, {
+    // Posts to the MAYA Next.js API which subscribes the user to MailerLite
+    // server-side with status="active" (no double-opt-in confirmation email).
+    return fetch(QUIZ_SUBMIT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body.toString(),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: state.email,
+        dogName: state.dogName,
+        answers: state.answers,
+        scores: state.scores
+      }),
       mode: 'cors'
     }).catch(function(err) {
       // Non-blocking — still show results if submit fails
-      console.error('[maya-quiz] MailerLite submit failed', err);
+      console.error('[maya-quiz] quiz-submit failed', err);
     });
   }
 
