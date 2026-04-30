@@ -342,8 +342,10 @@
   // user server-side using MAILERLITE_API_KEY, then the active
   // "MAYA - Quiz Welcome + 10% Off" automation sends the welcome email.
   //
-  // ⚠️ Update QUIZ_SUBMIT_URL below to the production Next.js domain.
-  var QUIZ_SUBMIT_URL = 'https://officeofmaya.com/api/quiz-submit';
+  // The MAYA Next.js app is hosted on Vercel (officeofmaya.com is the
+  // Shopify storefront — different system). Production alias verified
+  // 2026-04-30 with `vercel get_project` → "maya-azure-pi.vercel.app".
+  var QUIZ_SUBMIT_URL = 'https://maya-azure-pi.vercel.app/api/quiz-submit';
 
   // ---------- Products (pulled live from Shopify product metadata) ----------
   // These product handles must exist in the store.
