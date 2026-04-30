@@ -298,14 +298,17 @@ export function QuizClient({ products, bundle }: Props) {
       <div className="quiz-root">
         <div className="quiz-container">
           <div className="quiz-results">
-            <p className="quiz-eyebrow">YOUR RECOMMENDATION</p>
+
+            {/* Header */}
+            <p className="quiz-eyebrow">Your recommendation</p>
             <h1 className="quiz-results-title">
               {dogName ? `${dogName}'s formula` : "Your dog's formula"}
             </h1>
             <p className="quiz-results-subtitle">
-              Based on your answers, here&apos;s what we&apos;d start with.
+              Based on your answers, here&apos;s where we&apos;d start.
             </p>
 
+            {/* Top recommendation */}
             {recommendations.top && (
               <div className="quiz-top-rec">
                 <div className="quiz-top-rec-image">
@@ -313,14 +316,14 @@ export function QuizClient({ products, bundle }: Props) {
                     <Image
                       src={recommendations.top.image}
                       alt={recommendations.top.title}
-                      width={400}
-                      height={400}
+                      width={500}
+                      height={500}
                       className="quiz-product-image"
                     />
                   )}
                 </div>
                 <div className="quiz-top-rec-info">
-                  <p className="quiz-best-match">BEST MATCH</p>
+                  <p className="quiz-eyebrow" style={{ marginBottom: "1.25rem" }}>Best match</p>
                   <h2 className="quiz-product-title">
                     {recommendations.top.title}
                   </h2>
@@ -334,80 +337,83 @@ export function QuizClient({ products, bundle }: Props) {
                     className="quiz-btn-primary"
                     onClick={() => recommendations.top && addSingleToCart(recommendations.top)}
                   >
-                    Add to cart — {formatPrice(recommendations.top.price, recommendations.top.currencyCode)}
+                    Add to cart
                   </button>
                   <Link
                     href={`/products/${recommendations.top.handle}`}
                     className="quiz-link"
                   >
-                    Learn more
+                    Learn more →
                   </Link>
                 </div>
               </div>
             )}
 
+            {/* Secondary recommendations */}
             {recommendations.secondary.length > 0 && (
               <div className="quiz-secondary">
-                <p className="quiz-section-label">ALSO RECOMMENDED</p>
+                <p className="quiz-eyebrow" style={{ marginBottom: "1.25rem" }}>Also recommended</p>
                 <div className="quiz-secondary-grid">
                   {recommendations.secondary.map((p) => (
                     <div key={p.id} className="quiz-secondary-card">
                       {p.image && (
-                        <Image
-                          src={p.image}
-                          alt={p.title}
-                          width={200}
-                          height={200}
-                          className="quiz-secondary-image"
-                        />
+                        <div className="quiz-secondary-image-wrap">
+                          <Image
+                            src={p.image}
+                            alt={p.title}
+                            width={200}
+                            height={200}
+                            className="quiz-secondary-image"
+                          />
+                        </div>
                       )}
-                      <div className="quiz-secondary-info">
-                        <p className="quiz-secondary-title">{p.title}</p>
-                        <p className="quiz-secondary-price">
-                          {formatPrice(p.price, p.currencyCode)}
-                        </p>
-                        <button
-                          className="quiz-btn-ghost"
-                          onClick={() => addSingleToCart(p)}
-                        >
-                          Add
-                        </button>
-                      </div>
+                      <p className="quiz-secondary-title">{p.title}</p>
+                      <p className="quiz-secondary-price">
+                        {formatPrice(p.price, p.currencyCode)}
+                      </p>
+                      <button
+                        className="quiz-btn-ghost"
+                        onClick={() => addSingleToCart(p)}
+                      >
+                        Add to cart
+                      </button>
                     </div>
                   ))}
                 </div>
-                <button className="quiz-btn-secondary" onClick={addAllToCart}>
-                  Add all to cart
-                </button>
               </div>
             )}
 
+            {/* Bundle */}
             {bundle && (
               <div className="quiz-bundle">
-                <p className="quiz-section-label">OR GET EVERYTHING</p>
-                <div className="quiz-bundle-card">
-                  <div className="quiz-bundle-info">
+                <div className="quiz-bundle-inner">
+                  <div>
+                    <p className="quiz-eyebrow" style={{ marginBottom: "0.5rem" }}>The full system</p>
                     <h3 className="quiz-bundle-title">{bundle.title}</h3>
                     <p className="quiz-bundle-desc">
-                      All four formulas at our best price. The full system.
+                      All four formulas. Our best price.
                     </p>
+                  </div>
+                  <div className="quiz-bundle-right">
                     <p className="quiz-bundle-price">
                       {formatPrice(bundle.price, bundle.currencyCode)}
                     </p>
                     <button className="quiz-btn-primary" onClick={addBundleToCart}>
-                      Add bundle to cart
+                      Add bundle
                     </button>
                   </div>
                 </div>
               </div>
             )}
 
+            {/* Footer */}
             <div className="quiz-footer">
-              <p>
-                We emailed your recommendation to <strong>{email}</strong>. Use
-                code <strong>QUIZ10</strong> for 10% off your first order.
+              <p className="quiz-footer-code">QUIZ10</p>
+              <p className="quiz-footer-text">
+                10% off your first order — sent to {email}
               </p>
             </div>
+
           </div>
         </div>
         <QuizStyles />
@@ -666,120 +672,160 @@ function QuizStyles() {
         opacity: 0.5;
         margin-top: 1rem;
       }
+      /* ---- Results ---- */
       .quiz-results-title {
-        font-size: 2.5rem;
+        font-size: 2.25rem;
         font-weight: 400;
         margin-bottom: 0.5rem;
         line-height: 1.1;
       }
       .quiz-results-subtitle {
-        opacity: 0.6;
-        margin-bottom: 3rem;
+        opacity: 0.5;
+        margin-bottom: 2.5rem;
+        font-size: 0.875rem;
       }
+
+      /* Top recommendation */
       .quiz-top-rec {
         display: grid;
         grid-template-columns: 1fr;
         gap: 2rem;
-        padding: 2rem 0;
-        border-top: 1px dotted rgba(0, 0, 0, 0.2);
-        border-bottom: 1px dotted rgba(0, 0, 0, 0.2);
+        padding-top: 2.5rem;
+        border-top: 1px dotted rgba(0,0,0,0.15);
         margin-bottom: 3rem;
       }
-      @media (min-width: 640px) {
+      @media (min-width: 600px) {
         .quiz-top-rec {
           grid-template-columns: 1fr 1fr;
-          align-items: center;
+          align-items: start;
         }
       }
-      .quiz-top-rec-image { display: flex; justify-content: center; }
+      .quiz-top-rec-image {
+        background: #f5f2ed;
+        aspect-ratio: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
       .quiz-product-image {
         width: 100%;
-        height: auto;
-        max-width: 320px;
+        height: 100%;
         object-fit: cover;
       }
-      .quiz-best-match {
-        font-size: 0.7rem;
-        letter-spacing: 0.2em;
-        background: #1a1a1a;
-        color: #fdfbf7;
-        padding: 0.3rem 0.6rem;
-        display: inline-block;
-        margin-bottom: 1rem;
+      .quiz-top-rec-info {
+        display: flex;
+        flex-direction: column;
+        padding-top: 0.5rem;
       }
       .quiz-product-title {
-        font-size: 1.5rem;
+        font-size: 1.375rem;
         font-weight: 400;
         margin-bottom: 0.5rem;
+        line-height: 1.2;
       }
       .quiz-product-price {
-        font-size: 1.125rem;
-        margin-bottom: 1.5rem;
+        font-size: 1rem;
+        opacity: 0.6;
+        margin-bottom: 2rem;
       }
-      .quiz-section-label {
-        font-size: 0.75rem;
-        letter-spacing: 0.15em;
-        opacity: 0.5;
-        margin-bottom: 1rem;
-      }
+
+      /* Secondary recommendations */
       .quiz-secondary {
+        padding-top: 2.5rem;
+        border-top: 1px dotted rgba(0,0,0,0.15);
         margin-bottom: 3rem;
       }
       .quiz-secondary-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        gap: 1.5rem;
       }
       .quiz-secondary-card {
-        padding: 1rem;
-        border: 1px dotted rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+      }
+      .quiz-secondary-image-wrap {
+        background: #f5f2ed;
+        aspect-ratio: 1;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
       }
       .quiz-secondary-image {
         width: 100%;
-        height: auto;
-        max-width: 150px;
-        margin-bottom: 0.75rem;
+        height: 100%;
+        object-fit: cover;
       }
       .quiz-secondary-title {
         font-size: 0.875rem;
         margin-bottom: 0.25rem;
+        line-height: 1.3;
       }
       .quiz-secondary-price {
         font-size: 0.875rem;
-        opacity: 0.7;
-        margin-bottom: 0.75rem;
-      }
-      .quiz-bundle {
-        margin-bottom: 3rem;
-      }
-      .quiz-bundle-card {
-        padding: 2rem;
-        background: #1a1a1a;
-        color: #fdfbf7;
-      }
-      .quiz-bundle-title {
-        font-size: 1.5rem;
-        font-weight: 400;
-        margin-bottom: 0.5rem;
-      }
-      .quiz-bundle-desc {
-        opacity: 0.7;
+        opacity: 0.5;
         margin-bottom: 1rem;
       }
-      .quiz-bundle-price {
-        font-size: 1.25rem;
-        margin-bottom: 1.5rem;
+
+      /* Bundle */
+      .quiz-bundle {
+        padding-top: 2.5rem;
+        border-top: 1px dotted rgba(0,0,0,0.15);
+        margin-bottom: 3rem;
       }
-      .quiz-bundle-card .quiz-btn-primary {
-        background: #fdfbf7;
-        color: #1a1a1a;
+      .quiz-bundle-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
       }
-      .quiz-footer {
-        padding: 2rem 0;
-        text-align: center;
-        border-top: 1px dotted rgba(0, 0, 0, 0.2);
+      @media (min-width: 600px) {
+        .quiz-bundle-inner {
+          flex-direction: row;
+          align-items: flex-end;
+          justify-content: space-between;
+        }
+      }
+      .quiz-bundle-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        flex-shrink: 0;
+      }
+      @media (min-width: 600px) {
+        .quiz-bundle-right { align-items: flex-end; }
+      }
+      .quiz-bundle-title {
+        font-size: 1.125rem;
+        font-weight: 400;
+        margin-bottom: 0.25rem;
+      }
+      .quiz-bundle-desc {
         font-size: 0.875rem;
-        opacity: 0.7;
+        opacity: 0.5;
+      }
+      .quiz-bundle-price {
+        font-size: 1rem;
+        opacity: 0.6;
+      }
+
+      /* Footer / discount */
+      .quiz-footer {
+        padding: 2.5rem 0 1rem;
+        border-top: 1px dotted rgba(0,0,0,0.15);
+      }
+      .quiz-footer-code {
+        font-size: 1.75rem;
+        letter-spacing: 0.15em;
+        margin-bottom: 0.5rem;
+      }
+      .quiz-footer-text {
+        font-size: 0.8rem;
+        opacity: 0.45;
+        letter-spacing: 0.05em;
       }
     `}</style>
   );

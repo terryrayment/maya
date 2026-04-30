@@ -19,9 +19,10 @@ client by design — quiz still renders results).
 
 ## Pre-deploy
 
-- [ ] **`QUIZ_SUBMIT_URL` in `page.quiz.liquid`** points to the live Next.js
-      domain (apex `officeofmaya.com` OR the Vercel URL — whichever serves
-      the API in production)
+- [ ] **`QUIZ_SUBMIT_URL` in `page.quiz.liquid`** points to the Vercel
+      production alias **`https://maya-azure-pi.vercel.app/api/quiz-submit`**.
+      ⚠️  `officeofmaya.com` is the Shopify storefront — it does NOT serve the
+      Next.js API. Posting there silently 404s and no subscriber is created.
 - [ ] **CORS allowlist** in `src/app/api/quiz-submit/route.ts`
       (`ALLOWED_ORIGINS`) includes the Shopify storefront domain serving the
       quiz (`officeofmaya.com`, `www.officeofmaya.com`, and/or
@@ -82,6 +83,14 @@ Use a fresh email address (Gmail `+` aliases work: `you+quiz1@gmail.com`).
 - [ ] Email displays in Space Mono font with white background
 - [ ] QUIZ10 code is visible and styled correctly
 
+## Known bugs fixed (2026-04-30)
+
+| Bug | Root cause | Fix applied |
+|---|---|---|
+| No email received after quiz | `QUIZ_SUBMIT_URL` pointed to `officeofmaya.com` (Shopify, no API) instead of `maya-azure-pi.vercel.app` | Hard-coded Vercel URL in `page.quiz.liquid` |
+| No email received after quiz | `status: "active"` was commented out in `route.ts`, subscribers added as Unconfirmed, automation never fired | Uncommented `status: "active"` |
+| Compiling overlay frozen at 0% | `requestAnimationFrame` is throttled/paused by the browser when the tab is not in the foreground | Replaced `rAF` animation loop with `setInterval` in `runWithCompilingOverlay()` |
+
 ## If something breaks
 
 | Symptom | Likely cause | Fix |
@@ -90,6 +99,7 @@ Use a fresh email address (Gmail `+` aliases work: `you+quiz1@gmail.com`).
 | `200` returned but no MailerLite subscriber | API key missing/wrong account | Update `MAILERLITE_API_KEY` in Vercel |
 | Subscriber created but no email | Automation paused or in Draft | Reactivate automation |
 | Subscriber created with status "Unconfirmed" | `status: "active"` got dropped | Check `route.ts` payload still includes it |
+| Compiling overlay frozen / never shows results | `rAF` throttled (user in background tab) | Animation must use `setInterval`, not `requestAnimationFrame` |
 | User receives "San Bernardino Tax Sales" email | Quiz still hitting JSONP form endpoint | Verify `page.quiz.liquid` calls `QUIZ_SUBMIT_URL`, not `assets.mailerlite.com/jsonp/...` |
 
 ## Reference

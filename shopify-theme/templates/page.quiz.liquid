@@ -1,6 +1,6 @@
 {% comment %}
   MAYA Product Quiz — 5 questions, scores across 4 formulas, emails recommendation
-  via MailerLite form endpoint. Uses existing MAYA-FORM ID 185492455689291593.
+  via the Next.js /api/quiz-submit endpoint (bypasses MailerLite double opt-in).
 
   This page is self-contained — all styles and JS are inline so it works without
   theme modifications.
@@ -8,26 +8,53 @@
 
 <style>
   .maya-quiz {
-    background: #ffffff;
+    background: var(--ivory, #fdfbf7);
     min-height: 80vh;
     padding: 4rem var(--side-padding, 1.5rem);
     font-family: inherit;
     color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .mq-container { max-width: 640px; margin: 0 auto; }
+  .mq-container { max-width: 640px; width: 100%; margin: 0 auto; }
 
   /* Progress bar */
   .mq-progress {
-    height: 2px;
+    height: 3px;
     background: rgba(0,0,0,0.08);
-    margin-bottom: 3rem;
+    margin-bottom: 1.25rem;
     overflow: hidden;
+    border-radius: 99px;
   }
   .mq-progress-fill {
     height: 100%;
     background: #1a1a1a;
-    transition: width 300ms ease;
+    transition: width 350ms ease;
     width: 0;
+    border-radius: 99px;
+  }
+
+  /* Formula signal strip */
+  .mq-signal-strip {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin-bottom: 2.25rem;
+    min-height: 1.2rem;
+  }
+  .mq-signal-strip [data-formula] {
+    font-size: 0.62rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    opacity: 0.18;
+    transition: opacity 300ms ease;
+    white-space: nowrap;
+  }
+  .mq-signal-dot {
+    font-size: 0.62rem;
+    opacity: 0.18;
+    flex-shrink: 0;
   }
 
   /* Typography */
@@ -55,23 +82,24 @@
   .mq-options {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
     margin-bottom: 2rem;
   }
   .mq-option {
     text-align: left;
-    padding: 1.25rem 1.5rem;
-    border: 1px dashed rgba(0,0,0,0.25);
+    padding: 1.1rem 1.5rem;
+    border: 1px solid rgba(0,0,0,0.14);
     background: transparent;
     cursor: pointer;
     font: inherit;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #1a1a1a;
-    transition: all 150ms ease;
+    border-radius: 10px;
+    transition: all 140ms ease;
   }
   .mq-option:hover {
-    border-color: rgba(0,0,0,0.6);
-    background: rgba(0,0,0,0.02);
+    border-color: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.025);
   }
   .mq-option.selected {
     border-color: #1a1a1a;
@@ -84,32 +112,43 @@
     cursor: pointer;
     font: inherit;
     font-size: 0.875rem;
-    opacity: 0.5;
+    opacity: 0.45;
     padding: 0.5rem 0;
     color: #1a1a1a;
   }
   .mq-back:hover { opacity: 1; }
 
   /* Email form */
+  .mq-recap-strip {
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+    opacity: 0.45;
+    text-transform: uppercase;
+    margin-bottom: 1.75rem;
+    text-align: center;
+    line-height: 1.8;
+  }
   .mq-inputs {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.6rem;
     margin: 1.5rem 0 1rem;
   }
   .mq-input {
-    padding: 1rem 1.25rem;
-    border: 1px dashed rgba(0,0,0,0.25);
-    background: transparent;
+    padding: 0.95rem 1.25rem;
+    border: 1px solid rgba(0,0,0,0.16);
+    background: rgba(0,0,0,0.02);
     font: inherit;
     font-size: 1rem;
     color: #1a1a1a;
     font-family: inherit;
+    border-radius: 10px;
+    transition: border-color 150ms ease;
   }
   .mq-input:focus {
     outline: none;
     border-color: #1a1a1a;
-    border-style: solid;
+    background: transparent;
   }
   .mq-btn-primary {
     padding: 1rem 1.5rem;
@@ -121,14 +160,15 @@
     font-size: 0.875rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    border-radius: 10px;
     transition: opacity 150ms ease;
   }
-  .mq-btn-primary:hover:not(:disabled) { opacity: 0.85; }
+  .mq-btn-primary:hover:not(:disabled) { opacity: 0.82; }
   .mq-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
   .mq-btn-ghost {
-    padding: 0.75rem 1rem;
+    padding: 0.75rem 1.25rem;
     background: transparent;
-    border: 1px dashed rgba(0,0,0,0.3);
+    border: 1px solid rgba(0,0,0,0.2);
     cursor: pointer;
     font: inherit;
     font-size: 0.75rem;
@@ -137,182 +177,186 @@
     color: #1a1a1a;
     text-decoration: none;
     display: inline-block;
+    border-radius: 10px;
+    transition: all 150ms ease;
   }
   .mq-btn-ghost:hover {
     background: #1a1a1a;
     color: #fdfbf7;
+    border-color: #1a1a1a;
   }
   .mq-fine {
     font-size: 0.75rem;
-    opacity: 0.5;
+    opacity: 0.45;
     margin: 1rem 0 0 0;
   }
 
-  /* ---------- Results ---------- */
-  /* Layout: single editorial column, generous whitespace, no card chrome */
-  .maya-quiz.-results { padding-top: 6rem; padding-bottom: 6rem; }
-  .mq-results { max-width: 720px; margin: 0 auto; }
-
-  .mq-results-eyebrow {
-    font-size: 0.75rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    opacity: 0.5;
-    margin: 0 0 1.5rem 0;
-  }
+  /* Results */
   .mq-results-title {
-    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    font-size: 2.25rem;
     font-weight: 400;
-    line-height: 1.05;
-    margin: 0 0 1rem 0;
-    letter-spacing: -0.01em;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.15;
   }
   .mq-results-subtitle {
-    font-size: 1rem;
-    line-height: 1.5;
-    opacity: 0.6;
-    margin: 0 0 4rem 0;
-    max-width: 36ch;
+    opacity: 0.55;
+    margin: 0 0 2.5rem 0;
+    font-size: 0.95rem;
   }
-
-  /* Hero product feature */
-  .mq-hero {
-    margin: 0 0 4rem 0;
-  }
-  .mq-hero-image-wrap {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    background: #ffffff;
-    overflow: hidden;
+  .mq-top-rec {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem;
+    background: rgba(0,0,0,0.025);
+    border-radius: 16px;
     margin-bottom: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
-  .mq-hero-image-wrap img {
+  @media (min-width: 640px) {
+    .mq-top-rec { grid-template-columns: 1fr 1fr; align-items: center; }
+  }
+  .mq-top-rec img {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    height: auto;
+    max-width: 280px;
     display: block;
+    margin: 0 auto;
+    object-fit: cover;
+    border-radius: 12px;
   }
-  .mq-hero-meta {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+  .mq-best-match {
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    background: #1a1a1a;
+    color: #fdfbf7;
+    padding: 0.3rem 0.7rem;
+    display: inline-block;
+    margin-bottom: 0.85rem;
+    border-radius: 6px;
   }
-  .mq-hero-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    opacity: 0.55;
-    margin: 0;
-  }
-  .mq-hero-title {
-    font-size: clamp(1.5rem, 3.5vw, 2rem);
+  .mq-product-title {
+    font-size: 1.35rem;
     font-weight: 400;
-    line-height: 1.15;
-    margin: 0;
-    letter-spacing: -0.01em;
+    margin: 0 0 0.4rem 0;
   }
-  .mq-hero-price {
-    font-size: 1rem;
-    margin: 0.25rem 0 1.75rem 0;
-    opacity: 0.75;
+  .mq-product-price {
+    font-size: 1.05rem;
+    opacity: 0.7;
+    margin: 0 0 1.25rem 0;
+  }
+  .mq-rationale {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    opacity: 0;
+    margin: 1.5rem 0 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    transition: opacity 400ms ease;
+    color: rgba(26,26,26,0.6);
+  }
+  .mq-rationale.visible { opacity: 1; }
+  .mq-discount-box {
+    background: #1a1a1a;
+    color: #fdfbf7;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    margin: 2rem 0;
+    border-radius: 16px;
+  }
+  .mq-discount-box p { margin: 0; }
+  .mq-discount-code {
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    margin: 0.5rem 0;
   }
 
-  /* Site-style button with animated SVG border (matches theme `.button`) */
-  .mq-button {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 10.7rem;
-    height: 3.57rem;
-    padding: 0 1.5rem;
-    position: relative;
-    -webkit-user-select: none;
-    user-select: none;
-    background: transparent;
-    color: #1a1a1a;
-    border: none;
-    cursor: pointer;
-    font: inherit;
-    font-size: 1rem;
-    letter-spacing: 0.01em;
-    text-decoration: none;
-    text-align: center;
+  /* Step enter animation */
+  @keyframes mq-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
-  .mq-button-border {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+  .mq-step-entering {
+    animation: mq-enter 220ms ease-out both;
+  }
+
+  /* Analysis echo overlay — subtle pill toast */
+  #mq-echo-overlay {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: rgba(26,26,26,0.84);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: rgba(253,251,247,0.92);
+    padding: 0.6rem 1.4rem;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    line-height: 1.55;
+    text-align: center;
+    max-width: min(480px, calc(100vw - 3rem));
+    z-index: 100;
+    opacity: 0;
     pointer-events: none;
-    overflow: visible;
+    transition: opacity 200ms ease, transform 240ms cubic-bezier(0.16,1,0.3,1);
+    white-space: nowrap;
   }
-  .mq-button-border rect {
-    fill: none;
-    stroke: #1a1a1a;
-    stroke-width: 1px;
-    stroke-dasharray: 800;
-    stroke-dashoffset: 800;
-    transition: stroke-dashoffset 600ms ease;
+  #mq-echo-overlay.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
-  .mq-button:hover .mq-button-border rect,
-  .mq-button:focus-visible .mq-button-border rect {
-    stroke-dashoffset: 0;
-  }
+  .mq-echo-inner { display: contents; }
+  .mq-echo-label { display: none; }
 
-  /* Editorial divider between sections */
-  .mq-rule {
-    border: 0;
-    border-top: 1px solid rgba(0,0,0,0.12);
-    margin: 4rem 0;
+  /* Compiling overlay */
+  #mq-compiling-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fdfbf7;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
   }
-
-  /* Discount code — typography-only, no dark box */
-  .mq-code {
+  #mq-compiling-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .mq-compiling-inner {
     text-align: center;
-    margin: 0 0 4rem 0;
+    width: 220px;
   }
-  .mq-code-label {
-    font-size: 0.7rem;
-    letter-spacing: 0.25em;
+  .mq-compiling-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    opacity: 0.5;
-    margin: 0 0 0.75rem 0;
-  }
-  .mq-code-value {
-    font-size: clamp(2rem, 5vw, 2.75rem);
-    letter-spacing: 0.18em;
-    margin: 0 0 1rem 0;
-    font-weight: 400;
-  }
-  .mq-code-note {
-    font-size: 0.8rem;
+    margin: 0 0 1.5rem 0;
     opacity: 0.55;
+  }
+  .mq-compiling-bar-track {
+    height: 3px;
+    background: rgba(0,0,0,0.1);
+    margin-bottom: 0.85rem;
+    overflow: hidden;
+    border-radius: 99px;
+  }
+  .mq-compiling-bar-fill {
+    height: 100%;
+    background: #1a1a1a;
+    width: 0%;
+    border-radius: 99px;
+  }
+  .mq-compiling-pct {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    opacity: 0.45;
     margin: 0;
-    line-height: 1.5;
-    overflow-wrap: anywhere; /* prevent layout overflow on very long emails */
   }
-  .mq-code-note strong { font-weight: 400; opacity: 0.9; }
-
-  /* Footer CTA */
-  .mq-footer {
-    text-align: center;
-    margin-top: 1rem;
-  }
-  .mq-footer-link {
-    font-size: 0.75rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    opacity: 0.55;
-    color: #1a1a1a;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(0,0,0,0.25);
-    padding-bottom: 0.15rem;
-    transition: opacity 150ms ease, border-color 150ms ease;
-  }
-  .mq-footer-link:hover { opacity: 1; border-color: #1a1a1a; }
 </style>
 
 <div class="maya-quiz" id="maya-quiz-root">
@@ -323,7 +367,18 @@
       <div class="mq-progress-fill" id="mq-progress-fill"></div>
     </div>
 
-    <!-- Question screens (populated by JS) -->
+    <!-- Formula signal strip (visible during questions) -->
+    <div class="mq-signal-strip" id="mq-signal-strip">
+      <span data-formula="allergy">Allergy</span>
+      <span class="mq-signal-dot">&middot;</span>
+      <span data-formula="digestive">Digestive</span>
+      <span class="mq-signal-dot">&middot;</span>
+      <span data-formula="joint">Joint</span>
+      <span class="mq-signal-dot">&middot;</span>
+      <span data-formula="skin_coat">Skin &amp; Coat</span>
+    </div>
+
+    <!-- Question / email gate / results (populated by JS) -->
     <div id="mq-content"></div>
 
   </div>
@@ -334,18 +389,9 @@
   'use strict';
 
   // ---------- Configuration ----------
-  // Quiz submissions POST to the MAYA Next.js API (not directly to
-  // MailerLite's JSONP form endpoint) so we can pass status="active" and
-  // bypass the account-wide double opt-in confirmation email — that email
-  // is sent from "San Bernardino Tax Sales" because the MailerLite account
-  // is shared across multiple brands. The Next.js handler subscribes the
-  // user server-side using MAILERLITE_API_KEY, then the active
-  // "MAYA - Quiz Welcome + 10% Off" automation sends the welcome email.
-  //
-  // The MAYA Next.js app is hosted on Vercel (officeofmaya.com is the
-  // Shopify storefront — different system). Production alias verified
-  // 2026-04-30 with `vercel get_project` → "maya-azure-pi.vercel.app".
-  var QUIZ_SUBMIT_URL = 'https://maya-azure-pi.vercel.app/api/quiz-submit';
+  // POSTs to the Next.js API which subscribes with status="active" to bypass
+  // the shared MailerLite account's double opt-in (San Bernardino Tax Sales branding).
+  var QUIZ_SUBMIT_URL = 'https://officeofmaya.com/api/quiz-submit';
 
   // ---------- Products (pulled live from Shopify product metadata) ----------
   // These product handles must exist in the store.
@@ -373,43 +419,35 @@
   };
 
   {% comment %} Hydrate PRODUCTS with live Shopify data where handles match {% endcomment %}
-  {% comment %}
-    Hydrate PRODUCTS with live Shopify data. We use product.images.first
-    (the bottle render — the first image in admin, e.g. Maya_Joint_1.png)
-    rather than featured_image, and pre-format the price with Shopify's
-    money_without_trailing_zeros filter so it matches the storefront exactly.
-  {% endcomment %}
   {% for product in collections.all.products limit: 50 %}
     {% assign h = product.handle %}
-    {% assign img = product.images.first | default: product.featured_image %}
-    {% assign price_str = product.price_min | money_without_trailing_zeros %}
     {% if h contains 'allerg' %}
       PRODUCTS.allergy = {
         handle: {{ product.handle | json }},
         title: {{ product.title | json }},
-        image: {{ img | img_url: '800x' | prepend: 'https:' | json }},
-        price: {{ price_str | json }}
+        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
+        price: {{ product.price_min | json }}
       };
     {% elsif h contains 'digest' or h contains 'gut' %}
       PRODUCTS.digestive = {
         handle: {{ product.handle | json }},
         title: {{ product.title | json }},
-        image: {{ img | img_url: '800x' | prepend: 'https:' | json }},
-        price: {{ price_str | json }}
+        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
+        price: {{ product.price_min | json }}
       };
     {% elsif h contains 'joint' or h contains 'mobility' %}
       PRODUCTS.joint = {
         handle: {{ product.handle | json }},
         title: {{ product.title | json }},
-        image: {{ img | img_url: '800x' | prepend: 'https:' | json }},
-        price: {{ price_str | json }}
+        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
+        price: {{ product.price_min | json }}
       };
     {% elsif h contains 'skin' or h contains 'coat' or h contains 'fur' %}
       PRODUCTS.skin_coat = {
         handle: {{ product.handle | json }},
         title: {{ product.title | json }},
-        image: {{ img | img_url: '800x' | prepend: 'https:' | json }},
-        price: {{ price_str | json }}
+        image: {{ product.featured_image | img_url: '600x' | prepend: 'https:' | json }},
+        price: {{ product.price_min | json }}
       };
     {% endif %}
   {% endfor %}
@@ -420,9 +458,24 @@
       id: 'age',
       prompt: "How old is your dog?",
       options: [
-        { label: "Puppy (under 1 year)", scores: { digestive: 2, skin_coat: 1 } },
-        { label: "Adult (1-7 years)", scores: { skin_coat: 1, allergy: 1 } },
-        { label: "Senior (7+ years)", scores: { joint: 3, skin_coat: 1 } }
+        {
+          label: "Puppy (under 1 year)",
+          scores: { digestive: 2, skin_coat: 1 },
+          recap: "Puppy",
+          echo: "Gut microbiome colonization is still active in the first 12 months."
+        },
+        {
+          label: "Adult (1–7 years)",
+          scores: { skin_coat: 1, allergy: 1 },
+          recap: "Adult",
+          echo: "The maintenance window. Preventive supplementation is most cost-effective at this stage."
+        },
+        {
+          label: "Senior (7+ years)",
+          scores: { joint: 3, skin_coat: 1 },
+          recap: "Senior (7+)",
+          echo: "Joint load typically increases significantly after age 7 in most breeds."
+        }
       ]
     },
     {
@@ -430,41 +483,121 @@
       prompt: "What kind of dog do you have?",
       subtitle: "We use this to tailor the recommendation — breeds have different tendencies.",
       options: [
-        { label: "Flat-faced (Frenchie, Pug, Bulldog)", scores: { allergy: 3, skin_coat: 2 } },
-        { label: "Large breed (Golden, Lab, Shepherd)", scores: { joint: 3, skin_coat: 1 } },
-        { label: "Small breed (Chihuahua, Dachshund)", scores: { joint: 2, skin_coat: 1 } },
-        { label: "Mixed / Other", scores: { allergy: 1, digestive: 1, skin_coat: 1 } }
+        {
+          label: "Flat-faced (Frenchie, Pug, Bulldog)",
+          scores: { allergy: 3, skin_coat: 2 },
+          recap: "Flat-faced",
+          echo: "Brachycephalic anatomy elevates baseline skin and respiratory allergen sensitivity."
+        },
+        {
+          label: "Large breed (Golden, Lab, Shepherd)",
+          scores: { joint: 3, skin_coat: 1 },
+          recap: "Large breed",
+          echo: "Body mass above 50 lbs correlates with accelerated cartilage wear over time."
+        },
+        {
+          label: "Small breed (Chihuahua, Dachshund)",
+          scores: { joint: 2, skin_coat: 1 },
+          recap: "Small breed",
+          echo: "Patellar luxation is disproportionately prevalent in sub-20 lb breeds."
+        },
+        {
+          label: "Mixed / Other",
+          scores: { allergy: 1, digestive: 1, skin_coat: 1 },
+          recap: "Mixed breed",
+          echo: "Mixed-breed dogs carry broader genetic diversity — individual variation is the primary variable."
+        }
       ]
     },
     {
       id: 'concerns',
-      prompt: "What's your dog's biggest issue right now?",
-      subtitle: "Pick the one that's bothering them most.",
+      prompt: "What’s your dog’s biggest issue right now?",
+      subtitle: "Pick the one that’s bothering them most.",
       options: [
-        { label: "Itching, scratching, hot spots", scores: { allergy: 4, skin_coat: 2 } },
-        { label: "Upset stomach, gas, loose stool", scores: { digestive: 4 } },
-        { label: "Stiff joints, slow on walks", scores: { joint: 4 } },
-        { label: "Dull coat, excessive shedding", scores: { skin_coat: 4 } },
-        { label: "Nothing major — preventive care", scores: { allergy: 1, digestive: 1, joint: 1, skin_coat: 1 } }
+        {
+          label: "Itching, scratching, hot spots",
+          scores: { allergy: 4, skin_coat: 2 },
+          recap: "Itching / hot spots",
+          echo: "Chronic scratching is frequently a systemic inflammatory response, not a surface condition."
+        },
+        {
+          label: "Upset stomach, gas, loose stool",
+          scores: { digestive: 4 },
+          recap: "Gut issues",
+          echo: "Loose stool frequency above twice weekly is a reliable indicator of microbiome dysbiosis."
+        },
+        {
+          label: "Stiff joints, slow on walks",
+          scores: { joint: 4 },
+          recap: "Stiff joints",
+          echo: "Morning stiffness is an early marker — intervention is most effective before full degradation."
+        },
+        {
+          label: "Dull coat, excessive shedding",
+          scores: { skin_coat: 4 },
+          recap: "Coat / shedding",
+          echo: "Coat quality is a reliable proxy for internal omega-3 to omega-6 ratio."
+        },
+        {
+          label: "Nothing major — preventive care",
+          scores: { allergy: 1, digestive: 1, joint: 1, skin_coat: 1 },
+          recap: "Preventive",
+          echo: "Prophylactic supplementation typically reduces incident care costs over a dog’s lifetime."
+        }
       ]
     },
     {
       id: 'diet',
       prompt: "What do you feed your dog?",
       options: [
-        { label: "Kibble", scores: { digestive: 2, skin_coat: 1 } },
-        { label: "Fresh or raw", scores: { skin_coat: 1 } },
-        { label: "Home-cooked", scores: { digestive: 1, skin_coat: 1 } },
-        { label: "A mix of everything", scores: { digestive: 1 } }
+        {
+          label: "Kibble",
+          scores: { digestive: 2, skin_coat: 1 },
+          recap: "Kibble",
+          echo: "High-heat processing during kibble manufacturing degrades naturally occurring digestive enzymes."
+        },
+        {
+          label: "Fresh or raw",
+          scores: { skin_coat: 1 },
+          recap: "Fresh / raw",
+          echo: "Raw protein diets raise microbiome diversity but require careful pathogen management."
+        },
+        {
+          label: "Home-cooked",
+          scores: { digestive: 1, skin_coat: 1 },
+          recap: "Home-cooked",
+          echo: "Home preparation eliminates preservatives but frequently results in micronutrient gaps."
+        },
+        {
+          label: "A mix of everything",
+          scores: { digestive: 1 },
+          recap: "Mixed diet",
+          echo: "Variable ingredient exposure can trigger intermittent immune response in sensitive dogs."
+        }
       ]
     },
     {
       id: 'activity',
       prompt: "How active is your dog?",
       options: [
-        { label: "Very active — hikes, runs, agility", scores: { joint: 3, skin_coat: 1 } },
-        { label: "Moderate — daily walks", scores: { joint: 1, allergy: 1 } },
-        { label: "Low — short walks, lots of naps", scores: { joint: 2, digestive: 1 } }
+        {
+          label: "Very active — hikes, runs, agility",
+          scores: { joint: 3, skin_coat: 1 },
+          recap: "Very active",
+          echo: "High-impact activity accelerates articular cartilage compression cycles."
+        },
+        {
+          label: "Moderate — daily walks",
+          scores: { joint: 1, allergy: 1 },
+          recap: "Moderate",
+          echo: "Daily walking provides sufficient cardiovascular load without exceeding typical joint tolerance."
+        },
+        {
+          label: "Low — short walks, lots of naps",
+          scores: { joint: 2, digestive: 1 },
+          recap: "Low activity",
+          echo: "Sedentary behavior reduces synovial fluid production, increasing joint stiffness risk over time."
+        }
       ]
     }
   ];
@@ -476,6 +609,13 @@
     skin_coat: 'Skin & Coat'
   };
 
+  var FORMULA_RATIONALE = {
+    allergy: "Environmental allergen exposure creates chronic inflammatory load that compounds over time. The Allergy formula targets the histamine cascade at the gut and skin barrier simultaneously.",
+    digestive: "Gut microbiome disruption is the most underdiagnosed driver of systemic inflammation in dogs. The Digestive formula re-establishes the bacterial balance that regulates immune response.",
+    joint: "Cartilage degradation is largely irreversible once it begins — the window for intervention is earlier than most owners expect. Joint Care front-loads the collagen and glucosamine required to slow that process.",
+    skin_coat: "Coat quality is a direct readout of internal fatty acid status, not just grooming. Skin & Coat corrects the omega-3 to omega-6 ratio that determines both dermal integrity and shedding rate."
+  };
+
   // ---------- State ----------
   var state = {
     step: 0,
@@ -484,11 +624,31 @@
     email: '',
     dogName: ''
   };
+  var recapAnswers = [];
+  var isFirstRender = true;
 
   var root = document.getElementById('mq-content');
   var progressFill = document.getElementById('mq-progress-fill');
+  var signalStrip = document.getElementById('mq-signal-strip');
 
   var totalSteps = QUESTIONS.length + 1; // +1 for email gate
+
+  // ---------- Inject overlays once ----------
+  var echoOverlay = document.createElement('div');
+  echoOverlay.id = 'mq-echo-overlay';
+  echoOverlay.setAttribute('aria-live', 'polite');
+  echoOverlay.innerHTML = '<div class="mq-echo-inner"><span class="mq-echo-label">Analysis</span><span class="mq-echo-text"></span></div>';
+  document.body.appendChild(echoOverlay);
+
+  var compilingOverlay = document.createElement('div');
+  compilingOverlay.id = 'mq-compiling-overlay';
+  compilingOverlay.innerHTML =
+    '<div class="mq-compiling-inner">' +
+    '<p class="mq-compiling-label">Analyzing Profile</p>' +
+    '<div class="mq-compiling-bar-track"><div class="mq-compiling-bar-fill" id="mq-compiling-fill"></div></div>' +
+    '<p class="mq-compiling-pct" id="mq-compiling-pct">0%</p>' +
+    '</div>';
+  document.body.appendChild(compilingOverlay);
 
   // ---------- Helpers ----------
   function escapeHtml(s) {
@@ -497,16 +657,15 @@
     });
   }
 
-  function formatPrice(price) {
-    // Price comes from Shopify as a pre-formatted string (money_without_trailing_zeros)
-    // e.g. "$76", "$48.99". For backward-compat with raw cents, also handle numbers.
-    if (!price && price !== 0) return '';
-    if (typeof price === 'number') {
-      // Legacy fallback: treat as cents, preserve cents in output
-      var d = price / 100;
-      return '$' + (d % 1 === 0 ? d.toFixed(0) : d.toFixed(2));
-    }
-    return String(price);
+  function formatPrice(cents) {
+    if (!cents) return '';
+    return '$' + Math.round(cents / 100);
+  }
+
+  function topFormula() {
+    return Object.keys(state.scores).sort(function(a, b) {
+      return state.scores[b] - state.scores[a];
+    })[0];
   }
 
   function updateProgress() {
@@ -514,9 +673,94 @@
     progressFill.style.width = pct + '%';
   }
 
+  function updateSignalStrip() {
+    var isQuestion = state.step < QUESTIONS.length;
+    signalStrip.style.display = isQuestion ? '' : 'none';
+    if (!isQuestion) return;
+
+    var formulas = Object.keys(state.scores);
+    var maxScore = 0;
+    formulas.forEach(function(f) { if (state.scores[f] > maxScore) maxScore = state.scores[f]; });
+
+    signalStrip.querySelectorAll('[data-formula]').forEach(function(el) {
+      var f = el.getAttribute('data-formula');
+      el.style.opacity = (maxScore > 0 && state.scores[f] === maxScore) ? '1' : '0.18';
+    });
+  }
+
+  function showEcho(text, callback) {
+    var textEl = echoOverlay.querySelector('.mq-echo-text');
+    if (textEl) textEl.textContent = text;
+    echoOverlay.classList.add('visible');
+
+    // 200ms fade-in (CSS) + 1000ms display = 1200ms before fade-out starts
+    setTimeout(function() {
+      echoOverlay.classList.remove('visible'); // 200ms CSS fade-out
+      // Swap content partway through fade-out so it's invisible during swap
+      setTimeout(callback, 80);
+      // Clean up text after fade-out completes
+      setTimeout(function() {
+        if (textEl) textEl.textContent = '';
+      }, 220);
+    }, 1200);
+  }
+
+  function runWithCompilingOverlay(fetchPromise) {
+    return new Promise(function(resolve) {
+      var overlay = document.getElementById('mq-compiling-overlay');
+      var fill = document.getElementById('mq-compiling-fill');
+      var pctEl = document.getElementById('mq-compiling-pct');
+
+      overlay.classList.add('visible');
+      fill.style.width = '0%';
+      pctEl.textContent = '0%';
+
+      var startTime = performance.now();
+      var duration = 1200;
+      var fetchDone = false;
+      var animDone = false;
+
+      fetchPromise.then(function() { fetchDone = true; if (animDone) complete(); })
+                  .catch(function() { fetchDone = true; if (animDone) complete(); });
+
+      function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+      function tick(now) {
+        var elapsed = now - startTime;
+        var t = Math.min(elapsed / duration, 1);
+        var val = Math.round(easeOutCubic(t) * 99);
+        fill.style.width = val + '%';
+        pctEl.textContent = val + '%';
+        if (t < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          animDone = true;
+          if (fetchDone) complete();
+          // else hold at 99% until fetchDone triggers complete()
+        }
+      }
+
+      function complete() {
+        fill.style.width = '100%';
+        pctEl.textContent = '100%';
+        setTimeout(function() {
+          overlay.style.opacity = '0';
+          setTimeout(function() {
+            overlay.classList.remove('visible');
+            overlay.style.opacity = '';
+            resolve();
+          }, 320);
+        }, 180);
+      }
+
+      requestAnimationFrame(tick);
+    });
+  }
+
   // ---------- Render ----------
   function render() {
     updateProgress();
+    updateSignalStrip();
 
     if (state.step < QUESTIONS.length) {
       renderQuestion();
@@ -525,6 +769,16 @@
     } else {
       renderResults();
     }
+
+    // Enter animation (skip first render)
+    if (!isFirstRender) {
+      var child = root.firstElementChild;
+      if (child) {
+        child.classList.add('mq-step-entering');
+        setTimeout(function() { child.classList.remove('mq-step-entering'); }, 240);
+      }
+    }
+    isFirstRender = false;
   }
 
   function renderQuestion() {
@@ -556,14 +810,24 @@
     });
     var back = document.getElementById('mq-back');
     if (back) back.addEventListener('click', function() {
+      if (recapAnswers.length > 0) recapAnswers.pop();
       state.step = Math.max(0, state.step - 1);
       render();
     });
   }
 
   function renderEmailGate() {
+    // Build recap string from recorded answers
+    var recapHtml = '';
+    if (recapAnswers.length > 0) {
+      recapHtml = '<div class="mq-recap-strip">' +
+        escapeHtml(recapAnswers.join(' · ')) +
+        '</div>';
+    }
+
     var html = '';
     html += '<form id="mq-email-form">';
+    html += recapHtml;
     html += '  <p class="mq-eyebrow">Almost done</p>';
     html += '  <h1 class="mq-prompt">Where should we send the results?</h1>';
     html += '  <p class="mq-subtitle">We\'ll email your personalized recommendation, plus a 10% off code for your first order.</p>';
@@ -581,10 +845,13 @@
       state.email = document.getElementById('mq-email').value.trim();
       state.dogName = document.getElementById('mq-dog-name').value.trim();
       if (!state.email) return;
+
       var btn = document.getElementById('mq-submit');
       btn.disabled = true;
-      btn.textContent = 'Submitting...';
-      submitToMailerLite().then(function() {
+      btn.textContent = 'Analyzing…';
+
+      var fetchPromise = submitToMailerLite();
+      runWithCompilingOverlay(fetchPromise).then(function() {
         state.step = totalSteps;
         render();
       });
@@ -592,72 +859,50 @@
   }
 
   function renderResults() {
-    var topFormula = Object.keys(state.scores).sort(function(a, b) {
-      return state.scores[b] - state.scores[a];
-    })[0];
-    var product = PRODUCTS[topFormula];
-    var label = FORMULA_LABEL[topFormula] || topFormula;
-
-    // Editorial signature button used on the rest of the site — animated
-    // SVG border drawing on hover. Returns the button as an <a>.
-    function buttonLink(href, text) {
-      return '<a href="' + escapeHtml(href) + '" class="mq-button">' +
-             '<span>' + escapeHtml(text) + '</span>' +
-             '<svg class="mq-button-border" preserveAspectRatio="none">' +
-             '<rect x="0.5" y="0.5" width="calc(100% - 1px)" height="calc(100% - 1px)" rx="5" ry="5" />' +
-             '</svg>' +
-             '</a>';
-    }
-
-    // Switch the page wrapper into "results" mode for top/bottom padding.
-    var wrapper = document.querySelector('.maya-quiz');
-    if (wrapper) wrapper.classList.add('-results');
-    // Hide the progress bar on the final screen.
-    var progress = document.getElementById('mq-progress');
-    if (progress) progress.style.display = 'none';
-
-    var title = state.dogName
-      ? (escapeHtml(state.dogName) + "'s formula")
-      : "Your dog's formula";
+    var formula = topFormula();
+    var product = PRODUCTS[formula];
+    var label = FORMULA_LABEL[formula] || formula;
+    var rationale = FORMULA_RATIONALE[formula] || '';
 
     var html = '';
     html += '<div class="mq-results">';
-    html += '  <p class="mq-results-eyebrow">Your recommendation</p>';
+    html += '  <p class="mq-eyebrow">Your recommendation</p>';
+    var title = state.dogName ? (escapeHtml(state.dogName) + "’s formula") : "Your dog’s formula";
     html += '  <h1 class="mq-results-title">' + title + '</h1>';
-    html += '  <p class="mq-results-subtitle">Based on your answers, this is the formula we\'d start with.</p>';
+    html += '  <p class="mq-results-subtitle">Based on your answers, here’s the formula we’d start with.</p>';
 
     if (product) {
-      html += '  <div class="mq-hero">';
-      if (product.image) {
-        html += '    <div class="mq-hero-image-wrap">';
-        html += '      <img src="' + escapeHtml(product.image) + '" alt="' + escapeHtml(product.title) + '">';
-        html += '    </div>';
+      html += '  <div class="mq-top-rec">';
+      html += '    <div>';
+      if (product.image) html += '      <img src="' + escapeHtml(product.image) + '" alt="' + escapeHtml(product.title) + '">';
+      html += '    </div>';
+      html += '    <div>';
+      html += '      <p class="mq-best-match">BEST MATCH &middot; ' + escapeHtml(label) + '</p>';
+      html += '      <h2 class="mq-product-title">' + escapeHtml(product.title) + '</h2>';
+      if (product.price) html += '      <p class="mq-product-price">' + formatPrice(product.price) + '</p>';
+      html += '      <a href="/products/' + escapeHtml(product.handle) + '" class="mq-btn-primary" style="text-decoration:none;display:inline-block;">Shop ' + escapeHtml(label) + ' &rarr;</a>';
+      if (rationale) {
+        html += '      <p class="mq-rationale" id="mq-rationale">' + escapeHtml(rationale) + '</p>';
       }
-      html += '    <div class="mq-hero-meta">';
-      html += '      <p class="mq-hero-label">Best match &mdash; ' + escapeHtml(label) + '</p>';
-      html += '      <h2 class="mq-hero-title">' + escapeHtml(product.title) + '</h2>';
-      if (product.price) {
-        html += '      <p class="mq-hero-price">' + formatPrice(product.price) + '</p>';
-      }
-      html += '      <div>' + buttonLink('/products/' + product.handle, 'Shop ' + label) + '</div>';
       html += '    </div>';
       html += '  </div>';
     }
 
-    html += '  <hr class="mq-rule">';
-
-    html += '  <div class="mq-code">';
-    html += '    <p class="mq-code-label">Your 10% off code</p>';
-    html += '    <p class="mq-code-value">QUIZ10</p>';
-    html += '    <p class="mq-code-note">We emailed it to <strong>' + escapeHtml(state.email) + '</strong>. Check your inbox.</p>';
+    html += '  <div class="mq-discount-box">';
+    html += '    <p style="font-size:0.7rem;letter-spacing:0.2em;opacity:0.7;">YOUR 10% OFF CODE</p>';
+    html += '    <p class="mq-discount-code">QUIZ10</p>';
+    html += '    <p style="font-size:0.75rem;opacity:0.7;">We emailed it to <strong>' + escapeHtml(state.email) + '</strong>. Check your inbox.</p>';
     html += '  </div>';
 
-    html += '  <p class="mq-footer">';
-    html += '    <a href="/collections/all" class="mq-footer-link">Shop all MAYA</a>';
-    html += '  </p>';
+    html += '  <p style="text-align:center;margin-top:3rem;"><a href="/collections/all" class="mq-btn-ghost">Shop all MAYA</a></p>';
     html += '</div>';
-
     root.innerHTML = html;
+
+    // Fade in rationale after 400ms
+    var rationaleEl = document.getElementById('mq-rationale');
+    if (rationaleEl) {
+      setTimeout(function() { rationaleEl.classList.add('visible'); }, 400);
+    }
   }
 
   // ---------- Logic ----------
@@ -665,36 +910,52 @@
     var q = QUESTIONS[stepIdx];
     var opt = q.options[optIdx];
     state.answers[q.id] = opt.label;
+
+    // Track recap label
+    if (opt.recap) recapAnswers.push(opt.recap);
+
+    // Accumulate scores
     for (var f in opt.scores) {
       if (Object.prototype.hasOwnProperty.call(opt.scores, f)) {
         state.scores[f] = (state.scores[f] || 0) + opt.scores[f];
       }
     }
-    // Highlight selected briefly, then advance
+
+    // Advance step
+    state.step = stepIdx + 1;
+
+    // Highlight selected briefly
     var btn = root.querySelector('.mq-option[data-step="' + stepIdx + '"][data-opt="' + optIdx + '"]');
     if (btn) btn.classList.add('selected');
-    setTimeout(function() {
-      state.step = stepIdx + 1;
-      render();
-    }, 180);
+
+    // Update signal strip immediately so it reflects new scores
+    updateSignalStrip();
+
+    // Show echo for questions 1-4 (not before email gate)
+    if (opt.echo && state.step < QUESTIONS.length) {
+      showEcho(opt.echo, function() {
+        render();
+      });
+    } else {
+      setTimeout(function() {
+        render();
+      }, 180);
+    }
   }
 
   function submitToMailerLite() {
-    // Posts to the MAYA Next.js API which subscribes the user to MailerLite
-    // server-side with status="active" (no double-opt-in confirmation email).
     return fetch(QUIZ_SUBMIT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         email: state.email,
         dogName: state.dogName,
         answers: state.answers,
         scores: state.scores
-      }),
-      mode: 'cors'
+      })
     }).catch(function(err) {
       // Non-blocking — still show results if submit fails
-      console.error('[maya-quiz] quiz-submit failed', err);
+      console.error('[maya-quiz] submit failed', err);
     });
   }
 
